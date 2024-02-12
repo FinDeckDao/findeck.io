@@ -1,0 +1,1 @@
+{"canister_methods":{"init":{"name":"init"},"post_upgrade":{"name":"postUpgrade"},"queries":[{"name":"http_request","composite":true}],"updates":[{"name":"http_request_update"}],"callbacks":{}},"env_vars":[]}
