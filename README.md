@@ -27,7 +27,7 @@ Please setup your environment using
 
 ### Install the dfx command line tools for managing ICP applications
 
-You man need to restart the terminal after running this command.
+You may need to restart the terminal after running this command.
 
 ```
 DFX_VERSION=0.16.1 sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
@@ -50,7 +50,7 @@ repository to an ICP canister environment
 
 ```
 npm install
-dfx deploy
+npm run deploy:local
 ```
 
 ## If you have problems deploying
