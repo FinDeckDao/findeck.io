@@ -1,3 +1,5 @@
 node_modules/
 docs/diagrams/.$Account Deposits.drawio.bkp
 .DS_Store
+.azle/
+.dfx/
