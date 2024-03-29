@@ -7,7 +7,9 @@
     "pretest": "ts-node --transpile-only --ignore=false --skip-project test/pretest.ts",
     "serve": "cd src/frontend && VITE_CANISTER_ORIGIN=http://$(dfx canister id backend).localhost:8000 vite",
     "test": "ts-node --transpile-only --ignore=false --skip-project test/test.ts",
-    "deploy:local": "AZLE_AUTORELOAD=true dfx deploy"
+    "deploy:local": "AZLE_AUTORELOAD=true dfx deploy",
+    "postdeploy:local": "echo http://$(dfx canister id backend).localhost:8000",
+    "dfx": "dfx start --clean --host 127.0.0.1:8000"
   },
   "dependencies": {
     "azle": "^0.20.1",
