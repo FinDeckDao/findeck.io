@@ -1,13 +1,23 @@
 import { Content } from "./Content"
+import { Footer } from "./Footer"
 import { NavBar } from "./NavBar"
 import { SidePanel } from "./SidePanel"
 
-export const Layout = () => {
+interface LayoutProps {
+  navBarOverride?: JSX.Element
+  sidePanelOverride?: JSX.Element
+  content?: JSX.Element
+  children?: JSX.Element
+}
+
+export const Layout = (props: LayoutProps) => {
+  const { navBarOverride, sidePanelOverride, content, children } = props
   return (
-    <div className='grid grid-cols-12 gap-4 w-full h-screen bg-red-300'>
-      <NavBar />
-      <Content />
-      <SidePanel />
+    <div className='grid grid-cols-12 gap-4 w-full h-max bg-slate-700'>
+      {navBarOverride || <NavBar />}
+      {sidePanelOverride || <SidePanel />}
+      <Content>{children || content}</Content>
+      <Footer />
     </div>
   )
 }
