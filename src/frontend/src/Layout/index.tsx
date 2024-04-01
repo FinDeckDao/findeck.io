@@ -7,10 +7,10 @@ interface LayoutProps {
   navBarOverride?: JSX.Element
   sidePanelOverride?: JSX.Element
   content?: JSX.Element
-  children?: JSX.Element
+  children?: React.ReactNode
 }
 
-export const Layout = (props: LayoutProps) => {
+export const DefaultLayout = (props: LayoutProps) => {
   const { navBarOverride, sidePanelOverride, content, children } = props
   return (
     <div className='grid grid-cols-12 gap-4 w-full h-max bg-slate-700'>
@@ -22,4 +22,4 @@ export const Layout = (props: LayoutProps) => {
   )
 }
 
-export default Layout
+export default DefaultLayout

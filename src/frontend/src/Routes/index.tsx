@@ -1,17 +1,39 @@
 import {
   createBrowserRouter,
 } from "react-router-dom"
-import Layout from '../Layout/Layout.tsx'
+import { DefaultLayout } from '../Layout/index.tsx'
 import { ErrorPage } from '../Routes/ErrorPage.tsx'
+import { Home } from '../Screens/Home'
+import { Auth } from "../components/Auth/index.tsx"
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout><>Dashboard</></Layout>,
-    errorElement: <Layout><ErrorPage /></Layout>
+    element: (
+      <DefaultLayout>
+        <Home />
+      </DefaultLayout>
+    ),
+    errorElement: <ErrorPage />
   },
   {
     path: "/positions",
-    element: <Layout><>Positions</></Layout>
+    element: (
+      <Auth>
+        <DefaultLayout>
+          <>Positions Authenticated</>
+        </DefaultLayout >
+      </Auth>
+    )
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <Auth>
+        <DefaultLayout>
+          <>Dashboard Authenticated</>
+        </DefaultLayout>
+      </Auth>
+    )
   }
 ])

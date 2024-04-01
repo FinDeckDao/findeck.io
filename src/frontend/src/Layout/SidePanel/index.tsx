@@ -1,13 +1,19 @@
+import { Link } from "react-router-dom"
+
 export const SidePanel = () => {
   return (
     <aside id='sidebar' className="col-span-12 md:col-span-4 bg-slate-800 p-4 text-blue-200">
+      {/* TODO: Move this list of links to it's own component. */}
       <nav>
         <ul>
           <li>
-            <a href={`/`}>Dashboard</a>
+            <Link to={`/`}>Home</Link>
           </li>
           <li>
-            <a href={`/positions`}>Positions</a>
+            <Link to={`/positions`}>Positions</Link>
+          </li>
+          <li>
+            <Link to={`/dashboard`}>Dashboard</Link>
           </li>
         </ul>
       </nav>
