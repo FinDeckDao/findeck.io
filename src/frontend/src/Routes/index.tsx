@@ -4,7 +4,6 @@ import {
 import { DefaultLayout } from '../Layout/index.tsx'
 import { ErrorPage } from '../Routes/ErrorPage.tsx'
 import { Home } from '../Screens/Home'
-import { Auth } from "../components/Auth/index.tsx"
 
 export const router = createBrowserRouter([
   {
@@ -19,21 +18,17 @@ export const router = createBrowserRouter([
   {
     path: "/positions",
     element: (
-      <Auth>
-        <DefaultLayout>
-          <>Positions Authenticated</>
-        </DefaultLayout >
-      </Auth>
+      <DefaultLayout>
+        <>Positions Authenticated</>
+      </DefaultLayout >
     )
   },
   {
     path: "/dashboard",
     element: (
-      <Auth>
-        <DefaultLayout>
-          <>Dashboard Authenticated</>
-        </DefaultLayout>
-      </Auth>
+      <DefaultLayout>
+        <>Dashboard Authenticated</>
+      </DefaultLayout>
     )
   }
 ])

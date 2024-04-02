@@ -1,5 +1,7 @@
 import { PropsWithChildren, useEffect, useState } from "react"
 import { AuthClient } from "@dfinity/auth-client"
+import { AuthContext, defaultAuthContext, AuthContextType } from "../../Contexts/Auth/index.tsx"
+import { useLocation } from 'react-router-dom'
 
 const authClient = await AuthClient.create()
 
@@ -10,12 +12,9 @@ const authClient = await AuthClient.create()
 // It depends on the dfinity auth-client library to perform the authorization.
 export const Auth = (props: PropsWithChildren) => {
   const { children } = props
-
-  // TODO: This state is local for now but will be in a context later
-  //       default value should be false.
-  //       Context needs to be global to site including non-authenticated routes.
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [identity, setIdentity] = useState<string>("")
+  const [authState, setAuthState] = useState<AuthContextType>(defaultAuthContext)
+  const location = useLocation()
+  const { pathname } = location
 
   // Takes authentication state from client library and adds it to the local app state.
   const handleAuthenticated = async (authClient: AuthClient) => {
@@ -23,35 +22,34 @@ export const Auth = (props: PropsWithChildren) => {
     const authenticated = await authClient.isAuthenticated()
     const identity = await authClient.getIdentity()
 
-    if (identity) {
-      setIdentity(identity.getPrincipal().toText())
-      // TODO: Also need to setup an HttpAgent and bind it to this identity in order to make 
-      // authenticated calls to the canisters. 
-    }
-
-    if (authenticated) {
-      setIsAuthenticated(authenticated)
-      return
-    }
-    console.log(authClient)
+    setAuthState({ isAuthenticated: authenticated, identity: identity.getPrincipal().toText() })
   }
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    // Guard against home page.
+    // TODO: Populate this with an array of pages that don't require authentication.
+    console.log(pathname)
+    if (pathname === '/') return
+
+    // Force login for all other pages.
+    if (!authState.isAuthenticated) {
       authClient.login({
         // 7 days in nanoseconds
         maxTimeToLive: BigInt(604800000000000),
         onSuccess: async () => {
           handleAuthenticated(authClient)
         },
+        onError: (err) => {
+          // TODO: Handle this appropriately.
+          console.log(err)
+        }
       })
     }
-  }, [isAuthenticated])
+  }, [authState, pathname])
 
-  return <>
-    <h1>Auth Content</h1>
-    <p>User Authenticaed: {isAuthenticated ? "Yes" : "No"}</p>
-    <p>User: {identity}</p>
+  return <AuthContext.Provider value={authState}>
     {children}
-  </>
+  </AuthContext.Provider>
 }
+
+//TODO: Export a signout button that will call the authClient.logout() method.

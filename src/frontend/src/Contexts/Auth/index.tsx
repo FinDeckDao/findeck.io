@@ -1,5 +1,12 @@
 import { createContext } from "react"
 
-type AuthContextType = "test" | "test2"
+export type AuthContextType = {
+  isAuthenticated: boolean
+  identity: string
+}
 
-export const AuthContext = createContext<AuthContextType>("test")
+export const defaultAuthContext: AuthContextType = { isAuthenticated: false, identity: "" }
+
+export const AuthContext = createContext<AuthContextType>(defaultAuthContext)
+
+export default AuthContext
