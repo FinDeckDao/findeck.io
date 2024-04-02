@@ -28,6 +28,7 @@ export const Auth = (props: PropsWithChildren) => {
   useEffect(() => {
     // Guard against forcing authentication on the home page.
     // TODO: Populate this with an array of pages that don't require authentication.
+    //       For now this is simple enough and it works fine.
     if (pathname === '/') return
 
     // Force login for all other pages.
