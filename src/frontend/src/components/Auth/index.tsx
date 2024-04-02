@@ -40,7 +40,7 @@ export const Auth = (props: PropsWithChildren) => {
     if (!isAuthenticated) {
       authClient.login({
         // 7 days in nanoseconds
-        maxTimeToLive: BigInt(7 * 24 * 60 * 60 * 1000 * 1000 * 1000),
+        maxTimeToLive: BigInt(604800000000000),
         onSuccess: async () => {
           handleAuthenticated(authClient)
         },
