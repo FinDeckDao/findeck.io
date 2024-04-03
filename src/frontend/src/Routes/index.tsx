@@ -4,6 +4,8 @@ import {
 import { DefaultLayout } from '../Layout/index.tsx'
 import { ErrorPage } from '../Routes/ErrorPage.tsx'
 import { Home } from '../Screens/Home'
+import { DashboardScreen } from "../Screens/Dashboard"
+import { PositionsScreen } from "../Screens/Positions"
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +21,7 @@ export const router = createBrowserRouter([
     path: "/positions",
     element: (
       <DefaultLayout>
-        <>Positions Authenticated</>
+        <PositionsScreen />
       </DefaultLayout >
     )
   },
@@ -27,7 +29,7 @@ export const router = createBrowserRouter([
     path: "/dashboard",
     element: (
       <DefaultLayout>
-        <>Dashboard Authenticated</>
+        <DashboardScreen />
       </DefaultLayout>
     )
   }

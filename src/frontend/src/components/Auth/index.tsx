@@ -1,9 +1,9 @@
 import { PropsWithChildren, useEffect, useState } from "react"
-import { AuthClient } from "@dfinity/auth-client"
-import { AuthContext, defaultAuthContext, AuthContextType } from "../../Contexts/Auth/index.tsx"
+import { AuthContext } from "../../Contexts/Auth/index.tsx"
+import { defaultAuthContext, AuthContextType } from '../../Contexts/Auth/defaultContext.tsx'
 import { useLocation } from 'react-router-dom'
-
-const authClient = await AuthClient.create()
+import { AuthClient } from "@dfinity/auth-client"
+import { authClient } from "./authClient.tsx"
 
 // This component just handles presenting the results of the authorization process to this app.
 // It's no meant to perform the actual authorization.
