@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { AuthContext } from '../../Contexts/Auth/index.tsx'
 import { AuthError } from '../../components/Auth/Error.tsx'
+import { Positions } from '../../components/Position/index.tsx'
 
 export const PositionsScreen = () => {
   const auth = useContext(AuthContext)
@@ -12,6 +13,6 @@ export const PositionsScreen = () => {
 
   return <div>
     <h1>Positions</h1>
-    <p>Here are your positions.</p>
+    <Positions />
   </div>
 }
