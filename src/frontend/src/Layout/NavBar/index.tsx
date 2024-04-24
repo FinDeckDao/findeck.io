@@ -5,6 +5,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from "react-router-dom"
 import iclogo from '../../assets/internet-computer-icp-logo.svg'
 import { AuthContextType } from "../../Contexts/Auth/defaultContext"
+import { logOut } from "../../components/Auth/authClient"
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -31,6 +32,7 @@ export const NavBar = () => {
     return <a
       href="/"
       className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-sky-100 hover:bg-slate-700"
+      onClick={() => { logOut() }}
     >
       <img src={iclogo} className="h-8 w-8 inline p-0 mb-1 mr-2 align-middle" />
       Logout ({auth.identity.slice(0, 6)}...{auth.identity.slice(-4)})
@@ -41,7 +43,9 @@ export const NavBar = () => {
     {/* Default Menu */}
     <nav className="mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
       <div className="flex lg:flex-1">
-        <Link to="/" className="text-sky-100 font-bold">FinDeck.io</Link>
+        <Link to="/" className="text-sky-100 font-bold hover:bg-slate-700 block rounded-lg px-3 py-2.5">
+          FinDeck.io
+        </Link>
       </div>
       <div className="flex lg:hidden">
         <button

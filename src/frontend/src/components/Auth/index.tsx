@@ -13,8 +13,8 @@ export const Auth = (props: PropsWithChildren) => {
   // Takes authentication state from client library and adds it to the local app state.
   const handleAuthentication = async () => {
     authClient.login({
-      // 7 days in nanoseconds
-      maxTimeToLive: BigInt(604800000000000),
+      // 8 hours in nanoseconds
+      maxTimeToLive: BigInt(28800000000000),
       onSuccess: async () => {
         // Client library will check if the user is authenticated
         const authenticated = await authClient.isAuthenticated()
