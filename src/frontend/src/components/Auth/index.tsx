@@ -2,14 +2,8 @@ import { PropsWithChildren, useEffect, useState } from "react"
 import { AuthContext } from "../../Contexts/Auth/index.tsx"
 import { defaultAuthContext, AuthContextType } from '../../Contexts/Auth/defaultContext.tsx'
 import { useLocation } from 'react-router-dom'
-import { AuthClient } from "@dfinity/auth-client"
 import { authClient } from "./authClient.tsx"
 
-// This component just handles presenting the results of the authorization process to this app.
-// It's no meant to perform the actual authorization.
-// This will present the status of the authorization process to the user.
-// It will depend on a context to share the authorization status with the rest of the app.
-// It depends on the dfinity auth-client library to perform the authorization.
 export const Auth = (props: PropsWithChildren) => {
   const { children } = props
   const [authState, setAuthState] = useState<AuthContextType>(defaultAuthContext)
@@ -17,33 +11,48 @@ export const Auth = (props: PropsWithChildren) => {
   const { pathname } = location
 
   // Takes authentication state from client library and adds it to the local app state.
-  const handleAuthenticated = async (authClient: AuthClient) => {
-    // Client library will check if the user is authenticated
-    const authenticated = await authClient.isAuthenticated()
-    const identity = await authClient.getIdentity()
+  const handleAuthentication = async () => {
+    authClient.login({
+      // 7 days in nanoseconds
+      maxTimeToLive: BigInt(604800000000000),
+      onSuccess: async () => {
+        // Client library will check if the user is authenticated
+        const authenticated = await authClient.isAuthenticated()
+        const identity = await authClient.getIdentity()
 
-    setAuthState({ isAuthenticated: authenticated, identity: identity.getPrincipal().toText() })
+        // Write the authentication state to the session storage (to be used if the app refreshes).
+        window.sessionStorage.setItem("authContext", JSON.stringify({ isAuthenticated: authenticated, identity: identity.getPrincipal().toText() }))
+
+        // Set the authentication state in the app.
+        setAuthState({ isAuthenticated: authenticated, identity: identity.getPrincipal().toText() })
+      },
+      onError: (err) => {
+        // TODO: Handle this appropriately by showing an error message component.
+        // For now this works.
+        console.log(err)
+      }
+    })
   }
 
   useEffect(() => {
     // Guard against forcing authentication on the home page.
     // TODO: Populate this with an array of pages that don't require authentication.
     //       For now this is simple enough and it works fine.
+    // TODO: Make this a configuration Option.
     if (pathname === '/') return
 
     // Force login for all other pages.
     if (!authState.isAuthenticated) {
-      authClient.login({
-        // 7 days in nanoseconds
-        maxTimeToLive: BigInt(604800000000000),
-        onSuccess: async () => {
-          handleAuthenticated(authClient)
-        },
-        onError: (err) => {
-          // TODO: Handle this appropriately.
-          console.log(err)
-        }
-      })
+      // First check to see if a user session exists.
+      const authContext = window.sessionStorage.getItem("authContext")
+
+      // Guard for missing AuthContext
+      if (!authContext) {
+        handleAuthentication()
+        // If it doesn't exist then we will need to authenticate the user.
+      }
+      // If it exists then we can use it to authenticate the user.
+
     }
   }, [authState, pathname])
 
