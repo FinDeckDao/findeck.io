@@ -6,12 +6,7 @@ import { Link } from "react-router-dom"
 import iclogo from '../../assets/internet-computer-icp-logo.svg'
 import { AuthContextType } from "../../Contexts/Auth/defaultContext"
 import { logOut } from "../../components/Auth/authClient"
-
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Dashbord', href: '/dashboard' },
-  { name: 'Positions', href: '/positions' },
-]
+import { navigation } from "../../Routes"
 
 export const NavBar = () => {
   const auth = useContext(AuthContext)
@@ -90,7 +85,7 @@ export const NavBar = () => {
         <div className="mt-6 flow-root">
           <div className="-my-6 divide-y divide-gray-500/10">
             <div className="space-y-2 py-6">
-              {navigation.map((item) => (
+              {navigation.sort((a, b) => a.name.localeCompare(b.name)).map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}

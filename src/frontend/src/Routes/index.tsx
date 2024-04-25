@@ -6,6 +6,14 @@ import { ErrorPage } from '../Routes/ErrorPage.tsx'
 import { Home } from '../Screens/Home'
 import { DashboardScreen } from "../Screens/Dashboard"
 import { PositionsScreen } from "../Screens/Positions"
+import { ResourcesScreen } from "../Screens/Resources"
+
+export const navigation = [
+  { name: 'Home', href: '/' },
+  { name: 'Dashbord', href: '/dashboard' },
+  { name: 'Positions', href: '/positions' },
+  { name: 'Resources', href: '/resources' },
+]
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +38,14 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <DashboardScreen />
+      </DefaultLayout>
+    )
+  },
+  {
+    path: "/resources",
+    element: (
+      <DefaultLayout>
+        <ResourcesScreen />
       </DefaultLayout>
     )
   }
