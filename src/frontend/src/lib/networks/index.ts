@@ -9,8 +9,8 @@ export interface Network {
 // }
 
 export const Fiat: Network = {
-  name: 'Fiat',
-  nativeAsset: 'US Dollar'
+  name: 'US Dollar',
+  nativeAsset: 'USD'
 }
 
 // export interface Solana extends Network {
@@ -33,10 +33,10 @@ export const InternetComputer: Network = {
   nativeAsset: 'ICP'
 }
 
-// export interface Stellar extends Network {
-//   name: 'Stellar'
-//   nativeAsset: 'XLM'
-// }
+export const Stellar: Network = {
+  name: 'Stellar',
+  nativeAsset: 'XLM'
+}
 
 // export interface Avalanche extends Network {
 //   name: 'Avalanche'

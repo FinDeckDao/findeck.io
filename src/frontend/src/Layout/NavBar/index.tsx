@@ -5,12 +5,8 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from "react-router-dom"
 import iclogo from '../../assets/internet-computer-icp-logo.svg'
 import { AuthContextType } from "../../Contexts/Auth/defaultContext"
-
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Dashbord', href: '/dashboard' },
-  { name: 'Positions', href: '/positions' },
-]
+import { logOut } from "../../components/Auth/authClient"
+import { navigation } from "../../Routes"
 
 export const NavBar = () => {
   const auth = useContext(AuthContext)
@@ -31,17 +27,20 @@ export const NavBar = () => {
     return <a
       href="/"
       className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-sky-100 hover:bg-slate-700"
+      onClick={() => { logOut() }}
     >
       <img src={iclogo} className="h-8 w-8 inline p-0 mb-1 mr-2 align-middle" />
       Logout ({auth.identity.slice(0, 6)}...{auth.identity.slice(-4)})
     </a>
   }
 
-  return <header className="col-span-12 bg-slate-800 text-sky-100">
+  return <header className="col-span-12 bg-slate-800 text-sky-100 rounded-b-lg">
     {/* Default Menu */}
     <nav className="mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
       <div className="flex lg:flex-1">
-        <Link to="/" className="text-sky-100 font-bold">FinDeck.io</Link>
+        <Link to="/" className="text-sky-100 font-bold hover:bg-slate-700 block rounded-lg px-3 py-2.5">
+          FinDeck.io
+        </Link>
       </div>
       <div className="flex lg:hidden">
         <button
@@ -86,7 +85,7 @@ export const NavBar = () => {
         <div className="mt-6 flow-root">
           <div className="-my-6 divide-y divide-gray-500/10">
             <div className="space-y-2 py-6">
-              {navigation.map((item) => (
+              {navigation.sort((a, b) => a.name.localeCompare(b.name)).map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}

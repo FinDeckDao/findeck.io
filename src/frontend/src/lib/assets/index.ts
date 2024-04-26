@@ -1,7 +1,7 @@
 import {
   Fiat,
   // Ethereum,
-  // Stellar,
+  Stellar,
   // Avalanche,
   // Solana,
   // Xrpl,
@@ -52,11 +52,11 @@ export const Icp: Asset = {
   name: InternetComputer.name
 }
 
-// export type Velo = {
-//   network: 'stellar'
-//   symbol: 'VELO'
-//   name: 'Velo'
-// }
+export const Velo = {
+  network: Stellar,
+  symbol: 'VELO',
+  name: 'Velo'
+}
 
 // export type Shx = {
 //   network: 'stellar'
