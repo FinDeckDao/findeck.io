@@ -70,7 +70,7 @@ export const Positions = (props: PositionsProps) => {
 export const PositionCard = (props: Position) => {
   const { base, quote, trades } = props
 
-  const getTotalPosition = (trades: Trade[]) => {
+  const getTotalInvested = (trades: Trade[]) => {
     // Get the value of all long trades.
     const longTrades = trades.filter((value) => {
       return value.type === "buy"
@@ -121,23 +121,28 @@ export const PositionCard = (props: Position) => {
   }
 
   return (
-    <div className="card bg-base-100 shadow-xl mb-4 bg-neutral row-span-3">
+    <div className="card bg-neutral shadow-xl mb-4 row-span-3">
       <div className="card-body">
         <h2 className="card-title">{base.symbol}/{quote.symbol}</h2>
-        <h2 className="card-title">Total Assets Held: {getAssetsHeld(trades).toLocaleString("en-US", { style: "decimal" })} ${base.symbol}</h2>
-        <h2 className="card-title">Position Value: {getTotalPosition(trades).toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</h2>
-        <h2 className="card-title">Current ROI: XYZ</h2>
-        <h2 className="card-title">Cost Basis: {getTotalPosition(trades) / getAssetsHeld(trades)} ${quote.symbol}</h2>
-        <h2 className="card-title">Trades:</h2>
+        <h2 className="text-left"><span className="font-bold">Total Assets Held:</span> {getAssetsHeld(trades).toLocaleString("en-US", { style: "decimal" })} ${base.symbol}</h2>
+        <h2 className="text-left"><span className="font-bold">Total At Risk:</span> {getTotalInvested(trades).toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</h2>
+        <h2 className="text-left"><span className="font-bold">Current ROI:</span> XXX-CALCULATE-THIS-XXX</h2>
+        <h2 className="text-left"><span className="font-bold">Current Position Value:</span> XXX-CALCULATE-THIS-XXX</h2>
+        <h2 className="text-left"><span className="font-bold">Cost Basis:</span> {getTotalInvested(trades) / getAssetsHeld(trades)} ${quote.symbol}</h2>
+        <h2 className="text-left"><span className="font-bold">Trades:</span></h2>
         {
           trades.map((trade, index) => {
             return <p key={index}>
-              {trade.amount} ${base.symbol} @ ${quote.symbol} {trade.type === "sell" ? "-" : null}{trade.price}
+              {trade.amount} ${base.symbol}
+              @ {trade.type === "sell" ? "-" : null}{trade.price} ${quote.symbol}
+              totalling {trade.type === "sell" ? "-" : null}${trade.amount * trade.price} {quote.symbol}
+              {" "}***add a date to this***
             </p>
           })
         }
+        <h2 className="text-left"><span className="font-bold">Options:</span> (Set a limit order at X, Lower cost by adding X amount, etc...)</h2>
         <div className="card-actions justify-end">
-          <button className="btn btn-primary">Details</button>
+          <button className="btn btn-primary mr-4">Options</button> <button className="btn btn-primary">View Trades</button>
         </div>
       </div>
     </div>
