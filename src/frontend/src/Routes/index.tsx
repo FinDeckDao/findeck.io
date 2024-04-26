@@ -7,10 +7,11 @@ import { Home } from '../Screens/Home'
 import { DashboardScreen } from "../Screens/Dashboard"
 import { PositionsScreen } from "../Screens/Positions"
 import { ResourcesScreen } from "../Screens/Resources"
+import { ProtectedContent } from "../components/Auth/index.tsx"
 
 export const navigation = [
   { name: 'Home', href: '/' },
-  { name: 'Dashbord', href: '/dashboard' },
+  { name: 'Dashboard', href: '/dashboard' },
   { name: 'Positions', href: '/positions' },
   { name: 'Resources', href: '/resources' },
 ]
@@ -25,19 +26,25 @@ export const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage />
   },
+  // Positions screen is protected by the AuthContext.
   {
     path: "/positions",
     element: (
       <DefaultLayout>
-        <PositionsScreen />
-      </DefaultLayout >
+        <ProtectedContent>
+          <PositionsScreen />
+        </ProtectedContent>
+      </DefaultLayout>
     )
   },
+  // Dashboard screen is protected by the AuthContext.
   {
     path: "/dashboard",
     element: (
       <DefaultLayout>
-        <DashboardScreen />
+        <ProtectedContent>
+          <DashboardScreen />
+        </ProtectedContent>
       </DefaultLayout>
     )
   },

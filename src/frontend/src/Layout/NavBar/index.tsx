@@ -34,7 +34,7 @@ export const NavBar = () => {
     </a>
   }
 
-  return <header className="col-span-12 bg-slate-800 text-sky-100">
+  return <header className="col-span-12 bg-slate-800 text-sky-100 rounded-b-lg">
     {/* Default Menu */}
     <nav className="mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
       <div className="flex lg:flex-1">
