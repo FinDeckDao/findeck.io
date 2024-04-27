@@ -8,12 +8,25 @@ import { DashboardScreen } from "../Screens/Dashboard"
 import { PositionsScreen } from "../Screens/Positions"
 import { ResourcesScreen } from "../Screens/Resources"
 import { ProtectedContent } from "../components/Auth/index.tsx"
+import { RectangleGroupIcon, MapPinIcon } from "@heroicons/react/24/outline"
 
-export const navigation = [
+interface NavigationItem {
+  name: string
+  href: string
+  icon?: JSX.Element
+}
+
+export const navigation: NavigationItem[] = [
   { name: 'Home', href: '/' },
-  { name: 'Dashboard', href: '/dashboard' },
-  { name: 'Positions', href: '/positions' },
-  { name: 'Resources', href: '/resources' },
+  {
+    name: 'Dashboard',
+    href: '/dashboard',
+    icon: <RectangleGroupIcon className="h-6 w-6 inline" />
+  },
+  { name: 'Positions', href: '/positions', icon: <MapPinIcon className="h-6 w-6 inline" /> },
+  {
+    name: 'Resources', href: '/resources'
+  },
 ]
 
 export const router = createBrowserRouter([

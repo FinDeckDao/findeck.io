@@ -34,9 +34,6 @@ const positions: Position[] = [
   },
 ]
 
-interface PositionsProps {
-  view?: "cards" | "table" | "list"
-}
 
 const getCards = (positions: Position[]) => {
   return (
@@ -50,10 +47,14 @@ const getCards = (positions: Position[]) => {
   )
 }
 
+interface PositionsProps {
+  view?: "cards" | "table" | "list"
+}
+
 // Container for rows and columns of positions
 export const Positions = (props: PositionsProps) => {
   const { view } = props
-  // CRUD features here. Create, Read, Update, Delete
+
   switch (view) {
     case "cards":
       return getCards(positions)
@@ -142,7 +143,18 @@ export const PositionCard = (props: Position) => {
         }
         <h2 className="text-left"><span className="font-bold">Options:</span> (Set a limit order at X, Lower cost by adding X amount, etc...)</h2>
         <div className="card-actions justify-end">
-          <button className="btn btn-primary mr-4">Options</button> <button className="btn btn-primary">View Trades</button>
+          <button className="btn btn-primary mr-4 btn-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            Options
+          </button>
+          <button className="btn btn-primary btn-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+            </svg>
+            View Trades
+          </button>
         </div>
       </div>
     </div>

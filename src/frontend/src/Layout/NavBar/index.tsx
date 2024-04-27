@@ -59,7 +59,7 @@ export const NavBar = () => {
             to={item.href}
             className="text-sm font-semibold leading-6 text-sky-100 hover:bg-slate-700 rounded-lg p-3"
           >
-            {item.name}
+            {item?.icon} {item.name}
           </Link>
         ))}
       </div>
