@@ -45,7 +45,7 @@ export const NavBar = () => {
       <div className="flex lg:hidden">
         <button
           type="button"
-          className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+          className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-200"
           onClick={() => setMobileMenuOpen(true)}
         >
           <span className="sr-only">Open main menu</span>
@@ -90,7 +90,7 @@ export const NavBar = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-sky-100 hover:bg-slate-700"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base leading-7 text-sky-100 hover:bg-slate-700 uppercase"
                 >
                   {item.name}
                 </Link>

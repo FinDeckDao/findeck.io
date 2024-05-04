@@ -19,7 +19,7 @@ export const DefaultLayout = (props: LayoutProps) => {
     children
   } = props
   return <Auth>
-    <div className='grid grid-cols-12 gap-4 w-full h-max bg-neutral'>
+    <div className='bg-neutral'>
       {navBarOverride || <NavBar />}
       {/* {sidePanelOverride || <SidePanel />} */}
       <Content>{children || content}</Content>

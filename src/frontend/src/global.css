@@ -2,8 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Fonts */
+@font-face {
+  font-family: 'Share Tech Mono';
+  src: url(/fonts/ShareTechMono-Regular.ttf) format('ttf');
+}
+
 /* Custom CSS */
 #root {
   margin: 0px;
   padding: 0px;
+}
+
+html,
+body {
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
 }

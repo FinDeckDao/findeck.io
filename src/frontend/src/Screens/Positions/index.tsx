@@ -15,15 +15,14 @@ export const PositionsScreen = () => {
 
   return (
     <div className="text-center">
-      <h1 className='text-4xl mb-4'>Positions</h1>
+      <h1 className='text-2xl mb-4'>Positions</h1>
       <div className="relative h-14 mb-4">
-        <button className="absolute btn btn-primary btn-outline right-0" onClick={openModal}>
+        <button className="absolute btn btn-primary bg-neutral btn-outline right-0 uppercase" onClick={openModal}>
           <PlusCircleIcon className="h-6 w-6" />
           Position
         </button>
         <CreatePositionModal modalRef={modalRef} />
       </div>
-      {/* <p>Here are your positions {auth.identity}.</p> */}
       <Positions view='cards' />
     </div>
   )
