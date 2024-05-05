@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 // import { useContext } from 'react'
 // import { AuthContext } from '../../Contexts/Auth/index.tsx'
-import { Positions } from '../../components/Position/index.tsx'
+import { Positions } from '../../Components/Position/index.tsx'
 import { CreatePositionModal } from './CreatePositionModal.tsx'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 

@@ -1,17 +1,12 @@
-import { Icp, Usd, Velo, Asset } from "../../lib/assets"
-import { PositionCard } from "./card"
+import { Icp, Usd, Velo, Asset } from "../../Lib/assets"
+import { PositionCard } from "./Card"
 // import { position } from "./signal"
-
-export type Trade = {
-  amount: number
-  price: number
-  type: "buy" | "sell"
-}
+import { TradeProps } from "../Trade"
 
 export type Position = {
   base: Asset
   quote: Asset
-  trades: Trade[]
+  trades: TradeProps[]
 }
 
 // This data should be store in a database for paying customers
@@ -19,18 +14,18 @@ export type Position = {
 const positions: Position[] = [
   {
     base: Icp, quote: Usd, trades: [
-      { amount: 1, price: 100, type: "buy" },
-      { amount: 2, price: 200, type: "buy" },
-      { amount: 3, price: 300, type: "buy" },
-      { amount: 1, price: 400, type: "sell" }
+      { index: 1, amount: 1, price: 100, type: "buy", date: '2024-05-01', base: Icp, quote: Usd },
+      { index: 2, amount: 2, price: 200, type: "buy", date: '2024-05-02', base: Icp, quote: Usd },
+      { index: 3, amount: 3, price: 300, type: "buy", date: '2024-05-03', base: Icp, quote: Usd },
+      { index: 4, amount: 1, price: 400, type: "sell", date: '2024-05-04', base: Icp, quote: Usd }
     ]
   },
   {
     base: Velo, quote: Usd, trades: [
-      { amount: 25000, price: 0.01, type: "buy" },
-      { amount: 25000, price: 0.005, type: "buy" },
-      { amount: 25000, price: 0.004, type: "buy" },
-      { amount: 50000, price: 0.005, type: "sell" }
+      { index: 1, amount: 25000, price: 0.01, type: "buy", date: '2024-05-01', base: Velo, quote: Usd },
+      { index: 2, amount: 25000, price: 0.005, type: "buy", date: '2024-05-02', base: Velo, quote: Usd },
+      { index: 3, amount: 25000, price: 0.004, type: "buy", date: '2024-05-03', base: Velo, quote: Usd },
+      { index: 4, amount: 50000, price: 0.005, type: "sell", date: '2024-05-04', base: Velo, quote: Usd }
     ]
   },
 ]

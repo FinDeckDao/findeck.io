@@ -2,7 +2,7 @@ import { Content } from "./Content"
 import { Footer } from "./Footer"
 import { NavBar } from "./NavBar"
 // import { SidePanel } from "./SidePanel"
-import { Auth } from "../components/Auth"
+import { Auth } from "../Components/Auth"
 
 interface LayoutProps {
   navBarOverride?: JSX.Element

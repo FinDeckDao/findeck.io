@@ -1,4 +1,24 @@
 @tailwind base;
+/* Customize the Base */
+@layer base {
+  h1 {
+    @apply text-2xl transform-none mb-10;
+  }
+  h2 {
+    @apply text-xl transform-none mb-8;
+  }
+  h3 {
+    @apply text-lg transform-none mb-4 text-left;
+  }
+  html,
+  body {
+    @apply uppercase p-0 m-0;
+  }
+  p {
+    @apply mb-4 transform-none;
+  }
+}
+
 @tailwind components;
 @tailwind utilities;
 
@@ -8,14 +28,7 @@
   src: url(/fonts/ShareTechMono-Regular.ttf) format('ttf');
 }
 
-/* Custom CSS */
-#root {
-  margin: 0px;
-  padding: 0px;
-}
-
 html,
 body {
   font-family: 'Share Tech Mono', monospace;
-  text-transform: uppercase;
 }
