@@ -24,7 +24,7 @@ const tiers: tier[] = [
     id: 'tier-free',
     href: '#',
     price: { monthly: '$0', annually: '$0' },
-    description: 'Free Forever',
+    description: 'Free To Use - Forever',
     features: [
       'Track Unlimited Trades',
       'Track Unlimited Positions',
@@ -33,7 +33,7 @@ const tiers: tier[] = [
       'Price Data Uses Your API Keys',
       'Share Your Trades'
     ],
-    mostPopular: false,
+    mostPopular: true,
   },
   {
     name: 'Profit Trader',
@@ -49,7 +49,7 @@ const tiers: tier[] = [
       'Price Data Uses Our API Keys',
       'Share Your Trades'
     ],
-    mostPopular: true,
+    mostPopular: false,
   },
   {
     name: 'Sponsor Trader',

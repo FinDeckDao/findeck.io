@@ -3,7 +3,7 @@ import { AuthContext } from "../../Contexts/Auth"
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from "react-router-dom"
-import iclogo from '../../assets/internet-computer-icp-logo.svg'
+import iclogo from '../../Assets/internet-computer-icp-logo.svg'
 import { AuthContextType } from "../../Contexts/Auth/defaultContext"
 import { logOut } from "../../Components/Auth/authClient"
 import { navigation } from "../../Routes"

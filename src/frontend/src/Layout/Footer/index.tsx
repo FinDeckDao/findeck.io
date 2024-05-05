@@ -1,4 +1,4 @@
-import iclogo from '../../assets/internet-computer-icp-logo.svg'
+import iclogo from '../../Assets/internet-computer-icp-logo.svg'
 
 export const Footer = () => {
   return (
