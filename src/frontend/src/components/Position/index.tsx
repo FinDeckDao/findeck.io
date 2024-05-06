@@ -1,4 +1,4 @@
-import { Icp, Usd, Velo, Asset } from "../../Lib/assets"
+import { Icp, Usd, Velo, Asset } from "../../../fixtures/assets"
 import { PositionCard } from "./Card"
 // import { position } from "./signal"
 import { TradeProps } from "../Trade"
