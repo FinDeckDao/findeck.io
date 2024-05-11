@@ -1,3 +1,5 @@
+import { XCircleIcon } from "@heroicons/react/24/outline"
+
 import { TradeProps } from "../Trade"
 import { Trade } from "../Trade"
 
@@ -15,10 +17,12 @@ export const TradesModal = (props: TradesModalProps) => {
 
   return (
     <dialog className="modal" ref={modalRef}>
-      <div className="modal-box min-w-3/4">
+      <div className="modal-box min-w-96">
         <form method="dialog">
           {/* if there is a button in the dialog form, it will close the modal */}
-          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
+          </button>
         </form>
         <h3 className="font-bold text-lg">Trades</h3>
         {

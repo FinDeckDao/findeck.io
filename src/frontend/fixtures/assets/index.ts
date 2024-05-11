@@ -52,17 +52,17 @@ export const Icp: Asset = {
   name: InternetComputer.name
 }
 
-export const Velo = {
+export const Velo: Asset = {
   network: Stellar,
   symbol: 'VELO',
   name: 'Velo'
 }
 
-// export type Shx = {
-//   network: 'stellar'
-//   symbol: 'SHX'
-//   name: 'Stronghold Token'
-// }
+export const Shx: Asset = {
+  network: Stellar,
+  symbol: 'SHX',
+  name: 'Stronghold Token'
+}
 
 // export type Avax = {
 //   network: 'avax'
