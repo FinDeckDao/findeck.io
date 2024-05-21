@@ -109,7 +109,7 @@ export const PositionCard = (props: Position) => {
             type='number'
             className="input w-full"
             placeholder='Example: 13.00 - You can get this value from coinmarketcap.com'
-            value={Number(currentValue)}
+            value={currentValue || ""}
             onChange={(e) => setCurrentValue(Number(e.currentTarget.value))}
           />
         </label>

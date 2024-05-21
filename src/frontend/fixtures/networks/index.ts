@@ -42,3 +42,8 @@ export const Stellar: Network = {
 //   name: 'Avalanche'
 //   nativeAsset: 'AVAX'
 // }
+
+export const XinFin: Network = {
+  name: 'XinFin',
+  nativeAsset: 'XDC'
+}

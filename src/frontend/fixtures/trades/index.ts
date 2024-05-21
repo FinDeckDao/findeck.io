@@ -5,6 +5,7 @@ import { Position } from '../../src/Components/Position'
 // but for free customers, we can store it in the frontend.
 export const positions: Position[] = [
   {
+    owner: '',
     base: Icp,
     quote: Usd,
     trades: [
@@ -214,10 +215,20 @@ export const positions: Position[] = [
         date: '2024-04-28',
         base: Icp,
         quote: Usd
+      },
+      {
+        index: 24,
+        amount: 100,
+        price: 1273.25,
+        type: 'buy',
+        date: '2024-05-28',
+        base: Icp,
+        quote: Usd
       }
     ]
   },
   {
+    owner: '',
     base: Velo,
     quote: Usd,
     trades: [
@@ -233,6 +244,7 @@ export const positions: Position[] = [
     ]
   },
   {
+    owner: '',
     base: Shx,
     quote: Usd,
     trades: [

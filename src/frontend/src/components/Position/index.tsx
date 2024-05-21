@@ -4,9 +4,13 @@ import { GetCards } from "./Card"
 import { TradeProps } from "../Trade"
 import { positions } from "../../../fixtures/trades"
 
+// TODO: Normalize this data.
+//       base and quote are redundant because that data exists 
+//       in every trade. For now this will do.
 export type Position = {
   base: Asset
   quote: Asset
+  owner: string
   trades: TradeProps[]
 }
 

@@ -7,6 +7,7 @@ import {
   // Xrpl,
   // Bitcoin,
   InternetComputer,
+  XinFin,
   Network
 } from '../networks'
 
@@ -61,7 +62,7 @@ export const Velo: Asset = {
 export const Shx: Asset = {
   network: Stellar,
   symbol: 'SHX',
-  name: 'Stronghold Token'
+  name: 'Stronghold'
 }
 
 // export type Avax = {
@@ -75,3 +76,11 @@ export const Shx: Asset = {
 //   symbol: 'SOL'
 //   name: 'Solana'
 // }
+
+export const Wtk: Asset = {
+  network: XinFin,
+  symbol: 'WTK',
+  name: 'WadsPay'
+}
+
+export const SupportedAssets = [Usd, Icp, Velo, Shx, Wtk]

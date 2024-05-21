@@ -3,9 +3,9 @@ import Example from "./Pricing"
 export const Home = () => {
   return (
     <div className="container mx-auto text-center">
-      <h1>Beat the hidden things killing your trade profitability</h1>
+      <h1>Things you can't see are killing your trade profitability</h1>
 
-      <h2>This dApp is a decision support system to help you optimize your trading</h2>
+      <h2>Optimize your trading with data that supports your decisions</h2>
       <div className="text-left mb-8">
         <p>
           There are a few problems when it comes to trading that cause a lot of people to fail.

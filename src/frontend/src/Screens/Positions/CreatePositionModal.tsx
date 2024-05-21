@@ -1,5 +1,10 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { XCircleIcon, CheckCircleIcon } from "@heroicons/react/24/outline"
+import { positions } from '../../Services/Position'
+import { Position } from '../../Components/Position'
+import { Asset, SupportedAssets, Usd } from '../../../fixtures/assets'
+import { AuthContext } from '../../Contexts/Auth'
+
 
 interface CreatePositionModalProps {
   modalRef: React.RefObject<HTMLDialogElement>
@@ -8,48 +13,126 @@ interface CreatePositionModalProps {
 export const CreatePositionModal = (props: CreatePositionModalProps) => {
   const { modalRef } = props
 
+  const auth = useContext(AuthContext)
+
   const closeModal = () => {
     modalRef.current?.close()
   }
 
-  const [base, setBase] = useState<string>('')
-  const [quote, setQuote] = useState<string>('')
-  const [amount, setAmount] = useState<number | null>(null)
-  const [spent, setSpent] = useState<number | null>(null)
-  const [marketPrice, setMarketPrice] = useState<number | null>(null)
+  const [base, setBase] = useState<string>("")
+  const [quote, setQuote] = useState<string>("")
+  const [amount, setAmount] = useState<number | string>("")
+  const [spent, setSpent] = useState<number | string>("")
+  const [marketPrice, setMarketPrice] = useState<number | string>("")
+  const [date, setDate] = useState<string>('')
 
-
+  // Adds the new trade to the trades array within the signal.
   const savePosition = () => {
-    // Update the positions in the frontend using the signal.
-    console.log({
-      user: '',
-      positions: [
-        {
-          base: { symbol: base, name: base },
-          quote: { symbol: quote, name: quote },
-          trades: [
-            {
-              index: 1,
-              amount: amount,
-              price: marketPrice,
-              type: 'buy',
-              date: '2024-05-01',
-              base: { symbol: base, name: base },
-              quote: { symbol: quote, name: quote }
-            }
-          ]
-        }
-      ]
+    // Guard against missing inputs.
+    if (!base || !quote || !amount || !spent || !marketPrice || !date || !auth.isAuthenticated) {
+      alert(`Missing Inputs: 
+      base: ${base} 
+      quote: ${quote} 
+      amount: ${amount} 
+      spent: ${spent} 
+      marketplace: ${marketPrice} 
+      date: ${date}
+      user: ${auth.identity}`)
+      return
+    }
+
+    // Find the position that matches the base and quote.
+    const position = positions.value.find((position: Position) => {
+      return position.base.symbol === base && position.quote.symbol === quote
     })
+
+    // Inputs only allow us to set and get string values so we need to convert them to types we can use.
+    const baseFromInput = SupportedAssets.find((asset) => asset.symbol === base)
+    const quoteFromInput = SupportedAssets.find((asset) => asset.symbol === quote)
+
+    // Guard against missing base or missing quote.
+    // Somehow the user was able to select a base or quote that doesn't exist.
+    if (!baseFromInput || !quoteFromInput) { return }
+
+    // If not position exists, create a new position.
+    if (!position) {
+      positions.value.push({
+        owner: auth.identity,
+        base: baseFromInput,
+        quote: quoteFromInput,
+        trades: [
+          {
+            index: 1,
+            amount: Number(amount),
+            price: Number(spent),
+            type: baseFromInput !== Usd ? 'buy' : 'sell',
+            date: date,
+            base: baseFromInput,
+            quote: quoteFromInput
+          }
+        ]
+      })
+      console.log("New Position:")
+      console.log(positions.value)
+      // TODO: Save the position to the local storage.
+      closeModal()
+      return
+    }
+
+    // If the position exists, update the trades array keying off of the based and quote.
+    position.trades.push(
+      {
+        index: position.trades.length + 1,
+        amount: Number(amount),
+        price: Number(spent),
+        type: baseFromInput !== Usd ? 'buy' : 'sell',
+        date: date,
+        base: baseFromInput,
+        quote: quoteFromInput
+      }
+    )
+    console.log("Updated Trades:")
+    console.log(positions.value)
+    // TODO: Save the position to the local storage.
     closeModal()
+    return
   }
 
+  // Clear the position form.
   const clearPosition = () => {
     setBase('')
     setQuote('')
-    setAmount(null)
-    setSpent(null)
-    setMarketPrice(null)
+    setAmount('')
+    setSpent('')
+    setMarketPrice('')
+    setDate('')
+  }
+
+  // TODO: Dry this up.
+  const handleSelectedBase = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedAsset: Asset | undefined = SupportedAssets.find((asset) => {
+      if (asset.symbol === event.currentTarget.value) {
+        return asset.symbol
+      }
+    })
+
+    if (selectedAsset) {
+      setBase(selectedAsset.symbol)
+    }
+  }
+
+  // TODO: Dry this up. There are basically the same function.
+  //       MVP is to get it working.
+  const handleSelectedQuote = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedAsset: Asset | undefined = SupportedAssets.find((asset) => {
+      if (asset.symbol === event.currentTarget.value) {
+        return asset.symbol
+      }
+    })
+
+    if (selectedAsset) {
+      setQuote(selectedAsset.symbol)
+    }
   }
 
   return (
@@ -65,47 +148,59 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
 
         <form className="text-left">
           <label className="label block">Base (Asset you bought)
-            <input
-              type="text"
-              className="input w-full bg-slate-800"
-              placeholder="Example: ICP"
+            <select
+              className="select w-full mt-1 mb-4 bg-slate-800"
+              onChange={handleSelectedBase}
               value={base}
-              onChange={(e) => setBase(e.target.value)}
-            />
+            >
+              <option disabled value=''>Select the asset you purchased.</option>
+              {
+                SupportedAssets.sort().map((asset) => {
+                  return <option key={asset.symbol} value={asset.symbol}>${asset.symbol} ({asset.name})</option>
+                })
+              }
+            </select>
           </label>
           <label className="label block">Amount Purchased
             <input
               type="number"
-              className="input w-full bg-slate-800"
-              value={Number(amount)}
-              onChange={(e) => setAmount(Number(e.currentTarget.value))} />
+              className="input w-full bg-slate-800 mt-1 mb-4"
+              value={amount}
+              onChange={(e) => setAmount(e.currentTarget.value)}
+              placeholder='Example: 589.589' />
           </label>
 
           <label className="label block">Quote (asset you paid with)
-            <input
-              type="text"
-              className="input w-full bg-slate-800"
-              placeholder="Example: USD"
+            <select
+              className="select w-full mt-1 mb-4  bg-slate-800"
+              onChange={handleSelectedQuote}
               value={quote}
-              onChange={(e) => setQuote(e.target.value)}
-            />
+            >
+              <option disabled value=''>Select the asset you paid with.</option>
+              {
+                SupportedAssets.map((asset) => {
+                  return <option key={asset.symbol} value={asset.symbol}>${asset.symbol} ({asset.name})</option>
+                })
+              }
+            </select>
           </label>
 
-          <label className="label block">Spent
+          <label className="label block">Amount Spent
             <input
               type="number"
-              className="input w-full bg-slate-800"
-              placeholder="Example: 1"
-              value={Number(spent)}
-              onChange={(e) => setSpent(Number(e.currentTarget.value))} />
+              className="input w-full bg-slate-800 mt-1 mb-4"
+              placeholder="Example: 9.11"
+              value={spent}
+              onChange={(e) => setSpent(e.currentTarget.value)} />
           </label>
 
           <label className="label block">Current Market Price
             <input
               type="number"
-              className="input w-full bg-slate-800"
-              value={Number(marketPrice)}
-              onChange={(e) => setMarketPrice(Number(e.currentTarget.value))} />
+              className="input w-full bg-slate-800 mt-1 mb-4"
+              value={marketPrice}
+              onChange={(e) => setMarketPrice(e.currentTarget.value)}
+              placeholder='Example: 13.33' />
           </label>
 
           <label className="label block">Date of trade
@@ -113,6 +208,8 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
               type="text"
               className="input w-full bg-slate-800"
               placeholder="Example: 5/5/2024"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
             />
           </label>
         </form>
