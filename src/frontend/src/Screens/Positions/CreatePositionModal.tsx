@@ -5,6 +5,8 @@ import { Position } from '../../Components/Position'
 import { Asset, SupportedAssets, Usd } from '../../../fixtures/assets'
 import { AuthContext } from '../../Contexts/Auth'
 
+import { storePosition, NewPositionProps, newPosition } from '../../Services/Position'
+
 
 interface CreatePositionModalProps {
   modalRef: React.RefObject<HTMLDialogElement>
@@ -42,7 +44,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     }
 
     // Find the position that matches the base and quote.
-    const position = positions.value.find((position: Position) => {
+    const existingPosition = positions.value.find((position: Position) => {
       return position.base.symbol === base && position.quote.symbol === quote
     })
 
@@ -54,35 +56,36 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     // Somehow the user was able to select a base or quote that doesn't exist.
     if (!baseFromInput || !quoteFromInput) { return }
 
+    // Create a new position object.
+
+    const NewPosition: NewPositionProps = {
+      owner: auth.identity,
+      positionBase: baseFromInput,
+      positionQuote: quoteFromInput,
+      tradeBase: baseFromInput,
+      tradeQuote: quoteFromInput,
+      index: positions.value.length++,
+      amount: Number(amount),
+      spent: Number(spent),
+      date: date
+    }
+
     // If not position exists, create a new position.
-    if (!position) {
-      positions.value.push({
-        owner: auth.identity,
-        base: baseFromInput,
-        quote: quoteFromInput,
-        trades: [
-          {
-            index: 1,
-            amount: Number(amount),
-            price: Number(spent),
-            type: baseFromInput !== Usd ? 'buy' : 'sell',
-            date: date,
-            base: baseFromInput,
-            quote: quoteFromInput
-          }
-        ]
-      })
+    if (!existingPosition) {
       console.log("New Position:")
-      console.log(positions.value)
-      // TODO: Save the position to the local storage.
+      console.log(newPosition)
+      const position = newPosition(NewPosition)
+      storePosition(position)
+
       closeModal()
       return
     }
 
     // If the position exists, update the trades array keying off of the based and quote.
-    position.trades.push(
+    // TODO: This should go in the service layer not this component.
+    existingPosition.trades.push(
       {
-        index: position.trades.length + 1,
+        index: existingPosition.trades.length++,
         amount: Number(amount),
         price: Number(spent),
         type: baseFromInput !== Usd ? 'buy' : 'sell',
