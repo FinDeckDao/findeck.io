@@ -5,7 +5,7 @@ import { Position } from '../../Components/Position'
 import { Asset, SupportedAssets, Usd } from '../../../fixtures/assets'
 import { AuthContext } from '../../Contexts/Auth'
 
-import { storePosition, NewPositionProps, newPosition } from '../../Services/Position'
+import { storePosition, NewPositionProps, ConstructPosition } from '../../Services/Position'
 
 
 interface CreatePositionModalProps {
@@ -45,7 +45,10 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
 
     // Find the position that matches the base and quote.
     const existingPosition = positions.value.find((position: Position) => {
-      return position.base.symbol === base && position.quote.symbol === quote
+      // Account for any null or undefined positions.
+      // TODO: This is a temporary fix for a bug that causes null positions 
+      //       to be stored during the development.
+      if (position) return position.base.symbol === base && position.quote.symbol === quote
     })
 
     // Inputs only allow us to set and get string values so we need to convert them to types we can use.
@@ -72,11 +75,8 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
 
     // If not position exists, create a new position.
     if (!existingPosition) {
-      console.log("New Position:")
-      console.log(newPosition)
-      const position = newPosition(NewPosition)
-      storePosition(position)
-
+      const newPosition = ConstructPosition(NewPosition)
+      storePosition(newPosition)
       closeModal()
       return
     }

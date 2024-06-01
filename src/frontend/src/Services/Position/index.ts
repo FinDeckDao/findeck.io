@@ -11,8 +11,15 @@ const positionsFromLocalStorage: Position[] = JSON.parse(
   localStorage.getItem('positions') || JSON.stringify([])
 )
 
+// Remove any null or undefined positions.
+// TODO: This is a temporary fix for a bug that causes null positions
+//       to be stored during the development.
+const filteredPositions = positionsFromLocalStorage.filter(
+  (position) => position !== null && position !== undefined
+)
+
 // Export the global state.
-export const positions = signal<Position[]>(positionsFromLocalStorage)
+export const positions = signal<Position[]>(filteredPositions)
 
 // Store the position in local storage.
 // TODO: Function should account for new or existing positions.
@@ -44,7 +51,7 @@ export interface NewPositionProps {
 }
 
 // Factory function that creates a new position.
-export const newPosition = (props: NewPositionProps): Position => {
+export const ConstructPosition = (props: NewPositionProps): Position => {
   const {
     tradeBase,
     tradeQuote,

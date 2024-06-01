@@ -2,7 +2,8 @@ import { Asset } from "../../../fixtures/assets"
 import { GetCards } from "./Card"
 // import { position } from "./signal"
 import { TradeProps } from "../Trade"
-import { positions } from "../../../fixtures/trades"
+// import { positions } from "../../../fixtures/trades"
+import { positions } from "../../Services/Position"
 
 // TODO: Normalize this data.
 //       base and quote are redundant because that data exists 
@@ -24,13 +25,13 @@ export const Positions = (props: PositionsProps) => {
 
   switch (view) {
     case "cards":
-      return <GetCards positions={positions} />
+      return <GetCards positions={positions.value} />
     case "table":
       return <>Map of Table rows</>
     case "list":
       return <>List</>
     default:
-      return <GetCards positions={positions} />
+      return <GetCards positions={positions.value} />
   }
 }
 
