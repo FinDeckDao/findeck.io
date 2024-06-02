@@ -82,3 +82,25 @@ user facing asset delivery.
 curl http://[canisterId].localhost:8000/db
 curl -X POST -H "Content-Type: application/json" -d "{ \"hello\": \"world\" }" http://[canisterId].localhost:8000/db/update
 ```
+
+## Developer Notes
+
+The Positions are handled with 3 layers. TODO: Make these into 3 reusable
+packages.
+
+1. The Component Layer that reads or mutates the Positions.
+2. The Context Layer where the Positions are being used in the runtime app.
+   1. Retrieves from cache if something is cached.
+   2. Sets and empty default state of there is no cache.
+   3. Writes updates to the cache.
+   4. Exports read and mutate functions.
+   5. Prevents null entries from being added to or removed from the state.
+   6. Orchestrates between Cache Layer and Persistence Layer for Setting and
+      Getting Events.
+3. The Cache Layer where the Positions are stored in local storage.
+   1. Export data quickly for the user to backup their position data.
+   2. Import data quickly for the user to restore their browser position data
+      from a previous backup.
+4. The Persistence Layer where the Positions are stored in the database.
+   1. This feature is only available to paying customers.
+   2. Is responsible for understanding

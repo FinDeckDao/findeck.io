@@ -1,11 +1,11 @@
 import {
   Fiat,
-  // Ethereum,
+  Ethereum,
   Stellar,
-  // Avalanche,
-  // Solana,
-  // Xrpl,
-  // Bitcoin,
+  Avalanche,
+  Solana,
+  Xrpl,
+  Bitcoin,
   InternetComputer,
   XinFin,
   Network
@@ -17,40 +17,54 @@ export interface Asset {
   name: string
 }
 
+// Native Assets
+export const Avax: Asset = {
+  network: Avalanche,
+  symbol: Avalanche.nativeAsset,
+  name: Avalanche.name
+}
+
+export const Sol: Asset = {
+  network: Solana,
+  symbol: Solana.nativeAsset,
+  name: Solana.name
+}
+
 export const Usd: Asset = {
   network: Fiat,
   symbol: Fiat.nativeAsset,
   name: Fiat.name
 }
 
-// export type Usdc = {
-//   network: Ethereum | Stellar | Solana | Avalanche
-//   symbol: 'USDC'
-//   name: 'USD Circle'
-// }
+export const Xrp: Asset = {
+  network: Xrpl,
+  symbol: Xrpl.nativeAsset,
+  name: 'XRP' // XRP is the native asset of the XRP Ledger.
+}
 
-// export type Xrp = {
-//   network: Xrpl
-//   symbol: 'XRP'
-//   name: 'XRP'
-// }
+export const Eth: Asset = {
+  network: Ethereum,
+  symbol: Ethereum.nativeAsset,
+  name: Ethereum.name
+}
 
-// export type Eth = {
-//   network: Ethereum
-//   symbol: 'ETH'
-//   name: 'Ethereum'
-// }
-
-// export type Btc = {
-//   network: Bitcoin
-//   symbol: 'BTC'
-//   name: 'Bitcoin'
-// }
+export const Btc: Asset = {
+  network: Bitcoin,
+  symbol: Bitcoin.nativeAsset,
+  name: Bitcoin.name
+}
 
 export const Icp: Asset = {
   network: InternetComputer,
   symbol: InternetComputer.nativeAsset,
   name: InternetComputer.name
+}
+
+// Tokens
+export const Usdc: Asset = {
+  network: Stellar,
+  symbol: 'USDC',
+  name: 'USD Circle'
 }
 
 export const Velo: Asset = {
@@ -65,22 +79,22 @@ export const Shx: Asset = {
   name: 'Stronghold'
 }
 
-// export type Avax = {
-//   network: 'avax'
-//   symbol: 'AVAX'
-//   name: 'Avalanche'
-// }
-
-// export type Sol = {
-//   network: 'solana'
-//   symbol: 'SOL'
-//   name: 'Solana'
-// }
-
 export const Wtk: Asset = {
   network: XinFin,
   symbol: 'WTK',
   name: 'WadsPay'
 }
 
-export const SupportedAssets = [Usd, Icp, Velo, Shx, Wtk]
+export const SupportedAssets = [
+  Usd,
+  Usdc,
+  Icp,
+  Velo,
+  Shx,
+  Wtk,
+  Xrp,
+  Eth,
+  Btc,
+  Avax,
+  Sol
+]

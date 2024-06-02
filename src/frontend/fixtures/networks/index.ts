@@ -3,30 +3,30 @@ export interface Network {
   nativeAsset: string
 }
 
-// export interface Xrpl extends Network {
-//   name: 'XRP Ledger'
-//   nativeAsset: 'XRP'
-// }
+export const Xrpl: Network = {
+  name: 'XRP Ledger',
+  nativeAsset: 'XRP'
+}
 
 export const Fiat: Network = {
   name: 'US Dollar',
   nativeAsset: 'USD'
 }
 
-// export interface Solana extends Network {
-//   name: 'Solana'
-//   nativeAsset: 'SOL'
-// }
+export const Solana: Network = {
+  name: 'Solana',
+  nativeAsset: 'SOL'
+}
 
-// export interface Ethereum extends Network {
-//   name: 'Ethereum'
-//   nativeAsset: 'ETH'
-// }
+export const Ethereum: Network = {
+  name: 'Ethereum',
+  nativeAsset: 'ETH'
+}
 
-// export interface Bitcoin extends Network {
-//   name: 'Bitcoin'
-//   nativeAsset: 'BTC'
-// }
+export const Bitcoin: Network = {
+  name: 'Bitcoin',
+  nativeAsset: 'BTC'
+}
 
 export const InternetComputer: Network = {
   name: 'Internet Computer',
@@ -38,10 +38,10 @@ export const Stellar: Network = {
   nativeAsset: 'XLM'
 }
 
-// export interface Avalanche extends Network {
-//   name: 'Avalanche'
-//   nativeAsset: 'AVAX'
-// }
+export const Avalanche: Network = {
+  name: 'Avalanche',
+  nativeAsset: 'AVAX'
+}
 
 export const XinFin: Network = {
   name: 'XinFin',

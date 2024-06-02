@@ -8,7 +8,7 @@ import { positions } from "../../Services/Position"
 // TODO: Normalize this data.
 //       base and quote are redundant because that data exists 
 //       in every trade. For now this will do.
-export type Position = {
+export interface Position {
   base: Asset
   quote: Asset
   owner: string
@@ -25,13 +25,13 @@ export const Positions = (props: PositionsProps) => {
 
   switch (view) {
     case "cards":
-      return <GetCards positions={positions.value} />
+      return <GetCards positions={positions} />
     case "table":
       return <>Map of Table rows</>
     case "list":
       return <>List</>
     default:
-      return <GetCards positions={positions.value} />
+      return <GetCards positions={positions} />
   }
 }
 

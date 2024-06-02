@@ -3,9 +3,10 @@ import { Position } from "."
 import { TradeProps } from "../Trade"
 import { OptionsModal } from "./OptionsModal"
 import { TradesModal } from "./TradesModal"
+import { Signal } from "@preact/signals-react"
 
 interface GetCardsProps {
-  positions: Position[]
+  positions: Signal<Position[]>
 }
 
 export const GetCards = (props: GetCardsProps) => {
@@ -13,7 +14,7 @@ export const GetCards = (props: GetCardsProps) => {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       {
-        positions.map((position, index) => (
+        positions.value.map((position, index) => (
           <PositionCard key={index} {...position} />
         ))
       }
