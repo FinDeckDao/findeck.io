@@ -3,18 +3,17 @@ import { Position } from "."
 import { TradeProps } from "../Trade"
 import { OptionsModal } from "./OptionsModal"
 import { TradesModal } from "./TradesModal"
-import { Signal } from "@preact/signals-react"
 
 interface GetCardsProps {
-  positions: Signal<Position[]>
+  positions: Position[]
 }
 
 export const GetCards = (props: GetCardsProps) => {
   const { positions } = props
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
       {
-        positions.value.map((position, index) => (
+        positions.filter((position) => position !== null).map((position, index) => (
           <PositionCard key={index} {...position} />
         ))
       }
@@ -26,6 +25,10 @@ export const GetCards = (props: GetCardsProps) => {
 export const PositionCard = (props: Position) => {
   const { base, quote, trades } = props
   const [currentValue, setCurrentValue] = useState<number | null>(null)
+
+  // Remove any null trades.
+  // TODO: Handle this in the Position Context when the trade is added to the position.
+  const filteredTrades = trades.filter((trade) => trade !== null)
 
   const getTotalInvested = (trades: TradeProps[]) => {
     // Get the value of all long trades.
@@ -101,9 +104,9 @@ export const PositionCard = (props: Position) => {
     <div className="bg-slate-800 shadow-xl rounded-xl">
       <div className="card-body">
         <h2 className="card-title">{base.symbol}/{quote.symbol}</h2>
-        <p className="text-left mb-0"><span className="font-bold">Total Assets Held:</span> {getAssetsHeld(trades).toLocaleString("en-US", { style: "decimal" })} ${base.symbol}</p>
-        <p className="text-left mb-0"><span className="font-bold">Total At Risk:</span> {getTotalInvested(trades).toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</p>
-        <p className="text-left mb-0"><span className="font-bold">Cost Basis:</span> {calcualteCostBasis(trades).toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</p>
+        <p className="text-left mb-0"><span className="font-bold">Total Assets Held:</span> {getAssetsHeld(filteredTrades).toLocaleString("en-US", { style: "decimal" })} ${base.symbol}</p>
+        <p className="text-left mb-0"><span className="font-bold">Total At Risk:</span> {getTotalInvested(filteredTrades).toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</p>
+        <p className="text-left mb-0"><span className="font-bold">Cost Basis:</span> {calcualteCostBasis(filteredTrades).toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</p>
 
         <label className='label block text-left font-bold'>Current Value of {base.symbol}
           <input

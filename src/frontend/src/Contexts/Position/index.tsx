@@ -36,7 +36,7 @@ export const PositionProvider = (props: PositionProviderProps) => {
     if (positionsFromLocalStorage.length > 0) {
       setPositions(filteredPositions)
     }
-  }, [positions])
+  }, [])
 
   return (
     <PositionContext.Provider value={positions}>
@@ -45,5 +45,4 @@ export const PositionProvider = (props: PositionProviderProps) => {
       </PositionUpdateContext.Provider>
     </PositionContext.Provider>
   )
-
 }

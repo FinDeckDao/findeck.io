@@ -52,7 +52,8 @@ export const router = createBrowserRouter([
           <PositionsScreen />
         </ProtectedContent>
       </DefaultLayout>
-    )
+    ),
+    errorElement: <ErrorPage />
   },
   // Dashboard screen is protected by the AuthContext.
   {

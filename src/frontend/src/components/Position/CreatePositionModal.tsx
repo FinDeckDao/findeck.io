@@ -1,11 +1,14 @@
 import { useState, useContext } from 'react'
 import { XCircleIcon, CheckCircleIcon } from "@heroicons/react/24/outline"
-import { positions } from '../../Services/Position'
-import { Position } from '../../Components/Position'
-import { Asset, SupportedAssets, Usd } from '../../../fixtures/assets'
+import { Asset, SupportedAssets } from '../../../fixtures/assets'
 import { AuthContext } from '../../Contexts/Auth'
-
-import { storePosition, NewPositionProps, ConstructPosition } from '../../Services/Position'
+import {
+  constructPosition,
+  NewPositionProps,
+  storePosition,
+  StorePositionsProps,
+} from '../../Contexts/Position/Helpers'
+import { usePositionUpdate, usePositions } from '../../Contexts/Position/Hooks'
 
 
 interface CreatePositionModalProps {
@@ -14,6 +17,8 @@ interface CreatePositionModalProps {
 
 export const CreatePositionModal = (props: CreatePositionModalProps) => {
   const { modalRef } = props
+  const positions = usePositions()
+  const updatePosition = usePositionUpdate()
 
   const auth = useContext(AuthContext)
 
@@ -43,60 +48,38 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
       return
     }
 
-    // Find the position that matches the base and quote.
-    const existingPosition = positions.value.find((position: Position) => {
-      // Account for any null or undefined positions.
-      // TODO: This is a temporary fix for a bug that causes null positions 
-      //       to be stored during the development.
-      if (position) return position.base.symbol === base && position.quote.symbol === quote
-    })
-
     // Inputs only allow us to set and get string values so we need to convert them to types we can use.
     const baseFromInput = SupportedAssets.find((asset) => asset.symbol === base)
     const quoteFromInput = SupportedAssets.find((asset) => asset.symbol === quote)
 
     // Guard against missing base or missing quote.
     // Somehow the user was able to select a base or quote that doesn't exist.
-    if (!baseFromInput || !quoteFromInput) { return }
+    if (!baseFromInput || !quoteFromInput) {
+      console.error('Missing required inputs base and quote.')
+      return
+    }
 
     // Create a new position object.
-
-    const NewPosition: NewPositionProps = {
+    const newPosition: NewPositionProps = {
       owner: auth.identity,
       positionBase: baseFromInput,
       positionQuote: quoteFromInput,
       tradeBase: baseFromInput,
       tradeQuote: quoteFromInput,
-      index: positions.value.length++,
       amount: Number(amount),
       spent: Number(spent),
       date: date
     }
 
-    // If not position exists, create a new position.
-    if (!existingPosition) {
-      const newPosition = ConstructPosition(NewPosition)
-      storePosition(newPosition)
-      closeModal()
-      return
-    }
 
-    // If the position exists, update the trades array keying off of the based and quote.
-    // TODO: This should go in the service layer not this component.
-    existingPosition.trades.push(
-      {
-        index: existingPosition.trades.length++,
-        amount: Number(amount),
-        price: Number(spent),
-        type: baseFromInput !== Usd ? 'buy' : 'sell',
-        date: date,
-        base: baseFromInput,
-        quote: quoteFromInput
-      }
-    )
-    console.log("Updated Trades:")
-    console.log(positions.value)
-    // TODO: Save the position to the local storage.
+    // Store the position (storePosition handles details related to new 
+    // or existing positions along with cache, global context, and ICP Stable Memory).
+    const StorablePosition: StorePositionsProps = {
+      positions: positions,
+      position: constructPosition(newPosition),
+      setter: updatePosition
+    }
+    storePosition(StorablePosition)
     closeModal()
     return
   }

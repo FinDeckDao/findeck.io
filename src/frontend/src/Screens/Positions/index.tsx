@@ -1,12 +1,11 @@
-import { useRef } from 'react'
-// import { useContext } from 'react'
-// import { AuthContext } from '../../Contexts/Auth/index.tsx'
-import { Positions } from '../../Components/Position/index.tsx'
-import { CreatePositionModal } from './CreatePositionModal.tsx'
+import { PropsWithChildren, useRef } from 'react'
+import { Positions } from '../../Components/Position'
+import { CreatePositionModal } from '../../Components/Position/CreatePositionModal'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
+import { usePositions } from '../../Contexts/Position/Hooks'
 
-export const PositionsScreen = () => {
-  // const auth = useContext(AuthContext)
+const PositionsScreenWrapper = (props: PropsWithChildren) => {
+  const { children } = props
   const modalRef = useRef<HTMLDialogElement>(null)
 
   const openModal = () => {
@@ -23,7 +22,26 @@ export const PositionsScreen = () => {
         </button>
         <CreatePositionModal modalRef={modalRef} />
       </div>
-      <Positions view='cards' />
+      {children}
     </div>
+  )
+}
+
+export const PositionsScreen = () => {
+  const positions = usePositions()
+
+  // Guard for null or undefined positions.
+  if (positions.length === 0) {
+    return (
+      <PositionsScreenWrapper>
+        <div className='text-center'>To create a new position click the "+ position" button.</div>
+      </PositionsScreenWrapper>
+    )
+  }
+
+  return (
+    <PositionsScreenWrapper>
+      <Positions view='cards' />
+    </PositionsScreenWrapper>
   )
 }
