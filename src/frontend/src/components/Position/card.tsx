@@ -1,23 +1,27 @@
-import { useRef, useState } from "react"
+import { useRef, useState, useContext, FC } from "react"
 import { Position } from "."
-import { TradeProps } from "../Trade"
 import { OptionsModal } from "./OptionsModal"
 import { TradesModal } from "./TradesModal"
+import { PositionContext } from '../../Contexts/Position'
 
-interface GetCardsProps {
-  positions: Position[]
-}
+export const GetCards: FC = () => {
+  const { positions } = useContext(PositionContext)
 
-export const GetCards = (props: GetCardsProps) => {
-  const { positions } = props
+  const count = positions.length
+
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <div className={
+      `grid grid-cols-1 gap-4 
+      ${count >= 3 ? 'lg:grid-cols-3' : null} 
+      ${count === 2 ? 'lg:grid-cols-2' : null} 
+      ${count === 1 ? 'lg:grid-cols-1' : null}`}
+    >
       {
         positions.filter((position) => position !== null).map((position, index) => (
           <PositionCard key={index} {...position} />
         ))
       }
-    </div>
+    </div >
   )
 }
 
@@ -30,9 +34,9 @@ export const PositionCard = (props: Position) => {
   // TODO: Handle this in the Position Context when the trade is added to the position.
   const filteredTrades = trades.filter((trade) => trade !== null)
 
-  const getTotalInvested = (trades: TradeProps[]) => {
+  const getTotalInvested = () => {
     // Get the value of all long trades.
-    const longTrades = trades.filter((value) => {
+    const longTrades = filteredTrades.filter((value) => {
       return value.type === "buy"
     })
 
@@ -42,7 +46,7 @@ export const PositionCard = (props: Position) => {
     }, 0)
 
     // Get the value of all short trades.
-    const shortTrades = trades.filter((value) => {
+    const shortTrades = filteredTrades.filter((value) => {
       return value.type === "sell"
     })
 
@@ -55,9 +59,9 @@ export const PositionCard = (props: Position) => {
     return longTotal - shortTotal
   }
 
-  const getAssetsHeld = (trades: TradeProps[]) => {
+  const getAssetsHeld = () => {
     // Get the value of all long trades.
-    const longTrades = trades.filter((value) => {
+    const longTrades = filteredTrades.filter((value) => {
       return value.type === "buy"
     })
 
@@ -67,7 +71,7 @@ export const PositionCard = (props: Position) => {
     }, 0)
 
     // Get the value of all short trades.
-    const shortTrades = trades.filter((value) => {
+    const shortTrades = filteredTrades.filter((value) => {
       return value.type === "sell"
     })
 
@@ -92,21 +96,21 @@ export const PositionCard = (props: Position) => {
     tradesModalRef.current?.showModal()
   }
 
-  const calcualteCostBasis = (trades: TradeProps[]) => {
-    return getTotalInvested(trades) / getAssetsHeld(trades)
+  const calcualteCostBasis = () => {
+    return getTotalInvested() / getAssetsHeld()
   }
 
-  const calculateRoi = (trades: TradeProps[], currentValue: number) => {
-    return ((currentValue - calcualteCostBasis(trades)) / calcualteCostBasis(trades) * 100).toFixed(2)
+  const calculateRoi = (currentValue: number) => {
+    return ((currentValue - calcualteCostBasis()) / calcualteCostBasis() * 100).toFixed(2)
   }
 
   return (
     <div className="bg-slate-800 shadow-xl rounded-xl">
       <div className="card-body">
         <h2 className="card-title">{base.symbol}/{quote.symbol}</h2>
-        <p className="text-left mb-0"><span className="font-bold">Total Assets Held:</span> {getAssetsHeld(filteredTrades).toLocaleString("en-US", { style: "decimal" })} ${base.symbol}</p>
-        <p className="text-left mb-0"><span className="font-bold">Total At Risk:</span> {getTotalInvested(filteredTrades).toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</p>
-        <p className="text-left mb-0"><span className="font-bold">Cost Basis:</span> {calcualteCostBasis(filteredTrades).toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</p>
+        <p className="text-left mb-0"><span className="font-bold">Total Assets Held:</span> {getAssetsHeld().toLocaleString("en-US", { style: "decimal" })} ${base.symbol}</p>
+        <p className="text-left mb-0"><span className="font-bold">Total At Risk:</span> {getTotalInvested().toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</p>
+        <p className="text-left mb-0"><span className="font-bold">Cost Basis:</span> {calcualteCostBasis().toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</p>
 
         <label className='label block text-left font-bold'>Current Value of {base.symbol}
           <input
@@ -117,8 +121,8 @@ export const PositionCard = (props: Position) => {
             onChange={(e) => setCurrentValue(Number(e.currentTarget.value))}
           />
         </label>
-        <p className="text-left mb-0"><span className="font-bold">Current ROI:</span> {currentValue ? `${calculateRoi(trades, currentValue)}%` : `enter current value of ${base.symbol} to calculate`}</p>
-        <p className="text-left mb-0"><span className="font-bold">Current Position Value:</span> {currentValue ? `${(getAssetsHeld(trades) * currentValue).toLocaleString("en-US", { style: "decimal" })} $${quote.symbol}` : `enter current value of ${base.symbol} to calculate`}</p>
+        <p className="text-left mb-0"><span className="font-bold">Current ROI:</span> {currentValue ? `${calculateRoi(currentValue)}%` : `enter current value of ${base.symbol} to calculate`}</p>
+        <p className="text-left mb-0"><span className="font-bold">Current Position Value:</span> {currentValue ? `${(getAssetsHeld() * currentValue).toLocaleString("en-US", { style: "decimal" })} $${quote.symbol}` : `enter current value of ${base.symbol} to calculate`}</p>
 
         <div className="card-actions justify-end">
           <button className="btn btn-primary mr-4 btn-outline uppercase" onClick={openOptionsModal}>

@@ -5,10 +5,10 @@ import { AuthContext } from '../../Contexts/Auth'
 import {
   constructPosition,
   NewPositionProps,
-  storePosition,
+  updatePositions,
   StorePositionsProps,
 } from '../../Contexts/Position/Helpers'
-import { usePositionUpdate, usePositions } from '../../Contexts/Position/Hooks'
+import { PositionContext } from '../../Contexts/Position'
 
 
 interface CreatePositionModalProps {
@@ -17,8 +17,7 @@ interface CreatePositionModalProps {
 
 export const CreatePositionModal = (props: CreatePositionModalProps) => {
   const { modalRef } = props
-  const positions = usePositions()
-  const updatePosition = usePositionUpdate()
+  const { positions, setPositions } = useContext(PositionContext)
 
   const auth = useContext(AuthContext)
 
@@ -34,7 +33,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
   const [date, setDate] = useState<string>('')
 
   // Adds the new trade to the trades array within the signal.
-  const savePosition = () => {
+  const createNewPosition = () => {
     // Guard against missing inputs.
     if (!base || !quote || !amount || !spent || !marketPrice || !date || !auth.isAuthenticated) {
       alert(`Missing Inputs: 
@@ -71,21 +70,33 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
       date: date
     }
 
-
     // Store the position (storePosition handles details related to new 
     // or existing positions along with cache, global context, and ICP Stable Memory).
     const StorablePosition: StorePositionsProps = {
       positions: positions,
       position: constructPosition(newPosition),
-      setter: updatePosition
     }
-    storePosition(StorablePosition)
+
+    const updatedPositions = updatePositions(StorablePosition)
+
+    // Guard against failed update to the positions array.
+    if (!updatedPositions || !setPositions) {
+      console.error('Failed to store the position.')
+      return
+    }
+
+    // Update the global state with the new position.
+    // This is a hack that had to be done because the state wasn't updating.
+    // This was caused by updating sub-objects within the state using the same reference.
+    setPositions(prevState => {
+      return [...prevState]
+    })
     closeModal()
     return
   }
 
   // Clear the position form.
-  const clearPosition = () => {
+  const clearInputs = () => {
     setBase('')
     setQuote('')
     setAmount('')
@@ -201,11 +212,11 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
         </form>
         <div //className='modal-action'
         >
-          <button className="btn btn-ghost float-start" onClick={savePosition}>
+          <button className="btn btn-ghost float-start" onClick={createNewPosition}>
             <CheckCircleIcon className="h-6 w-6" aria-hidden="true" />
             {" "}Save
           </button>
-          <button className="btn btn-ghost float-end" onClick={clearPosition}>
+          <button className="btn btn-ghost float-end" onClick={clearInputs}>
             <XCircleIcon className="h-6 w-6" aria-hidden="true" />
             {" "}Clear
           </button>

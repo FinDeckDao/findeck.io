@@ -1,8 +1,8 @@
-import { PropsWithChildren, useRef } from 'react'
+import { PropsWithChildren, useRef, useContext } from 'react'
 import { Positions } from '../../Components/Position'
 import { CreatePositionModal } from '../../Components/Position/CreatePositionModal'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
-import { usePositions } from '../../Contexts/Position/Hooks'
+import { PositionContext } from '../../Contexts/Position'
 
 const PositionsScreenWrapper = (props: PropsWithChildren) => {
   const { children } = props
@@ -28,7 +28,7 @@ const PositionsScreenWrapper = (props: PropsWithChildren) => {
 }
 
 export const PositionsScreen = () => {
-  const positions = usePositions()
+  const { positions } = useContext(PositionContext)
 
   // Guard for null or undefined positions.
   if (positions.length === 0) {

@@ -62,18 +62,17 @@ export const constructPosition = (props: NewPositionProps): Position => {
 
 export interface StorePositionsProps {
   positions: Position[]
-  setter: React.Dispatch<React.SetStateAction<Position[]>>
   position: Position
 }
 
-// Store the position in local storage and to the global context.
-// TODO: Function should account for new or existing positions.
-export const storePosition = (props: StorePositionsProps) => {
-  const { positions, position, setter } = props
+// Takes positions and a new position then stores them in local storage.
+// Returns the updated positions array.
+export const updatePositions = (props: StorePositionsProps) => {
+  const { positions, position } = props
 
   // Guard against null or undefined positions.
-  if (!position) {
-    console.error('Position is null or undefined.')
+  if (!position || !positions) {
+    throw new Error('Missing required inputs: position, positions, or setter.')
     return
   }
 
@@ -91,32 +90,40 @@ export const storePosition = (props: StorePositionsProps) => {
     }
   )
 
+  // Case 1 - The position doesn't exist.
   // If the position doesn't exist just save it.
   if (!existingPosition) {
     positions.push(position)
-  } else {
-    // If the position exists, update the trades array keying off of the based and quote.
-    existingPosition.trades.push({
-      index: existingPosition.trades.length++,
-      amount: Number(position.trades[0].amount),
-      price: Number(position.trades[0].price),
-      type: position.trades[0].type,
-      date: position.trades[0].date,
-      base: position.trades[0].base,
-      quote: position.trades[0].quote
-    })
-    // Add the new position to the existing positions.
-    positions.push(position)
+    // Update the local storage to reflect the changes on subsequent page loads.
+    saveToLocalStorage(positions)
+    return positions
   }
 
-  // Update the local storage to reflect the changes on subsequent page loads.
-  localStorage.setItem('positions', JSON.stringify(positions))
-  console.log('Position stored in local storage:', position)
+  // Case 2 - The position exists.
+  // If the position exists, update the trades array keying off of the based and quote.
+  // Return the entire positions array with the updated position.
 
-  // Update the global state to reflect the changes immediately in the UI.
-  setter(positions)
-  console.log('Position stored in global context:', position)
+  // Construct a new trade object and push it to the existing position's trades array.
+  existingPosition.trades.push({
+    index: existingPosition.trades.length++,
+    amount: Number(position.trades[0].amount),
+    price: Number(position.trades[0].price),
+    type: position.trades[0].type,
+    date: position.trades[0].date,
+    base: position.trades[0].base,
+    quote: position.trades[0].quote
+  })
+  saveToLocalStorage(positions)
+  return positions
 
   // TODO: Persist the positions to the ICP network's Stable Memory Persistence Store
   //       if the user is a paid subscriber.
+  // saveToStableMemory(positions)
 }
+
+const saveToLocalStorage = (positions: Position[]) => {
+  localStorage.setItem('positions', JSON.stringify(positions))
+}
+
+// TODO: Bind this function to the user's ICP identity and save it to the ICP network.
+// const saveToStableMemory = (positions: Position[]) => { }
