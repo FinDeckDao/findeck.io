@@ -1,7 +1,7 @@
 import { Asset } from "../../../fixtures/assets"
 import { GetCards } from "./Card"
 // import { position } from "./signal"
-import { TradeProps } from "../Trade"
+import { Trade } from "../Trade"
 
 
 // TODO: Normalize this data.
@@ -11,7 +11,7 @@ export interface Position {
   base: Asset
   quote: Asset
   owner: string
-  trades: TradeProps[]
+  trades: Trade[]
 }
 
 interface PositionsProps {

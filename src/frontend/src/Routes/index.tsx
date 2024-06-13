@@ -13,6 +13,7 @@ import {
   MapPinIcon,
   HomeIcon
 } from "@heroicons/react/24/outline"
+import { Trades } from '../Screens/Trades'
 
 interface NavigationItem {
   name: string
@@ -73,5 +74,14 @@ export const router = createBrowserRouter([
         <ResourcesScreen />
       </DefaultLayout>
     )
+  },
+  {
+    path: '/trades',
+    element: (
+      <DefaultLayout>
+        <Trades />
+      </DefaultLayout>
+    )
   }
+
 ])

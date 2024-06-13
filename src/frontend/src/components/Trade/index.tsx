@@ -1,6 +1,6 @@
 import { Asset } from '../../../fixtures/assets'
 
-export interface TradeProps {
+export interface Trade {
   index: number
   amount: number
   price: number
@@ -10,7 +10,7 @@ export interface TradeProps {
   quote: Asset
 }
 
-export const Trade = (props: TradeProps) => {
+export const Trade = (props: Trade) => {
   const { index, amount, price, type, date, base, quote } = props
 
   // Guard for null props
