@@ -7,7 +7,7 @@ import {
   NewPositionProps,
   updatePositions,
   StorePositionsProps,
-} from '../../Contexts/Position/Helpers'
+} from '../../Contexts/Position/helpers'
 import { PositionContext } from '../../Contexts/Position'
 
 
