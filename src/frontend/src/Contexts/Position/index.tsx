@@ -1,5 +1,13 @@
 import React, { useState, Dispatch, FC, PropsWithChildren } from "react"
-import { Position } from "../../Components/Position"
+import { AssetPair } from "../../Contexts/AssetPair"
+
+// TODO: Normalize this data.
+//       base and quote are redundant because that data exists 
+//       in every trade. For now this will do.
+export interface Position {
+  assetPair: AssetPair
+  owner: string
+}
 
 // Define the context type for the Position Context.
 interface PositionContextType {

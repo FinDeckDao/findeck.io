@@ -9,6 +9,8 @@ import {
   StorePositionsProps,
 } from '../../Contexts/Position/helpers'
 import { PositionContext } from '../../Contexts/Position'
+import { AssetSelector } from '../AssetSelector'
+import { AssetPairContext } from '../../Contexts/AssetPair'
 
 
 interface CreatePositionModalProps {
@@ -17,9 +19,31 @@ interface CreatePositionModalProps {
 
 export const CreatePositionModal = (props: CreatePositionModalProps) => {
   const { modalRef } = props
-  const { positions, setPositions } = useContext(PositionContext)
-
   const auth = useContext(AuthContext)
+  const { positions, setPositions } = useContext(PositionContext)
+  const { assetPair, setAssetPair } = useContext(AssetPairContext)
+
+  const handleSelectedBase = (value: string) => {
+    // Find the selected asset pair from the list of supported asset pairs.
+    const selectedAssetPair = SupportedAssets.find((asset) => {
+      return asset.symbol === value
+    })
+
+    if (selectedAssetPair && setAssetPair) {
+      setAssetPair({ ...assetPair, base: selectedAssetPair })
+    }
+  }
+
+  const handleSelectedQuote = (value: string) => {
+    // Find the selected asset pair from the list of supported asset pairs.
+    const selectedAssetPair = SupportedAssets.find((asset) => {
+      return asset.symbol === value
+    })
+
+    if (selectedAssetPair && setAssetPair) {
+      setAssetPair({ ...assetPair, quote: selectedAssetPair })
+    }
+  }
 
   const closeModal = () => {
     modalRef.current?.close()
@@ -105,33 +129,6 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     setDate('')
   }
 
-  // TODO: Dry this up.
-  const handleSelectedBase = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedAsset: Asset | undefined = SupportedAssets.find((asset) => {
-      if (asset.symbol === event.currentTarget.value) {
-        return asset.symbol
-      }
-    })
-
-    if (selectedAsset) {
-      setBase(selectedAsset.symbol)
-    }
-  }
-
-  // TODO: Dry this up. There are basically the same function.
-  //       MVP is to get it working.
-  const handleSelectedQuote = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedAsset: Asset | undefined = SupportedAssets.find((asset) => {
-      if (asset.symbol === event.currentTarget.value) {
-        return asset.symbol
-      }
-    })
-
-    if (selectedAsset) {
-      setQuote(selectedAsset.symbol)
-    }
-  }
-
   return (
     <dialog className="modal w-min-full" ref={modalRef} >
       <div className="modal-box">
@@ -145,18 +142,11 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
 
         <form className="text-left">
           <label className="label block">Base (Asset you bought)
-            <select
-              className="select w-full mt-1 mb-4 bg-slate-800"
-              onChange={handleSelectedBase}
+            <AssetSelector
               value={base}
-            >
-              <option disabled value=''>Select the asset you purchased.</option>
-              {
-                SupportedAssets.sort().map((asset) => {
-                  return <option key={asset.symbol} value={asset.symbol}>${asset.symbol} ({asset.name})</option>
-                })
-              }
-            </select>
+              setValue={handleSelectedBase}
+              defaultMessage="Select the asset you purchased."
+            />
           </label>
           <label className="label block">Amount Purchased
             <input
@@ -168,18 +158,11 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
           </label>
 
           <label className="label block">Quote (asset you paid with)
-            <select
-              className="select w-full mt-1 mb-4  bg-slate-800"
-              onChange={handleSelectedQuote}
-              value={quote}
-            >
-              <option disabled value=''>Select the asset you paid with.</option>
-              {
-                SupportedAssets.map((asset) => {
-                  return <option key={asset.symbol} value={asset.symbol}>${asset.symbol} ({asset.name})</option>
-                })
-              }
-            </select>
+            <AssetSelector
+              value={base}
+              setValue={handleSelectedQuote}
+              defaultMessage="Select the asset you paid with."
+            />
           </label>
 
           <label className="label block">Amount Spent

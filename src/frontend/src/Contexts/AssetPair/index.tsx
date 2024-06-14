@@ -1,6 +1,7 @@
 import { useState, Dispatch, createContext, FC, PropsWithChildren } from "react"
 import { Icp, Usd, Asset } from "../../../fixtures/assets"
 
+// This interface acts like a join table between positions and trades.
 export interface AssetPair {
   base: Asset
   quote: Asset

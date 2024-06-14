@@ -4,14 +4,17 @@ import {
 import { router } from './Routes/index.tsx'
 import { PositionProvider } from "./Contexts/Position"
 import { AssetPairProvider } from "./Contexts/AssetPair"
+import { TradesProvider } from "./Contexts/Trade/index.tsx"
 
 const App = () => {
   return (
-    <PositionProvider>
-      <AssetPairProvider>
-        <RouterProvider router={router} />
-      </AssetPairProvider>
-    </PositionProvider>
+    <AssetPairProvider>
+      <PositionProvider>
+        <TradesProvider>
+          <RouterProvider router={router} />
+        </TradesProvider>
+      </PositionProvider>
+    </AssetPairProvider>
   )
 }
 

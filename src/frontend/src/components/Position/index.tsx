@@ -1,18 +1,4 @@
-import { Asset } from "../../../fixtures/assets"
 import { GetCards } from "./Card"
-// import { position } from "./signal"
-import { Trade } from "../Trade"
-
-
-// TODO: Normalize this data.
-//       base and quote are redundant because that data exists 
-//       in every trade. For now this will do.
-export interface Position {
-  base: Asset
-  quote: Asset
-  owner: string
-  trades: Trade[]
-}
 
 interface PositionsProps {
   view?: "cards" | "table" | "list"
