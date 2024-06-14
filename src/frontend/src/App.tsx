@@ -2,12 +2,15 @@ import {
   RouterProvider,
 } from "react-router-dom"
 import { router } from './Routes/index.tsx'
-import { PositionProvider } from "./Contexts/Position/index.tsx"
+import { PositionProvider } from "./Contexts/Position"
+import { AssetPairProvider } from "./Contexts/AssetPair"
 
 const App = () => {
   return (
     <PositionProvider>
-      <RouterProvider router={router} />
+      <AssetPairProvider>
+        <RouterProvider router={router} />
+      </AssetPairProvider>
     </PositionProvider>
   )
 }

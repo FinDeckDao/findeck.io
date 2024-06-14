@@ -1,4 +1,4 @@
-import React, { useState, Dispatch } from "react"
+import React, { useState, Dispatch, FC, PropsWithChildren } from "react"
 import { Position } from "../../Components/Position"
 
 // Define the context type for the Position Context.
@@ -32,11 +32,8 @@ const defaultContext: PositionContextType = {
 
 export const PositionContext = React.createContext<PositionContextType>(defaultContext)
 
-interface PositionProviderProps {
-  children: React.ReactNode
-}
 // This component provides setters and getters for the Positions Context.
-export const PositionProvider = (props: PositionProviderProps) => {
+export const PositionProvider: FC<PropsWithChildren> = (props) => {
   const { children } = props
 
   // Default value is an empty array of Positions.
