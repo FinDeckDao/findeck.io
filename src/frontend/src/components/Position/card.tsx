@@ -3,6 +3,7 @@ import { Position } from "."
 import { OptionsModal } from "./OptionsModal"
 import { PositionContext } from '../../Contexts/Position'
 import { Link } from 'react-router-dom'
+import { AssetPairContext } from "../../Contexts/AssetPair"
 
 export const GetCards: FC = () => {
   const { positions } = useContext(PositionContext)
@@ -29,6 +30,7 @@ export const GetCards: FC = () => {
 export const PositionCard = (props: Position) => {
   const { base, quote, trades } = props
   const [currentValue, setCurrentValue] = useState<number | null>(null)
+  const { setAssetPair } = useContext(AssetPairContext)
 
   // Remove any null trades.
   // TODO: Handle this in the Position Context when the trade is added to the position.
@@ -86,14 +88,14 @@ export const PositionCard = (props: Position) => {
 
   // const auth = useContext(AuthContext)
   const optionModalRef = useRef<HTMLDialogElement>(null)
-  const tradesModalRef = useRef<HTMLDialogElement>(null)
 
   const openOptionsModal = () => {
     optionModalRef.current?.showModal()
   }
 
-  const openTradesModal = () => {
-    tradesModalRef.current?.showModal()
+  const setPair = () => {
+    const assetPair = { base, quote }
+    if (setAssetPair) setAssetPair(assetPair)
   }
 
   const calcualteCostBasis = () => {
@@ -131,7 +133,7 @@ export const PositionCard = (props: Position) => {
             </svg>
             Options
           </button>
-          <Link to={'/trades'} className="btn btn-primary btn-outline uppercase" onClick={openTradesModal}>
+          <Link to={'/trades'} className="btn btn-primary btn-outline uppercase" onClick={setPair}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
             </svg>

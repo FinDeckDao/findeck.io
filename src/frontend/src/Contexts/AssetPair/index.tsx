@@ -1,7 +1,7 @@
 import { useState, Dispatch, createContext, FC, PropsWithChildren } from "react"
 import { Icp, Usd, Asset } from "../../../fixtures/assets"
 
-interface AssetPair {
+export interface AssetPair {
   base: Asset
   quote: Asset
 }
@@ -21,7 +21,7 @@ const defaultContext: AssetPairFocusContextType = {
   setAssetPair: null
 }
 
-const PositionFocusContext = createContext<AssetPairFocusContextType>(defaultContext)
+export const AssetPairContext = createContext<AssetPairFocusContextType>(defaultContext)
 
 // This component provides setters and getters for the AssetPair Context.
 export const AssetPairProvider: FC<PropsWithChildren> = (props) => {
@@ -31,8 +31,8 @@ export const AssetPairProvider: FC<PropsWithChildren> = (props) => {
   const [assetPair, setAssetPair] = useState<AssetPair>(defaultAssetPair)
 
   return (
-    <PositionFocusContext.Provider value={{ assetPair, setAssetPair }}>
+    <AssetPairContext.Provider value={{ assetPair, setAssetPair }}>
       {children}
-    </PositionFocusContext.Provider>
+    </AssetPairContext.Provider>
   )
 }
