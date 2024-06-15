@@ -2,10 +2,15 @@ import { useContext, FC } from "react"
 import { Trade } from "../../Contexts/Trade"
 import { Md5 } from "ts-md5"
 import { TradesContext } from "../../Contexts/Trade"
+import { AssetPair } from "../../Contexts/AssetPair"
+
+interface TradeTableProps {
+  assetPair: AssetPair
+}
 
 // This component displays all trades for a given asset pair.
-export const TradesTable: FC<Trade> = (props) => {
-  const { assetPair } = props
+export const TradesTable: FC<TradeTableProps> = (props) => {
+  const { base, quote } = props.assetPair
   const { trades, setTrades } = useContext(TradesContext)
 
 
@@ -18,13 +23,13 @@ export const TradesTable: FC<Trade> = (props) => {
 
   // Use the asset pair to filter the trades.
   const filteredTrades = cleanTrades.filter((trade) => {
-    return trade.assetPair.base.symbol === assetPair.base.symbol
-      && trade.assetPair.quote.symbol === assetPair.quote.symbol
+    return trade.assetPair.base.symbol === base.symbol
+      && trade.assetPair.quote.symbol === quote.symbol
   })
 
   // Guard for empty trades.
   if (filteredTrades.length === 0) {
-    return <div className="text-center">No trades found for {assetPair.base.symbol}/{assetPair.quote.symbol}.</div>
+    return <div className="text-center">No trades found for {base.symbol}/{quote.symbol}.</div>
   }
 
   const deleteTrade = (t: Trade) => {

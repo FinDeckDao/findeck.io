@@ -1,6 +1,7 @@
-import { GetCards } from "./Card"
+import { GetPositionCards } from "./Card"
 import { DisplayContext } from "../../Contexts/Display"
 import { useContext } from "react"
+import { PositionsTable } from "./Table"
 
 // Container for rows and columns of positions
 export const Positions = () => {
@@ -10,11 +11,11 @@ export const Positions = () => {
 
   switch (display) {
     case "cards":
-      return <GetCards />
+      return <GetPositionCards />
     case "table":
-      return <>Map of Table rows</>
+      return <PositionsTable />
     default:
-      return <GetCards />
+      return <GetPositionCards />
   }
 }
 

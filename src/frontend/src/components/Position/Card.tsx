@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { TradesContext } from "../../Contexts/Trade"
 import { AssetPairContext } from "../../Contexts/AssetPair"
 
-export const GetCards: FC = () => {
+export const GetPositionCards: FC = () => {
   const { positions } = useContext(PositionContext)
   const count = positions.length
 
