@@ -32,7 +32,7 @@ export const TradesProvider: FC<PropsWithChildren> = (props) => {
   const { children } = props
 
   // Default value is our favorite asset pair.
-  const [trades, setTrades] = useState<Trade[]>([])
+  const [trades, setTrades] = useState<Trade[]>(tradesFromLocalStorage)
 
   return (
     <TradesContext.Provider value={{ trades, setTrades }}>

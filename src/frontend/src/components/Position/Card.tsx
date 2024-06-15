@@ -3,8 +3,8 @@ import { Position } from "../../Contexts/Position"
 import { OptionsModal } from "./OptionsModal"
 import { PositionContext } from '../../Contexts/Position'
 import { Link } from 'react-router-dom'
-import { AssetPairContext } from "../../Contexts/AssetPair"
 import { TradesContext } from "../../Contexts/Trade"
+import { AssetPairContext } from "../../Contexts/AssetPair"
 
 export const GetCards: FC = () => {
   const { positions } = useContext(PositionContext)
@@ -31,19 +31,28 @@ export const GetCards: FC = () => {
 export const PositionCard = (props: Position) => {
   const { assetPair } = props
   const [currentValue, setCurrentValue] = useState<number | null>(null)
-  const { setAssetPair } = useContext(AssetPairContext)
   const { trades } = useContext(TradesContext)
-  const { base, quote } = assetPair
+  const { setAssetPair } = useContext(AssetPairContext)
 
   // Guard against null trades.
   // TODO: Handle this in the Position Context when the trade is added to the position.
-  const filteredTrades = trades.filter((trade) => trade !== null)
+  const cleanTrades = trades.filter((trade) => trade !== null)
+
+  console.log("cleanTrades", cleanTrades)
+
+  const filteredTrades = cleanTrades.filter((trade) => {
+    return trade.assetPair.base.symbol === assetPair.base.symbol
+      && trade.assetPair.quote.symbol === assetPair.quote.symbol
+  })
+  console.log("filteredTrades", filteredTrades)
 
   const getTotalInvested = () => {
     // Get the value of all long trades.
     const longTrades = filteredTrades.filter((value) => {
       return value.type === "buy"
     })
+
+    console.log("longTrades", longTrades)
 
     // Get the totals value of all long trades.
     const longTotal = longTrades.reduce((accumulator, currentValue) => {
@@ -97,8 +106,9 @@ export const PositionCard = (props: Position) => {
   }
 
   const setPair = () => {
-    const assetPair = { base, quote }
-    if (setAssetPair) setAssetPair(assetPair)
+    if (setAssetPair) {
+      setAssetPair(assetPair)
+    }
   }
 
   const calcualteCostBasis = () => {
@@ -112,12 +122,12 @@ export const PositionCard = (props: Position) => {
   return (
     <div className="bg-slate-800 shadow-xl rounded-xl">
       <div className="card-body">
-        <h2 className="card-title">{base.symbol}/{quote.symbol}</h2>
-        <p className="text-left mb-0"><span className="font-bold">Total Assets Held:</span> {getAssetsHeld().toLocaleString("en-US", { style: "decimal" })} ${base.symbol}</p>
-        <p className="text-left mb-0"><span className="font-bold">Total At Risk:</span> {getTotalInvested().toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</p>
-        <p className="text-left mb-0"><span className="font-bold">Cost Basis:</span> {calcualteCostBasis().toLocaleString("en-US", { style: "decimal" })} ${quote.symbol}</p>
+        <h2 className="card-title">{assetPair.base.symbol}/{assetPair.quote.symbol}</h2>
+        <p className="text-left mb-0"><span className="font-bold">Total Assets Held:</span> {getAssetsHeld().toLocaleString("en-US", { style: "decimal" })} ${assetPair.base.symbol}</p>
+        <p className="text-left mb-0"><span className="font-bold">Total At Risk:</span> {getTotalInvested().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}</p>
+        <p className="text-left mb-0"><span className="font-bold">Cost Basis:</span> {calcualteCostBasis().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}</p>
 
-        <label className='label block text-left font-bold'>Current Value of {base.symbol}
+        <label className='label block text-left font-bold'>Current Value of {assetPair.base.symbol}
           <input
             type='number'
             className="input w-full"
@@ -126,8 +136,18 @@ export const PositionCard = (props: Position) => {
             onChange={(e) => setCurrentValue(Number(e.currentTarget.value))}
           />
         </label>
-        <p className="text-left mb-0"><span className="font-bold">Current ROI:</span> {currentValue ? `${calculateRoi(currentValue)}%` : `enter current value of ${base.symbol} to calculate`}</p>
-        <p className="text-left mb-0"><span className="font-bold">Current Position Value:</span> {currentValue ? `${(getAssetsHeld() * currentValue).toLocaleString("en-US", { style: "decimal" })} $${quote.symbol}` : `enter current value of ${base.symbol} to calculate`}</p>
+        <p className="text-left mb-0">
+          <span className="font-bold">Current ROI:</span>
+          {currentValue
+            ? `${calculateRoi(currentValue)}%`
+            : `enter current value of ${assetPair.base.symbol} to calculate`}
+        </p>
+        <p className="text-left mb-0">
+          <span className="font-bold">Current Position Value:</span>
+          {currentValue
+            ? `${(getAssetsHeld() * currentValue).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`
+            : `enter current value of ${assetPair.base.symbol} to calculate`}
+        </p>
 
         <div className="card-actions justify-end">
           <button className="btn btn-primary mr-4 btn-outline uppercase" onClick={openOptionsModal}>
