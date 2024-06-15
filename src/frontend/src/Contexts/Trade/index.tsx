@@ -1,10 +1,12 @@
 import { useState, FC, PropsWithChildren, createContext, Dispatch } from "react"
 import { AssetPair } from "../AssetPair"
 
+type TradeType = "buy" | "sell"
+
 export interface Trade {
   amount: number
   price: number
-  type: "buy" | "sell"
+  type: TradeType
   date: string
   time: string
   assetPair: AssetPair

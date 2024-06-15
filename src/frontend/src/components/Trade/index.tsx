@@ -1,11 +1,10 @@
 import { useContext, FC } from "react"
 import { Trade } from "../../Contexts/Trade"
 import { Md5 } from "ts-md5"
-import { TradesProps } from "../../Screens/Trades"
 import { TradesContext } from "../../Contexts/Trade"
 
 // This component displays all trades for a given asset pair.
-export const TradesTable: FC<TradesProps> = (props) => {
+export const TradesTable: FC<Trade> = (props) => {
   const { assetPair } = props
   const { trades, setTrades } = useContext(TradesContext)
 
@@ -48,7 +47,7 @@ export const TradesTable: FC<TradesProps> = (props) => {
             <tr>
               <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-3">Amount Purchased</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Price Paid</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Type</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Trade Type</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Date</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Base</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Quote</th>
@@ -62,8 +61,14 @@ export const TradesTable: FC<TradesProps> = (props) => {
                   const key = Md5.hashStr(JSON.stringify(trade))
                   return (
                     <tr key={key} className={index % 2 === 0 ? 'bg-slate-800 text-left' : 'text-left'}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3">{trade.amount} ${trade.assetPair.base.symbol}</td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm">{trade.price} ${trade.assetPair.quote.symbol}</td>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-3">
+                        {trade.amount}{" "}
+                        ${trade.type === "buy" ? trade.assetPair.base.symbol : trade.assetPair.quote.symbol}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm">
+                        {trade.price}{" "}
+                        ${trade.type === "buy" ? trade.assetPair.quote.symbol : trade.assetPair.base.symbol}
+                      </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">{trade.type}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">{trade.date}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">{trade.assetPair.base.symbol}</td>

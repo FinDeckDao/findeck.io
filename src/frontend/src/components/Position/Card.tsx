@@ -8,8 +8,9 @@ import { AssetPairContext } from "../../Contexts/AssetPair"
 
 export const GetCards: FC = () => {
   const { positions } = useContext(PositionContext)
-
   const count = positions.length
+
+  const cleanPositions = positions.filter((position) => position !== null)
 
   return (
     <div className={
@@ -19,7 +20,7 @@ export const GetCards: FC = () => {
       ${count === 1 ? 'lg:grid-cols-1' : null}`}
     >
       {
-        positions.filter((position) => position !== null).map((position, index) => (
+        cleanPositions.map((position, index) => (
           <PositionCard key={index} {...position} />
         ))
       }
@@ -38,21 +39,16 @@ export const PositionCard = (props: Position) => {
   // TODO: Handle this in the Position Context when the trade is added to the position.
   const cleanTrades = trades.filter((trade) => trade !== null)
 
-  console.log("cleanTrades", cleanTrades)
-
   const filteredTrades = cleanTrades.filter((trade) => {
     return trade.assetPair.base.symbol === assetPair.base.symbol
       && trade.assetPair.quote.symbol === assetPair.quote.symbol
   })
-  console.log("filteredTrades", filteredTrades)
 
   const getTotalInvested = () => {
     // Get the value of all long trades.
     const longTrades = filteredTrades.filter((value) => {
       return value.type === "buy"
     })
-
-    console.log("longTrades", longTrades)
 
     // Get the totals value of all long trades.
     const longTotal = longTrades.reduce((accumulator, currentValue) => {

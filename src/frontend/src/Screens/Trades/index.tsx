@@ -1,11 +1,8 @@
 import { FC, useContext } from 'react'
-import { AssetPair } from '../../Contexts/AssetPair'
 import { AssetSelector } from '../../Components/AssetSelector'
 import { AssetPairContext } from '../../Contexts/AssetPair'
 import { SupportedAssets } from '../../../fixtures/assets'
 import { TradesTable } from '../../Components/Trade'
-
-
 
 // This component displays the trades screen.
 export const TradesScreen: FC = () => {
@@ -46,10 +43,6 @@ export const TradesScreen: FC = () => {
       <TradesTable assetPair={assetPair} />
     </div>
   )
-}
-
-export interface TradesProps {
-  assetPair: AssetPair
 }
 
 export default TradesScreen

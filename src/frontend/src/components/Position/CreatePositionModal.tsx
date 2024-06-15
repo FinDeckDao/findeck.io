@@ -7,7 +7,6 @@ import { AssetSelector } from '../AssetSelector'
 import { AssetPairContext } from '../../Contexts/AssetPair'
 import { TradesContext, Trade } from '../../Contexts/Trade'
 
-
 interface CreatePositionModalProps {
   modalRef: React.RefObject<HTMLDialogElement>
 }
@@ -97,16 +96,44 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     }
 
     // Determine what the new position should be.
+    // A new position is created only when the asset pair combination isn't being used 
+    // in any other asset pair in the global state.
+    const calculatedPosition = positions.filter((position) => {
+      if (position.assetPair.base.symbol === baseFromInput.symbol
+        && position.assetPair.quote.symbol === quoteFromInput.symbol) {
+        return position
+      }
+      if (position.assetPair.base.symbol === quoteFromInput.symbol
+        && position.assetPair.quote.symbol === baseFromInput.symbol) {
+        return position
+      }
+    })
+
+    // This handles 2 cases.
+    // 1. A new position is created when the calculated position doesn't exist using the base/quote inputs.
+    // 2. A new position is created when the calculated position does exist using the existing position.
     const newPosition: Position = {
-      assetPair: assetPair,
+      assetPair: calculatedPosition.length > 0 ? calculatedPosition[0].assetPair : { base: baseFromInput, quote: quoteFromInput },
       owner: auth.identity
     }
 
     // Find an existing position.
     const existingPosition = positions.find((position) => {
-      return position.assetPair.base.symbol === newPosition.assetPair.base.symbol
+      // There are two conditions that establish an existing position.
+
+      // 1. The asset pair is the same (buy).
+      if (position.assetPair.base.symbol === newPosition.assetPair.base.symbol
         && position.assetPair.quote.symbol === newPosition.assetPair.quote.symbol
-        && position.owner === auth.identity
+        && position.owner === auth.identity) {
+        return position
+      }
+
+      // 2. The asset pair is the same but reversed (sell).
+      if (position.assetPair.base.symbol === newPosition.assetPair.quote.symbol
+        && position.assetPair.quote.symbol === newPosition.assetPair.base.symbol
+        && position.owner === auth.identity) {
+        return position
+      }
     })
 
     // Handle a new position (add).
@@ -126,14 +153,29 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
         && trade.assetPair.quote.symbol === quote
     })
 
+    const orderType = (() => {
+      if (baseFromInput === existingPosition?.assetPair.base
+        && quoteFromInput === existingPosition?.assetPair.quote) {
+        return 'buy'
+      }
+      if (baseFromInput === existingPosition?.assetPair.quote
+        && quoteFromInput === existingPosition?.assetPair.base) {
+        return 'sell'
+      }
+
+      // Default to buy. For now this will work.
+      // TODO: Move things around so that this case is never reached.
+      return 'buy'
+    })
+
     // Create a new trade.
     const newTrade: Trade = {
       amount: Number(amount),
       price: Number(spent),
-      type: "buy", // TODO: This should be dynamically determined by the asset Pair.
+      type: orderType(), // TODO: This should be dynamically determined by the asset Pair.
       date: date,
       time: time,
-      assetPair: {
+      assetPair: existingPosition ? existingPosition.assetPair : {
         base: baseFromInput,
         quote: quoteFromInput
       }
