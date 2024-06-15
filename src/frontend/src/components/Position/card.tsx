@@ -1,9 +1,10 @@
 import { useRef, useState, useContext, FC } from "react"
-import { Position } from "."
+import { Position } from "../../Contexts/Position"
 import { OptionsModal } from "./OptionsModal"
 import { PositionContext } from '../../Contexts/Position'
 import { Link } from 'react-router-dom'
 import { AssetPairContext } from "../../Contexts/AssetPair"
+import { TradesContext } from "../../Contexts/Trade"
 
 export const GetCards: FC = () => {
   const { positions } = useContext(PositionContext)
@@ -28,11 +29,13 @@ export const GetCards: FC = () => {
 
 // Individual Position Card
 export const PositionCard = (props: Position) => {
-  const { base, quote, trades } = props
+  const { assetPair } = props
   const [currentValue, setCurrentValue] = useState<number | null>(null)
   const { setAssetPair } = useContext(AssetPairContext)
+  const { trades } = useContext(TradesContext)
+  const { base, quote } = assetPair
 
-  // Remove any null trades.
+  // Guard against null trades.
   // TODO: Handle this in the Position Context when the trade is added to the position.
   const filteredTrades = trades.filter((trade) => trade !== null)
 

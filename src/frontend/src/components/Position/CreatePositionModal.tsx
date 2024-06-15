@@ -1,27 +1,45 @@
 import { useState, useContext } from 'react'
 import { XCircleIcon, CheckCircleIcon } from "@heroicons/react/24/outline"
-import { Asset, SupportedAssets } from '../../../fixtures/assets'
+import { SupportedAssets } from '../../../fixtures/assets'
 import { AuthContext } from '../../Contexts/Auth'
-import {
-  constructPosition,
-  NewPositionProps,
-  updatePositions,
-  StorePositionsProps,
-} from '../../Contexts/Position/helpers'
-import { PositionContext } from '../../Contexts/Position'
+import { Position, PositionContext } from '../../Contexts/Position'
 import { AssetSelector } from '../AssetSelector'
 import { AssetPairContext } from '../../Contexts/AssetPair'
+import { TradesContext, Trade } from '../../Contexts/Trade'
 
 
 interface CreatePositionModalProps {
   modalRef: React.RefObject<HTMLDialogElement>
 }
 
+// Create Position Modal
+// Gathers the necessary information to create a new position.
+// Takes the data and updates two global states:
+// 1. positions
+// 2. trades
 export const CreatePositionModal = (props: CreatePositionModalProps) => {
   const { modalRef } = props
   const auth = useContext(AuthContext)
+
+  // There is a lot of state here but it's all local to this component.
+  const [base, setBase] = useState<string>("")
+  const [quote, setQuote] = useState<string>("")
+  const [amount, setAmount] = useState<number | string>("")
+  const [spent, setSpent] = useState<number | string>("")
+  const [marketPrice, setMarketPrice] = useState<number | string>("")
+  const [date, setDate] = useState<string>('')
+  const [time, setTime] = useState<string>('')
+
+  // These are essential global states.
   const { positions, setPositions } = useContext(PositionContext)
   const { assetPair, setAssetPair } = useContext(AssetPairContext)
+  const { trades, setTrades } = useContext(TradesContext)
+
+  // Guard against missing global state.
+  if (!setPositions || !setAssetPair) {
+    console.error('Missing global state.')
+    return
+  }
 
   const handleSelectedBase = (value: string) => {
     // Find the selected asset pair from the list of supported asset pairs.
@@ -30,6 +48,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     })
 
     if (selectedAssetPair && setAssetPair) {
+      setBase(selectedAssetPair.symbol)
       setAssetPair({ ...assetPair, base: selectedAssetPair })
     }
   }
@@ -41,6 +60,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     })
 
     if (selectedAssetPair && setAssetPair) {
+      setQuote(selectedAssetPair.symbol)
       setAssetPair({ ...assetPair, quote: selectedAssetPair })
     }
   }
@@ -49,17 +69,10 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     modalRef.current?.close()
   }
 
-  const [base, setBase] = useState<string>("")
-  const [quote, setQuote] = useState<string>("")
-  const [amount, setAmount] = useState<number | string>("")
-  const [spent, setSpent] = useState<number | string>("")
-  const [marketPrice, setMarketPrice] = useState<number | string>("")
-  const [date, setDate] = useState<string>('')
-
   // Adds the new trade to the trades array within the signal.
   const createNewPosition = () => {
-    // Guard against missing inputs.
-    if (!base || !quote || !amount || !spent || !marketPrice || !date || !auth.isAuthenticated) {
+    // // Guard against missing inputs.
+    if (!base || !quote || !amount || !spent || !marketPrice || !date || !auth.isAuthenticated || !time) {
       alert(`Missing Inputs: 
       base: ${base} 
       quote: ${quote} 
@@ -67,54 +80,82 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
       spent: ${spent} 
       marketplace: ${marketPrice} 
       date: ${date}
+      time: ${time}
       user: ${auth.identity}`)
       return
     }
 
-    // Inputs only allow us to set and get string values so we need to convert them to types we can use.
+    // // Inputs only allow us to set and get string values so we need to convert them to types we can use.
     const baseFromInput = SupportedAssets.find((asset) => asset.symbol === base)
     const quoteFromInput = SupportedAssets.find((asset) => asset.symbol === quote)
 
-    // Guard against missing base or missing quote.
-    // Somehow the user was able to select a base or quote that doesn't exist.
+    // // Guard against missing base or missing quote.
+    // // Somehow the user was able to select a base or quote that doesn't exist.
     if (!baseFromInput || !quoteFromInput) {
       console.error('Missing required inputs base and quote.')
       return
     }
 
-    // Create a new position object.
-    const newPosition: NewPositionProps = {
-      owner: auth.identity,
-      positionBase: baseFromInput,
-      positionQuote: quoteFromInput,
-      tradeBase: baseFromInput,
-      tradeQuote: quoteFromInput,
+    // Determine what the new position should be.
+    const newPosition: Position = {
+      assetPair: assetPair,
+      owner: auth.identity
+    }
+
+    // Find an existing position.
+    const existingPosition = positions.find((position) => {
+      return position.assetPair.base.symbol === newPosition.assetPair.base.symbol
+        && position.assetPair.quote.symbol === newPosition.assetPair.quote.symbol
+        && position.owner === auth.identity
+    })
+
+    // Handle a new position (add).
+    if (!existingPosition) {
+      // Add the new position to the global state.
+      setPositions([...positions, newPosition])
+
+      // Save the new position to the local storage.
+      localStorage.setItem('positions', JSON.stringify([...positions, newPosition]))
+    }
+
+    // Find an existing trade.
+    const existingTrade = trades.find((trade) => {
+      return trade.date === date
+        && trade.time === time
+        && trade.assetPair.base.symbol === base
+        && trade.assetPair.quote.symbol === quote
+    })
+
+    // Create a new trade.
+    const newTrade: Trade = {
       amount: Number(amount),
-      spent: Number(spent),
-      date: date
+      price: Number(spent),
+      type: "buy", // TODO: This should be dynamically determined by the asset Pair.
+      date: date,
+      time: time,
+      assetPair: {
+        base: baseFromInput,
+        quote: quoteFromInput
+      }
     }
 
-    // Store the position (storePosition handles details related to new 
-    // or existing positions along with cache, global context, and ICP Stable Memory).
-    const StorablePosition: StorePositionsProps = {
-      positions: positions,
-      position: constructPosition(newPosition),
-    }
-
-    const updatedPositions = updatePositions(StorablePosition)
-
-    // Guard against failed update to the positions array.
-    if (!updatedPositions || !setPositions) {
-      console.error('Failed to store the position.')
+    // Guard against missing global state.
+    if (!setTrades) {
+      console.error('Missing global state.')
       return
     }
 
-    // Update the global state with the new position.
-    // This is a hack that had to be done because the state wasn't updating.
-    // This was caused by updating sub-objects within the state using the same reference.
-    setPositions(prevState => {
-      return [...prevState]
-    })
+    // Handle new trade (add).
+    if (!existingTrade) {
+      // Add the new trade to the global state.
+      setTrades([...trades, newTrade])
+
+      // Save the new trade to the local storage.
+      localStorage.setItem('trades', JSON.stringify([...trades, newTrade]))
+    }
+
+    // To handle a duplicate position we do nothing.
+    // To handle a duplicate trade we do nothing.
     closeModal()
     return
   }
@@ -127,17 +168,20 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     setSpent('')
     setMarketPrice('')
     setDate('')
+    setTime('')
   }
 
   return (
     <dialog className="modal w-min-full" ref={modalRef} >
       <div className="modal-box">
+
         <form method="dialog">
           {/* if there is a button in the dialog form, it will close the modal */}
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </form>
+
         <h3 className="font-bold text-lg">New Position {base && quote ? `(${base}/${quote})` : null}</h3>
 
         <form className="text-left">
@@ -148,6 +192,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
               defaultMessage="Select the asset you purchased."
             />
           </label>
+
           <label className="label block">Amount Purchased
             <input
               type="number"
@@ -159,7 +204,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
 
           <label className="label block">Quote (asset you paid with)
             <AssetSelector
-              value={base}
+              value={quote}
               setValue={handleSelectedQuote}
               defaultMessage="Select the asset you paid with."
             />
@@ -183,7 +228,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
               placeholder='Example: 13.33' />
           </label>
 
-          <label className="label block">Date of trade
+          <label className="label block">Date Of Trade
             <input
               type="text"
               className="input w-full bg-slate-800"
@@ -192,17 +237,31 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
               onChange={(e) => setDate(e.target.value)}
             />
           </label>
+
+          <label className="label block">Time Of Trade
+            <input
+              type="text"
+              className="input w-full bg-slate-800"
+              placeholder="Example: 12:30AM"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+            />
+          </label>
+
         </form>
         <div //className='modal-action'
         >
+
           <button className="btn btn-ghost float-start" onClick={createNewPosition}>
             <CheckCircleIcon className="h-6 w-6" aria-hidden="true" />
             {" "}Save
           </button>
+
           <button className="btn btn-ghost float-end" onClick={clearInputs}>
             <XCircleIcon className="h-6 w-6" aria-hidden="true" />
             {" "}Clear
           </button>
+
         </div>
       </div>
     </dialog >
