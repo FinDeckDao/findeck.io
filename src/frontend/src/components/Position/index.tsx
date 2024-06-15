@@ -1,20 +1,18 @@
 import { GetCards } from "./Card"
-
-interface PositionsProps {
-  view?: "cards" | "table" | "list"
-}
+import { DisplayContext } from "../../Contexts/Display"
+import { useContext } from "react"
 
 // Container for rows and columns of positions
-export const Positions = (props: PositionsProps) => {
-  const { view } = props
+export const Positions = () => {
+  const { display } = useContext(DisplayContext)
 
-  switch (view) {
+  console.log("Positions display:", display)
+
+  switch (display) {
     case "cards":
       return <GetCards />
     case "table":
       return <>Map of Table rows</>
-    case "list":
-      return <>List</>
     default:
       return <GetCards />
   }

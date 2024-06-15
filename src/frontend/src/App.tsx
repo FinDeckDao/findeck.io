@@ -5,13 +5,16 @@ import { router } from './Routes/index.tsx'
 import { PositionProvider } from "./Contexts/Position"
 import { AssetPairProvider } from "./Contexts/AssetPair"
 import { TradesProvider } from "./Contexts/Trade/index.tsx"
+import { DisplayProvider } from "./Contexts/Display/index.tsx"
 
 const App = () => {
   return (
     <AssetPairProvider>
       <PositionProvider>
         <TradesProvider>
-          <RouterProvider router={router} />
+          <DisplayProvider>
+            <RouterProvider router={router} />
+          </DisplayProvider>
         </TradesProvider>
       </PositionProvider>
     </AssetPairProvider>
