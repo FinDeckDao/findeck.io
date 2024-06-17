@@ -5,6 +5,8 @@ import { PositionContext } from '../../Contexts/Position'
 import { Link } from 'react-router-dom'
 import { TradesContext } from "../../Contexts/Trade"
 import { AssetPairContext } from "../../Contexts/AssetPair"
+import { DeleteButton } from "../Buttons/Delete"
+import { ConfirmDeleteModal } from "./ConfirmDeleteModal"
 
 export const GetPositionCards: FC = () => {
   const { positions } = useContext(PositionContext)
@@ -21,19 +23,25 @@ export const GetPositionCards: FC = () => {
     >
       {
         cleanPositions.map((position, index) => (
-          <PositionCard key={index} {...position} />
+          <PositionCard key={index} position={position} />
         ))
       }
     </div >
   )
 }
 
+interface PositionCardProps {
+  position: Position
+}
+
 // Individual Position Card
-export const PositionCard = (props: Position) => {
-  const { assetPair } = props
+export const PositionCard = (props: PositionCardProps) => {
+  const { position } = props
+  const { assetPair } = position
   const [currentValue, setCurrentValue] = useState<number | null>(null)
-  const { trades } = useContext(TradesContext)
+  const { trades, setTrades } = useContext(TradesContext)
   const { setAssetPair } = useContext(AssetPairContext)
+  const { positions, setPositions } = useContext(PositionContext)
 
   // Guard against null trades.
   // TODO: Handle this in the Position Context when the trade is added to the position.
@@ -115,6 +123,36 @@ export const PositionCard = (props: Position) => {
     return ((currentValue - calcualteCostBasis()) / calcualteCostBasis() * 100).toFixed(2)
   }
 
+  // const auth = useContext(AuthContext)
+  const deleteConfirmationModalRef = useRef<HTMLDialogElement>(null)
+
+  const openDeleteConfirmationModal = () => {
+    deleteConfirmationModalRef.current?.showModal()
+  }
+
+  const deletePosition = (p: Position) => {
+    // Filter out the position to delete.
+    const updatedPositions = positions.filter((position) => {
+      return position !== p
+    })
+
+    // Update the position context.
+    if (setPositions && updatedPositions) {
+      setPositions([...updatedPositions])
+    }
+
+    // Filter out the trades for the position to delete.
+    const updatedTrades = trades.filter((trade) => {
+      return trade.assetPair.base.symbol !== p.assetPair.base.symbol
+        && trade.assetPair.quote.symbol !== p.assetPair.quote.symbol
+    })
+    // Update the trade context.
+    if (setTrades && updatedTrades) {
+      setTrades([...updatedTrades])
+    }
+
+  }
+
   return (
     <div className="bg-slate-800 shadow-xl rounded-xl">
       <div className="card-body">
@@ -133,33 +171,38 @@ export const PositionCard = (props: Position) => {
           />
         </label>
         <p className="text-left mb-0">
-          <span className="font-bold">Current ROI:</span>
+          <span className="font-bold">Current ROI: </span>
           {currentValue
             ? `${calculateRoi(currentValue)}%`
             : `enter current value of ${assetPair.base.symbol} to calculate`}
         </p>
         <p className="text-left mb-0">
-          <span className="font-bold">Current Position Value:</span>
+          <span className="font-bold">Current Position Value: </span>
           {currentValue
             ? `${(getAssetsHeld() * currentValue).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`
             : `enter current value of ${assetPair.base.symbol} to calculate`}
         </p>
-
         <div className="card-actions justify-end">
-          <button className="btn btn-primary mr-4 btn-outline uppercase" onClick={openOptionsModal}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-            Options
-          </button>
-          <Link to={'/trades'} className="btn btn-primary btn-outline uppercase" onClick={setPair}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
-            </svg>
-            Trades
-          </Link>
+          <div className="flex justify-between w-full">
+            <DeleteButton onClick={openDeleteConfirmationModal} />
+            <div>
+              <button className="btn btn-primary btn-outline uppercase" onClick={openOptionsModal}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                Options
+              </button>
+              <Link to={'/trades'} className="btn btn-primary btn-outline uppercase" onClick={setPair}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+                </svg>
+                Trades
+              </Link>
+            </div>
+          </div>
         </div>
         <OptionsModal modalRef={optionModalRef} />
+        <ConfirmDeleteModal modalRef={deleteConfirmationModalRef} deleteAction={() => deletePosition(position)} />
       </div>
     </div>
   )

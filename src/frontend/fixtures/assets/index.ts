@@ -85,16 +85,23 @@ export const Wtk: Asset = {
   name: 'WadsPay'
 }
 
+export const Xlm: Asset = {
+  network: Stellar,
+  symbol: Stellar.nativeAsset,
+  name: Stellar.name
+}
+
 export const SupportedAssets = [
+  Avax,
+  Btc,
+  Eth,
+  Icp,
+  Shx,
+  Sol,
   Usd,
   Usdc,
-  Icp,
   Velo,
-  Shx,
   Wtk,
-  Xrp,
-  Eth,
-  Btc,
-  Avax,
-  Sol
+  Xlm,
+  Xrp
 ]

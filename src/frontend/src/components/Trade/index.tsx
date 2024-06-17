@@ -3,6 +3,7 @@ import { Trade } from "../../Contexts/Trade"
 import { Md5 } from "ts-md5"
 import { TradesContext } from "../../Contexts/Trade"
 import { AssetPair } from "../../Contexts/AssetPair"
+import { TrashIcon } from "@heroicons/react/24/outline"
 
 interface TradeTableProps {
   assetPair: AssetPair
@@ -79,8 +80,9 @@ export const TradesTable: FC<TradeTableProps> = (props) => {
                       <td className="whitespace-nowrap px-3 py-4 text-sm">{trade.assetPair.base.symbol}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">{trade.assetPair.quote.symbol}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
-                        <button className='btn btn-primary bg-slate-800 btn-outline uppercase'
+                        <button className="btn btn-warning btn-outline uppercase"
                           onClick={() => deleteTrade(trade)}>
+                          <TrashIcon className="h-6 w-6 inline" />
                           Delete
                         </button>
                       </td>

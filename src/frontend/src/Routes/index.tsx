@@ -11,7 +11,8 @@ import { ProtectedContent } from "../Components/Auth/index.tsx"
 import {
   //RectangleGroupIcon,
   MapPinIcon,
-  HomeIcon
+  HomeIcon,
+  ArrowsRightLeftIcon,
 } from "@heroicons/react/24/outline"
 import { TradesScreen } from '../Screens/Trades'
 
@@ -32,6 +33,7 @@ export const navigation: NavigationItem[] = [
   // {
   //   name: 'Resources', href: '/resources'
   // },
+  { name: 'Trades', href: '/trades', icon: <ArrowsRightLeftIcon className="h-6 w-6 inline" /> },
 ]
 
 export const router = createBrowserRouter([
