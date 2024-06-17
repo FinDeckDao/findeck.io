@@ -16,8 +16,8 @@ export const GetPositionCards: FC = () => {
 
   return (
     <div className={
-      `grid grid-cols-1 gap-4 
-      ${count >= 3 ? 'lg:grid-cols-3' : null} 
+      `grid grid-cols-1 gap-4
+      ${count >= 3 ? 'lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1' : null} 
       ${count === 2 ? 'lg:grid-cols-2' : null} 
       ${count === 1 ? 'lg:grid-cols-1' : null}`}
     >
@@ -115,12 +115,12 @@ export const PositionCard = (props: PositionCardProps) => {
     }
   }
 
-  const calcualteCostBasis = () => {
+  const calculateCostBasis = () => {
     return getTotalInvested() / getAssetsHeld()
   }
 
   const calculateRoi = (currentValue: number) => {
-    return ((currentValue - calcualteCostBasis()) / calcualteCostBasis() * 100).toFixed(2)
+    return ((currentValue - calculateCostBasis()) / calculateCostBasis() * 100).toFixed(2)
   }
 
   // const auth = useContext(AuthContext)
@@ -155,11 +155,11 @@ export const PositionCard = (props: PositionCardProps) => {
 
   return (
     <div className="bg-slate-800 shadow-xl rounded-xl">
-      <div className="card-body">
+      <div className="card-body p-4">
         <h2 className="card-title">{assetPair.base.symbol}/{assetPair.quote.symbol}</h2>
         <p className="text-left mb-0"><span className="font-bold">Total Assets Held:</span> {getAssetsHeld().toLocaleString("en-US", { style: "decimal" })} ${assetPair.base.symbol}</p>
         <p className="text-left mb-0"><span className="font-bold">Total At Risk:</span> {getTotalInvested().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}</p>
-        <p className="text-left mb-0"><span className="font-bold">Cost Basis:</span> {calcualteCostBasis().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}</p>
+        <p className="text-left mb-0"><span className="font-bold">Cost Basis:</span> {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}</p>
 
         <label className='label block text-left font-bold'>Current Value of {assetPair.base.symbol}
           <input
@@ -186,7 +186,7 @@ export const PositionCard = (props: PositionCardProps) => {
           <div className="flex justify-between w-full">
             <DeleteButton onClick={openDeleteConfirmationModal} />
             <div>
-              <button className="btn btn-primary btn-outline uppercase" onClick={openOptionsModal}>
+              <button className="btn btn-primary btn-outline uppercase mr-1 mb-2" onClick={openOptionsModal}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>

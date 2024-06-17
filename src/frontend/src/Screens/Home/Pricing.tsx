@@ -26,11 +26,12 @@ const tiers: tier[] = [
     price: { monthly: '$0', annually: '$0' },
     description: 'Free To Use - Forever',
     features: [
-      'Track Unlimited Trades',
-      'Track Unlimited Positions',
+      'Track Thousands of Trades',
+      'Track Thousands of Positions',
       'Data Stored In Your Browser',
-      'Manual Backups',
-      'Manual Price Data Entry',
+      'Manual Position Backups',
+      'Manual Trade Positions',
+      'Automatic Price Data',
       'Share Your Trades'
     ],
     mostPopular: true,
@@ -45,7 +46,8 @@ const tiers: tier[] = [
       'Track Unlimited Trades',
       'Track Unlimited Positions',
       'Data Stored On ICP Network',
-      'Automatic Backups',
+      'Automatic Position Backups',
+      'Automatic Trade Backups',
       'Automatic Price Data',
       'Share Your Trades'
     ],
@@ -61,10 +63,11 @@ const tiers: tier[] = [
       'Track Unlimited Trades',
       'Track Unlimited Positions',
       'Data Stored On ICP Network',
-      'Automatic Backups',
+      'Automatic Position Backups',
+      'Automatic Trade Backups',
       'Automatic Price Data',
       'Share Your Trades',
-      'Half Back In FNDK DAO Tokens',
+      'Half Back In $FNDK DAO Tokens',
     ],
     mostPopular: false,
   }
@@ -134,7 +137,7 @@ export default function Example() {
                   'mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
                 )}
               >
-                Buy plan
+                Start Plan
               </a>
               <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-gray-300 xl:mt-10">
                 {tier.features.map((feature) => (
