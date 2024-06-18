@@ -23,28 +23,55 @@ renewal fees.
 Please setup your environment using
 [these instructions](https://demergent-labs.github.io/azle/get_started.html).
 
-## Starting the App locally.
+## Add DFX Version Manager
 
-### Install the dfx command line tools for managing ICP applications
-
-You may need to restart the terminal after running this command.
+Run this command and follow the prompts.
 
 ```
-DFX_VERSION=0.16.1 sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
+sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 ```
 
-## Start the DFX service locally.
+Be sure to add the environment configuration changes it tells you to.
 
-This starts the primary tool used to create, deploy, and manage dApps on the
-Internet Computer.
+Restart your terminal.
+
+## Confirm DFX Version Manager is working as expected.
+
+Run this command and review the item that is set to default.
+
+```
+dfxvm list
+```
+
+The default should be set to the latest version and look something like this.
+
+```
+% dfxvm list
+0.16.1
+0.18.0
+0.20.1 (default)
+```
+
+If you see this it's setup correctly.
+
+## Start the DFX service locally
+
+Starts the primary tool used to create, deploy, and manage dApps on the Internet
+Computer.
 
 ```
 dfx start --clean --host 127.0.0.1:8000
 ```
 
+Running this will present you with a WebBased Dashboard at a urls that looks
+similar to `http://localhost:52733/_/dashboard`. This is an environment similar
+to the IC but running locally for development purposes.
+
+It's helpful to leave this running while you're doing development work.
+
 ## In a separate terminal in the findeck.io directory
 
-This ensures any app dependencies are installed and then adds the code from this
+Ensures any app dependencies are installed and then adds the code from this
 repository to an ICP canister environment
 ([basically a WASM module](https://internetcomputer.org/docs/current/concepts/canisters-code)).
 
