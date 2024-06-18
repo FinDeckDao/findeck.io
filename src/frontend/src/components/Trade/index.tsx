@@ -1,9 +1,9 @@
 import { useContext, FC } from "react"
-import { Trade } from "../../Contexts/Trade"
 import { Md5 } from "ts-md5"
 import { TradesContext } from "../../Contexts/Trade"
 import { AssetPair } from "../../Contexts/AssetPair"
 import { TrashIcon } from "@heroicons/react/24/outline"
+import { deleteTrade } from "../../Contexts/Trade/helpers"
 
 interface TradeTableProps {
   assetPair: AssetPair
@@ -31,18 +31,6 @@ export const TradesTable: FC<TradeTableProps> = (props) => {
   // Guard for empty trades.
   if (filteredTrades.length === 0) {
     return <div className="text-center">No trades found for {base.symbol}/{quote.symbol}.</div>
-  }
-
-  const deleteTrade = (t: Trade) => {
-    // Filter out the trade to delete.
-    const updatedTrades = trades.filter((trade) => {
-      return trade !== t
-    })
-
-    // Update the trades context.
-    if (setTrades && updatedTrades) {
-      setTrades([...updatedTrades])
-    }
   }
 
   return (
@@ -81,7 +69,7 @@ export const TradesTable: FC<TradeTableProps> = (props) => {
                       <td className="whitespace-nowrap px-3 py-4 text-sm">{trade.assetPair.quote.symbol}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
                         <button className="btn btn-warning btn-outline uppercase"
-                          onClick={() => deleteTrade(trade)}>
+                          onClick={() => deleteTrade({ trade, trades, setter: setTrades })}>
                           <TrashIcon className="h-6 w-6 inline" />
                           Delete
                         </button>

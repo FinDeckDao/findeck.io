@@ -7,6 +7,8 @@ import { AssetPair } from "../../Contexts/AssetPair"
 export interface Position {
   assetPair: AssetPair
   owner: string
+  price?: number
+  priceDate?: string
 }
 
 // Define the context type for the Position Context.

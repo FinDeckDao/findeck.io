@@ -1,4 +1,4 @@
-import { useRef, useState, useContext, FC } from "react"
+import { useRef, useState, useContext, FC, useEffect } from "react"
 import { Position } from "../../Contexts/Position"
 import { OptionsModal } from "./OptionsModal"
 import { PositionContext } from '../../Contexts/Position'
@@ -7,6 +7,7 @@ import { TradesContext } from "../../Contexts/Trade"
 import { AssetPairContext } from "../../Contexts/AssetPair"
 import { DeleteButton } from "../Buttons/Delete"
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal"
+import { deletePosition } from "../../Contexts/Position/helpers"
 
 export const GetPositionCards: FC = () => {
   const { positions } = useContext(PositionContext)
@@ -130,28 +131,22 @@ export const PositionCard = (props: PositionCardProps) => {
     deleteConfirmationModalRef.current?.showModal()
   }
 
-  const deletePosition = (p: Position) => {
-    // Filter out the position to delete.
-    const updatedPositions = positions.filter((position) => {
-      return position !== p
-    })
+  // Handle fetching the current value of the asset from the API.
+  useEffect(() => {
+    console.log("Position Price: ", position.price)
+    console.log("Position Price Date: ", position.priceDate)
+    // First thing we'll do is check for a cached price stored in the position.
 
-    // Update the position context.
-    if (setPositions && updatedPositions) {
-      setPositions([...updatedPositions])
-    }
 
-    // Filter out the trades for the position to delete.
-    const updatedTrades = trades.filter((trade) => {
-      return trade.assetPair.base.symbol !== p.assetPair.base.symbol
-        && trade.assetPair.quote.symbol !== p.assetPair.quote.symbol
-    })
-    // Update the trade context.
-    if (setTrades && updatedTrades) {
-      setTrades([...updatedTrades])
-    }
+    // If we don't have a cached price, we'll fetch the current price from the coinpaprika api.
+    // fetch(`https://api.coinpaprika.com/v1/tickers/${assetPair.base.id}`)
+    // .then((response) => response.json())
+    // .then((data) => {
+    //   setCurrentValue(data.quotes.USD.price)
+    // })
 
-  }
+    // fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${assetPair.base.id}&vs_currencies=usd`)
+  }, [])
 
   return (
     <div className="bg-slate-800 shadow-xl rounded-xl">
@@ -202,7 +197,12 @@ export const PositionCard = (props: PositionCardProps) => {
           </div>
         </div>
         <OptionsModal modalRef={optionModalRef} />
-        <ConfirmDeleteModal modalRef={deleteConfirmationModalRef} deleteAction={() => deletePosition(position)} />
+        <ConfirmDeleteModal
+          modalRef={deleteConfirmationModalRef}
+          deleteAction={() => deletePosition(
+            { positions, position, setter: setPositions, trades, tradeSetter: setTrades }
+          )}
+        />
       </div>
     </div>
   )
