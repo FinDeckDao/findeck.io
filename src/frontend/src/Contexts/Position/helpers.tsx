@@ -41,3 +41,30 @@ export const deletePosition = (props: DeletePositionProps) => {
 
   // TODO: For paid customers, add an additional layer to store this data on the ICP network.
 }
+
+interface UpdatePositionProps {
+  positions: Position[],
+  position: Position,
+  setter: Dispatch<SetStateAction<Position[]>> | null
+}
+
+// Handles the details related to the update of a Position.
+// Note this is primarily used when the price data for the position is being updated.
+export const updatePosition = (props: UpdatePositionProps) => {
+  const { position, positions, setter } = props
+
+  // Filter out the position that needs to deleted.
+  const updatedPositions = positions.filter((p) => {
+    return position.assetPair.base.symbol !== p.assetPair.base.symbol
+      && position.assetPair.quote.symbol !== p.assetPair.quote.symbol
+      && position.owner !== p.owner
+  })
+
+  // Update the trades context.
+  if (setter && updatedPositions) {
+    setter([...updatedPositions, position])
+  }
+
+  // Update the local storage.
+  localStorage.setItem('positions', JSON.stringify(updatedPositions))
+}

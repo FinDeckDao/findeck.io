@@ -7,7 +7,7 @@ import { TradesContext } from "../../Contexts/Trade"
 import { AssetPairContext } from "../../Contexts/AssetPair"
 import { DeleteButton } from "../Buttons/Delete"
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal"
-import { deletePosition } from "../../Contexts/Position/helpers"
+import { deletePosition, updatePosition } from "../../Contexts/Position/helpers"
 
 export const GetPositionCards: FC = () => {
   const { positions } = useContext(PositionContext)
@@ -133,19 +133,45 @@ export const PositionCard = (props: PositionCardProps) => {
 
   // Handle fetching the current value of the asset from the API.
   useEffect(() => {
-    console.log("Position Price: ", position.price)
-    console.log("Position Price Date: ", position.priceDate)
-    // First thing we'll do is check for a cached price stored in the position.
+    // Handles the updating of the position price data.
+    // Define header for the fetch request.
+    const headers = new Headers()
+    headers.append('X-CMC_PRO_API_KEY', 'de24431a-dbd0-4b91-8eef-221a85004add')
 
+    const updatePriceData = () => {
+      fetch(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${assetPair.base.symbol}`, { headers })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+          const newPosition = {
+            ...position,
+            price: data.quotes.USD.price,
+            priceDate: new Date().toISOString()
+          }
+          updatePosition({ positions, position: newPosition, setter: setPositions })
+        }).catch((error) => {
+          // TODO: Handle this error more gracefully (present something to the user).
+          console.error(error)
+        })
+    }
 
-    // If we don't have a cached price, we'll fetch the current price from the coinpaprika api.
-    // fetch(`https://api.coinpaprika.com/v1/tickers/${assetPair.base.id}`)
-    // .then((response) => response.json())
-    // .then((data) => {
-    //   setCurrentValue(data.quotes.USD.price)
-    // })
+    // If there is no price data, we'll fetch the current price from the coinpaprika api.
+    if (!position.price && !position.priceDate) {
+      updatePriceData()
+    }
 
-    // fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${assetPair.base.id}&vs_currencies=usd`)
+    // If there is price data, we'll only update it if it's more than an hour old.
+    if (position.price && position.priceDate) {
+      // If the price is more than 1 hours old, we'll use the cached price.
+      const priceDate = new Date(position.priceDate)
+      const currentDate = new Date()
+
+      // If the price is more than 1 hour old, we'll use the cached price.
+      if (currentDate.getTime() - priceDate.getTime() > 3600000) {
+        // If we don't have a cached price, we'll fetch the current price from the coinpaprika api.
+        updatePriceData()
+      }
+    }
   }, [])
 
   return (
