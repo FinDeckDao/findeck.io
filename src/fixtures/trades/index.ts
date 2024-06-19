@@ -1,5 +1,5 @@
 import { Icp, Usd, Usdc, Velo } from '../assets'
-import { Trade } from '../../../frontend/src/Contexts/Trade'
+import { Trade } from '../../frontend/src/Contexts/Trade'
 
 export const trades: Trade[] = [
   {

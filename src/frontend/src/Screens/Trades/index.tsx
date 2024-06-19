@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react'
 import { AssetSelector } from '../../Components/AssetSelector'
 import { AssetPairContext } from '../../Contexts/AssetPair'
-import { SupportedAssets } from '../../../fixtures/assets'
+import { SupportedAssets } from '../../../../fixtures/assets'
 import { TradesTable } from '../../Components/Trade'
 
 // This component displays the trades screen.

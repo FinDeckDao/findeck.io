@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react'
 import { XCircleIcon, CheckCircleIcon } from "@heroicons/react/24/outline"
-import { SupportedAssets } from '../../../fixtures/assets'
+import { SupportedAssets } from '../../../../fixtures/assets'
 import { AuthContext } from '../../Contexts/Auth'
 import { Position, PositionContext } from '../../Contexts/Position'
 import { AssetSelector } from '../AssetSelector'

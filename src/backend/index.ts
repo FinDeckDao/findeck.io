@@ -1,26 +1,15 @@
-import { Server } from 'azle';
-import express, { Request } from 'express';
-
-let db = {
-    hello: ''
-};
+import { Server } from 'azle'
+import express from 'express'
+import { home } from './route-handlers'
 
 export default Server(() => {
-    const app = express();
+  const app = express()
 
-    app.use(express.json());
+  app.use(express.json())
 
-    app.get('/db', (req, res) => {
-        res.json(db);
-    });
+  app.get('/', home)
 
-    app.post('/db/update', (req: Request<any, any, typeof db>, res) => {
-        db = req.body;
+  app.use(express.static('/dist'))
 
-        res.json(db);
-    });
-
-    app.use(express.static('/dist'));
-
-    return app.listen();
-});
+  return app.listen()
+})
