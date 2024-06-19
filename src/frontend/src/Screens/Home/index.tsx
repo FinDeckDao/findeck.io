@@ -63,7 +63,7 @@ export const Home = () => {
         </div>
       </div>
 
-      <h2>Pricing</h2>
+      <h2>Pricing?</h2>
       <Example />
     </div >
   )

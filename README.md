@@ -54,6 +54,16 @@ The default should be set to the latest version and look something like this.
 
 If you see this it's setup correctly.
 
+## Install Podman
+
+Run this command to install podman and the desktop manager (which is an
+environmental dependency for dfx builds).
+
+```
+brew install podman
+brew install podman-desktop
+```
+
 ## Start the DFX service locally
 
 Starts the primary tool used to create, deploy, and manage dApps on the Internet
@@ -63,9 +73,12 @@ Computer.
 dfx start --clean --host 127.0.0.1:8000
 ```
 
-Running this will present you with a WebBased Dashboard at a urls that looks
-similar to `http://localhost:52733/_/dashboard`. This is an environment similar
-to the IC but running locally for development purposes.
+Running this will present you with a WebBased Dashboard at a url (likely with a
+different port number) that looks similar to
+`http://localhost:52733/_/dashboard`. This is an environment similar to the IC
+but running locally for development purposes.
+
+Using this you can see data related to the canisters deployed.
 
 It's helpful to leave this running while you're doing development work.
 
@@ -77,6 +90,8 @@ repository to an ICP canister environment
 
 ```
 npm install
+dfx canister create install-dfx-extension
+npx azle install-dfx-extension
 npm run deploy:local
 ```
 
