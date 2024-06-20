@@ -1,6 +1,6 @@
 import { Server } from 'azle'
 import express, { Request, Response } from 'express'
-import apiRouter from './routes/api'
+import { router } from './routes/api'
 
 export default Server(() => {
   const app = express()
@@ -8,14 +8,10 @@ export default Server(() => {
   app.use(express.json())
 
   // Mount the API router at the /v1/ path
-  // app.get('v1/', apiRouter)
+  //  app.use('/v1', router)
 
-  app.get('v1/prices', (_: Request, res: Response) => {
-    res.json({ message: 'prices will come from here just provide the asset' })
-  })
-
-  app.get('v1/test', (req, res) => {
-    res.json({ message: 'test' })
+  app.get('/v1', (_req: Request, res: Response) => {
+    res.json({ message: 'Hello from v1' })
   })
 
   // The home route is handled automatically and serves up a build of the frontend.

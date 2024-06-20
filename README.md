@@ -90,8 +90,8 @@ repository to an ICP canister environment
 
 ```
 npm install
-dfx canister create install-dfx-extension
-npx azle install-dfx-extension
+dfx canister create backend
+npx azle backend
 npm run deploy:local
 ```
 
