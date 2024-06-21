@@ -1,8 +1,17 @@
 import { Router, Request, Response } from 'express'
-
 export const router = Router()
 
-// Example sub routes of v1
+// Returns the latest price for all the cryptocurrencies we track.
 router.get('/prices', (_req: Request, res: Response) => {
-  res.json({ message: 'prices will come from here just provide the asset' })
+  res.json({ prices: 'prices' })
+})
+
+interface PricesParams {
+  id: string
+}
+
+// Takes an optional parameter for the currency symbol
+router.get('/prices/:id', (req: Request<PricesParams>, res: Response) => {
+  const { id } = req.params
+  res.send(`Item ID: ${id}`)
 })

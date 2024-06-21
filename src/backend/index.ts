@@ -1,23 +1,22 @@
-import { Server } from 'azle'
-import express, { Request, Response } from 'express'
-import { router } from './routes/api'
+import express, { Request, Response, NextFunction } from 'express'
+import { router } from './routes/api/index'
 
-export default Server(() => {
-  const app = express()
+const app = express()
 
-  app.use(express.json())
+app.use(express.json())
 
-  // Mount the API router at the /v1/ path
-  //  app.use('/v1', router)
+// This is the API
+app.use('/v1', router)
 
-  app.get('/v1', (_req: Request, res: Response) => {
-    res.json({ message: 'Hello from v1' })
-  })
+// This delivers the frontend
+// The dist folder is provided withing the ICP canister
+// by the dfx.json configuration file.
+app.use(express.static('/dist'))
 
-  // The home route is handled automatically and serves up a build of the frontend.
-  // app.get('/', Don't need this because we are using the frontend build as static files).
-  app.use(express.static('/dist'))
-
-  // Setup the listener
-  return app.listen()
+// This is the catch-all middleware that delivers the frontend.
+// The frontend is a single-page application (SPA) that presents errors to the user.
+app.use((_err: any, _req: Request, res: Response, _next: NextFunction) => {
+  res.status(500).sendFile('/dist/index.html')
 })
+
+app.listen()

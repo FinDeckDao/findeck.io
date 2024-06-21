@@ -1,148 +1,122 @@
-# FinDeckDao
+# Azle Hello World
 
-In its first phase FinDeckDao is a Web3 application that helps to provide trade
-decision support to people who invest in digital assets.
+-   [Installation](#installation)
+-   [Deployment](#deployment)
+-   [Examples](#examples)
 
-FinDeckDao is built on top of the Internet Computer (ICP) and integrates with
-external blockchains like the XRP Ledger Network, Stellar Network, Coreum,
-Casper, XinFin, Avalanche, and others.
+Azle helps you to build secure decentralized/replicated servers in TypeScript or JavaScript on [ICP](https://internetcomputer.org/). The current replication factor is [13-40 times](https://dashboard.internetcomputer.org/subnets).
 
-## Domains
+For more documentation please see [The Azle Book](https://demergent-labs.github.io/azle/).
 
-These domains were purchased for this project with the intention to point these
-toward the dApp hosted on the ICP blockchain.
+Please remember that Azle is in beta and thus it may have unknown security vulnerabilities due to the following:
 
-[FinDeck.Dao](https://ud.me/findeck.dao) was purchased from Unstoppable Domains
-for a one time fee.
+-   Azle is built with various software packages that have not yet reached maturity
+-   Azle does not yet have multiple independent security reviews/audits
+-   Azle does not yet have many live, successful, continuously operating applications deployed to ICP
 
-[FinDeck.io](https://findeck.io) was purchased from NameCheap.com with annual
-renewal fees.
+## Installation
 
-## Getting Setup
+> Windows is only supported through a Linux virtual environment of some kind, such as [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
 
-Please setup your environment using
-[these instructions](https://demergent-labs.github.io/azle/get_started.html).
+On Ubuntu/WSL:
 
-## Add DFX Version Manager
-
-Run this command and follow the prompts.
-
-```
-sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+```bash
+sudo apt-get install podman
 ```
 
-Be sure to add the environment configuration changes it tells you to.
+On Mac:
 
-Restart your terminal.
-
-## Confirm DFX Version Manager is working as expected.
-
-Run this command and review the item that is set to default.
-
-```
-dfxvm list
-```
-
-The default should be set to the latest version and look something like this.
-
-```
-% dfxvm list
-0.16.1
-0.18.0
-0.20.1 (default)
-```
-
-If you see this it's setup correctly.
-
-## Install Podman
-
-Run this command to install podman and the desktop manager (which is an
-environmental dependency for dfx builds).
-
-```
+```bash
 brew install podman
-brew install podman-desktop
 ```
 
-## Start the DFX service locally
+It's recommended to use nvm and Node.js 20:
 
-Starts the primary tool used to create, deploy, and manage dApps on the Internet
-Computer.
-
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 ```
+
+Restart your terminal and then run:
+
+```bash
+nvm install 20
+```
+
+Check that the installation went smoothly by looking for clean output from the following command:
+
+```bash
+node --version
+```
+
+Install the dfx command line tools for managing ICP applications:
+
+```bash
+DFX_VERSION=0.20.1 sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
+```
+
+Check that the installation went smoothly by looking for clean output from the following command:
+
+```bash
+dfx --version
+```
+
+If after trying to run `dfx --version` you encounter an error such as `dfx: command not found`, you might need to add `$HOME/bin` to your path. Here's an example of doing this in your `.bashrc`:
+
+```bash
+echo 'export PATH="$PATH:$HOME/bin"' >> "$HOME/.bashrc"
+```
+
+## Deployment
+
+```bash
+npx azle new hello_world
+cd hello_world
+
+npm install
+
+npx azle install-dfx-extension
+
 dfx start --clean --host 127.0.0.1:8000
 ```
 
-Running this will present you with a WebBased Dashboard at a url (likely with a
-different port number) that looks similar to
-`http://localhost:52733/_/dashboard`. This is an environment similar to the IC
-but running locally for development purposes.
+In a separate terminal in the `hello_world` directory:
 
-Using this you can see data related to the canisters deployed.
-
-It's helpful to leave this running while you're doing development work.
-
-## In a separate terminal in the findeck.io directory
-
-Ensures any app dependencies are installed and then adds the code from this
-repository to an ICP canister environment
-([basically a WASM module](https://internetcomputer.org/docs/current/concepts/canisters-code)).
-
-```
-npm install
-dfx canister create backend
-npx azle backend
-npm run deploy:local
+```bash
+dfx deploy
 ```
 
-## If you have problems deploying
+If you are building an HTTP-based canister and would like your canister to autoreload on file changes (DO NOT deploy to mainnet with autoreload enabled):
 
-Please see this document on
-[azle deployment issues](https://demergent-labs.github.io/azle/deployment.html#common-deployment-issues).
-
-## Obtain your application's [canisterId]
-
+```bash
+AZLE_AUTORELOAD=true dfx deploy
 ```
+
+If you have problems deploying see [Common deployment issues](https://demergent-labs.github.io/azle/deployment.html#common-deployment-issues).
+
+View your frontend in a web browser at `http://[canisterId].localhost:8000`.
+
+To obtain your application's [canisterId]:
+
+```bash
 dfx canister id backend
 ```
 
-## Understanding the Frontend
+Communicate with your canister using any HTTP client library, for example using `curl`:
 
-The frontend can be viewed in a web browser at
-http://[canisterId].localhost:8000. It's worth noting that the front end UI is
-just a set of assets to the dApp that gets delivered when the backend is called.
-
-This works more like a classic monolithic application where all the code is
-being delivered from one server (canister in this case) instead of something
-that looks more modern (but not necessarily better) where a serverless function
-(for secure runtime logic) might work in conjunction with object hosting for
-user facing asset delivery.
-
-## Communicate with your canister using any HTTP client library
-
-```
+```bash
 curl http://[canisterId].localhost:8000/db
 curl -X POST -H "Content-Type: application/json" -d "{ \"hello\": \"world\" }" http://[canisterId].localhost:8000/db/update
 ```
 
-## Developer Notes
+## Examples
 
-The Positions are handled with 3 layers. TODO: Make these into 3 reusable
-packages.
+There are many Azle examples in the [examples directory](https://github.com/demergent-labs/azle/tree/main/examples). We recommend starting with the following:
 
-1. The Component Layer that reads or mutates the Positions.
-2. The Context Layer where the Positions are being used in the runtime app.
-   1. Retrieves from cache if something is cached.
-   2. Sets and empty default state of there is no cache.
-   3. Writes updates to the cache.
-   4. Exports read and mutate functions.
-   5. Prevents null entries from being added to or removed from the state.
-   6. Orchestrates between Cache Layer and Persistence Layer for Setting and
-      Getting Events.
-3. The Cache Layer where the Positions are stored in local storage.
-   1. Export data quickly for the user to backup their position data.
-   2. Import data quickly for the user to restore their browser position data
-      from a previous backup.
-4. The Persistence Layer where the Positions are stored in the database.
-   1. This feature is only available to paying customers.
-   2. Is responsible for understanding
+-   [apollo_server](https://github.com/demergent-labs/azle/tree/main/examples/apollo_server)
+-   [ethers](https://github.com/demergent-labs/azle/tree/main/examples/ethers)
+-   [express](https://github.com/demergent-labs/azle/tree/main/examples/express)
+-   [fs](https://github.com/demergent-labs/azle/tree/main/examples/fs)
+-   [hello_world](https://github.com/demergent-labs/azle/tree/main/examples/hello_world)
+-   [ic_evm_rpc](https://github.com/demergent-labs/azle/tree/main/examples/ic_evm_rpc)
+-   [sqlite](https://github.com/demergent-labs/azle/tree/main/examples/sqlite)
+-   [web_assembly](https://github.com/demergent-labs/azle/tree/main/examples/web_assembly)

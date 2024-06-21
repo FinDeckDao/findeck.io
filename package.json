@@ -1,24 +1,20 @@
 {
-  "name": "FinDeck.io",
-  "version": "0.0.1",
-  "description": "Contains Internet Computer canister code for FinDeck.io | A FinDeckDao Project",
   "scripts": {
     "build": "cd src/frontend && VITE_CANISTER_ORIGIN=http://$(dfx canister id backend).localhost:8000 vite build",
-    "deploy:local": "AZLE_AUTORELOAD=true dfx deploy",
+    "dev:backend": "AZLE_AUTORELOAD=true dfx deploy",
+    "dev:frontend": "cd src/frontend && VITE_CANISTER_ORIGIN=http://$(dfx canister id backend).localhost:8000 vite",
     "dfx": "dfx start --clean --host 127.0.0.1:8000",
     "pretest": "ts-node --transpile-only --ignore=false --skip-project test/pretest.ts",
-    "dev": "cd src/frontend && VITE_CANISTER_ORIGIN=http://$(dfx canister id backend).localhost:8000 vite",
     "test": "ts-node --transpile-only --ignore=false --skip-project test/test.ts"
   },
   "dependencies": {
-    "@dfinity/auth-client": "^1.2.0",
-    "azle": "0.20.0",
+    "azle": "^0.22.0",
     "express": "^4.18.2",
     "lit": "^3.1.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
-    "@types/node": "^20.14.5",
+    "@types/node": "^20.14.6",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.12"
