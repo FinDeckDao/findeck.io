@@ -16,7 +16,7 @@ app.use(express.static('/dist'))
 // This is the catch-all middleware that delivers the frontend.
 // The frontend is a single-page application (SPA) that presents errors to the user.
 app.use((_err: any, _req: Request, res: Response, _next: NextFunction) => {
-  res.status(500).sendFile('/dist/index.html')
+  res.status(200).sendFile('/dist/index.html')
 })
 
 app.listen()
