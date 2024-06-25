@@ -1,10 +1,15 @@
 {
-    "canisters": {
-        "backend": {
-            "type": "azle",
-            "main": "src/backend/index.ts",
-            "assets": [["src/frontend/dist", "dist"]],
-            "build_assets": "npm run build"
-        }
+  "canisters": {
+    "backend": {
+      "type": "azle",
+      "main": "src/backend/index.ts",
+      "assets": [["src/frontend/dist", "dist"]],
+      "build_assets": "npm run build"
     }
+  },
+  "networks": {
+    "ic": {
+      "providers": ["https://ic0.app", "https://mainnet.dfinity.network"]
+    }
+  }
 }

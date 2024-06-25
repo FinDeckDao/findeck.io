@@ -1,0 +1,3 @@
+service : {
+  getExchangeRate: (record { base: text; quote: text }) -> (record { rate: float64 }) query;
+}
