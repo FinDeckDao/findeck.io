@@ -40,7 +40,7 @@ const tiers: tier[] = [
     name: 'Profit Trader',
     id: 'tier-paid',
     href: '#',
-    price: { monthly: '$10', annually: '$100' },
+    price: { monthly: '$9.99', annually: '$99.99' },
     description: 'This is helping you make profit',
     features: [
       'Track Unlimited Trades',
@@ -57,7 +57,7 @@ const tiers: tier[] = [
     name: 'Sponsor Trader',
     id: 'tier-sponsor',
     href: '#',
-    price: { monthly: '$20', annually: '$200' },
+    price: { monthly: '$19.99', annually: '$199.99' },
     description: 'You want to own this project',
     features: [
       'Track Unlimited Trades',
@@ -77,7 +77,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+export const Pricing = () => {
   const [frequency, setFrequency] = useState(frequencies[0])
 
   return (
@@ -124,8 +124,12 @@ export default function Example() {
               </div>
               <p className="mt-4 text-sm leading-6 text-gray-300">{tier.description}</p>
               <p className="mt-6 flex items-baseline gap-x-1">
-                <span className="text-4xl font-bold tracking-tight text-white">{tier.price[frequency.value as keyof typeof tier.price]}</span>
-                <span className="text-sm font-semibold leading-6 text-gray-300">{frequency.priceSuffix}</span>
+                <span className="text-4xl font-bold tracking-tight text-white">
+                  {tier.price[frequency.value as keyof typeof tier.price]}
+                </span>
+                <span className="text-sm font-semibold leading-6 text-gray-300">
+                  {frequency.priceSuffix}
+                </span>
               </p>
               <a
                 href={tier.href}
@@ -136,6 +140,7 @@ export default function Example() {
                     : 'bg-white/10 text-white hover:bg-white/20 focus-visible:outline-white',
                   'mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
                 )}
+                onClick={() => { alert('We are not accepting payments yet. To use the free version just login into the IC using your Internet Identity (button at top right).') }}
               >
                 Start Plan
               </a>
@@ -154,3 +159,5 @@ export default function Example() {
     </div>
   )
 }
+
+export default Pricing

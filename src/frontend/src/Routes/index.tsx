@@ -3,7 +3,8 @@ import {
 } from "react-router-dom"
 import { DefaultLayout } from '../Layout/index.tsx'
 import { ErrorPage } from '../Routes/ErrorPage.tsx'
-import { Home } from '../Screens/Home'
+// import { Home } from '../Screens/Home'
+import { ComingSoon } from '../Screens/Home/ComingSoon'
 import { DashboardScreen } from "../Screens/Dashboard"
 import { PositionsScreen } from "../Screens/Positions"
 import { ResourcesScreen } from "../Screens/Resources"
@@ -41,7 +42,7 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <DefaultLayout>
-        <Home />
+        <ComingSoon />
       </DefaultLayout>
     ),
     errorElement: <ErrorPage />

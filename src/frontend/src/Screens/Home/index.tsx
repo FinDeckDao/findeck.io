@@ -49,7 +49,7 @@ export const Home = () => {
       </div>
 
 
-      <div className="rounded-3xl bg-slate-800 p-4 mb-4">
+      <div className="rounded-3xl bg-slate-00 p-4 mb-4">
         <h3>Overwhelmed because you have too many trades open</h3>
         <div className="text-left mb-10">
           <p>
