@@ -24,6 +24,18 @@ export const ComingSoon = () => {
           Alex and Jay Podcast on YouTube
         </a>
       </div >
+      <h2>Podcast Episode 1 - Explains the goals of this dApp.</h2>
+      <div className="aspect-w-16 aspect-h-9 w-full">
+        <iframe
+          className="mx-auto my-auto mb-8"
+          width="420"
+          height='236'
+          src="https://www.youtube.com/embed/yHnque24WHc?si=G6ShcswkkJfHSfQY"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        >
+        </iframe>
+      </div>
       <Pricing />
     </div >
   )
