@@ -1,12 +1,18 @@
 {
   "scripts": {
     "build": "cd src/frontend && VITE_CANISTER_ORIGIN=http://$(dfx canister id backend).localhost:8000 vite build",
+    "deploy": "dfx deploy --ic",
     "dev:backend": "AZLE_AUTORELOAD=true dfx deploy",
     "dev:frontend": "cd src/frontend && VITE_CANISTER_ORIGIN=http://$(dfx canister id backend).localhost:8000 vite",
     "dfx": "dfx start --clean --host 127.0.0.1:8000",
+    "overwrite:ic": "dfx canister install --mode reinstall backend --ic",
     "pretest": "ts-node --transpile-only --ignore=false --skip-project test/pretest.ts",
+    "start:ic": "dfx canister start --identity $(dfx identity whoami) --all --ic",
+    "start:local": "dfx canister start --identity $(dfx identity whoami) --all",
+    "stop:ic": "dfx canister stop --identity $(dfx identity whoami) --all --ic",
+    "stop:local": "dfx canister stop --identity $(dfx identity whoami) --all",
     "test": "ts-node --transpile-only --ignore=false --skip-project test/test.ts",
-    "deploy": "dfx deploy --ic"
+    "upgrade:ic": "dfx canister install --mode upgrade backend --ic"
   },
   "dependencies": {
     "azle": "^0.22.0",
