@@ -18,6 +18,7 @@ app.use(
   '/.well-known/ic-domains',
   express.static('/dist/.well-known/ic-domains')
 )
+// Not sure if this is required but leaving it here for now.
 app.use('/.ic-assets.json', express.static('/dist/.ic-assets.json'))
 
 // This is the catch-all middleware that delivers the frontend.
