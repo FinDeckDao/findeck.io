@@ -1,6 +1,6 @@
 [
   {
-    "match": ".well-known",
+    "match": "**/*",
     "ignore": false
   }
 ]
