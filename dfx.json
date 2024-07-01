@@ -1,13 +1,40 @@
 {
   "canisters": {
     "backend": {
-      "type": "azle",
-      "main": "src/backend/index.ts",
-      "assets": [["src/frontend/dist", "dist"]],
-      "build_assets": "npm run build:frontend",
-      "candid": "src/backend/backend.did"
+      "main": "src/backend/main.mo",
+      "type": "motoko"
+    },
+    "frontend": {
+      "dependencies": ["backend"],
+      "source": ["src/frontend/dist"],
+      "type": "assets",
+      "workspace": "frontend"
+    },
+    "internet_identity": {
+      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "frontend": {},
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "type": "custom",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     }
   },
+  "defaults": {
+    "bitcoin": {
+      "enabled": true,
+      "log_level": "info",
+      "nodes": ["127.0.0.1:18444"]
+    },
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1,
   "networks": {
     "ic": {
       "providers": ["https://ic0.app", "https://mainnet.dfinity.network"]

@@ -1,36 +1,24 @@
 {
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "name": "findeck.io",
   "scripts": {
-    "build:backend:ic": "dfx build backend --ic",
-    "build:backend": "dfx build backend",
-    "build:frontend": "cd src/frontend && VITE_CANISTER_ORIGIN=http://$(dfx canister id backend).localhost:8000 vite build",
-    "create:local": "dfx canister create backend",
-    "deploy:ic": "dfx deploy backend --ic",
-    "dev:backend": "AZLE_AUTORELOAD=true dfx deploy",
-    "dev:frontend": "cd src/frontend && VITE_CANISTER_ORIGIN=http://$(dfx canister id backend).localhost:8000 vite",
+    "build": "npm run build --workspaces --if-present",
+    "deploy": "dfx deploy",
+    "deploy:ic": "dfx deploy --ic",
+    "dev": "npm run dev --workspaces --if-present",
     "dfx": "dfx start --clean --host 127.0.0.1:8000",
-    "overwrite:ic": "dfx canister install --mode reinstall backend --ic",
-    "overwrite:local": "dfx canister install --mode reinstall backend --ic",
-    "preoverwrite:ic": "npm run build:frontend && npm run build:backend:ic",
-    "pretest": "ts-node --transpile-only --ignore=false --skip-project test/pretest.ts",
-    "preupgrade:ic": "npm run build:frontend && npm run build:backend:ic",
-    "start:ic": "dfx canister start --identity $(dfx identity whoami) --all --ic",
-    "start:local": "dfx canister start --identity $(dfx identity whoami) --all",
-    "stop:ic": "dfx canister stop --identity $(dfx identity whoami) --all --ic",
-    "stop:local": "dfx canister stop --identity $(dfx identity whoami) --all",
-    "test": "ts-node --transpile-only --ignore=false --skip-project test/test.ts",
-    "upgrade:ic": "dfx canister install --mode upgrade backend --ic",
-    "upgrade:local": "dfx canister install --mode upgrade backend"
+    "prebuild": "npm run prebuild --workspaces --if-present",
+    "pretest": "npm run prebuild --workspaces --if-present",
+    "start": "npm start --workspaces --if-present",
+    "test": "npm test --workspaces --if-present",
+    "preupdate": "dfx generate",
+    "update": "dfx deploy frontend --mode=reinstall --yes"
   },
-  "dependencies": {
-    "azle": "^0.22.0",
-    "express": "^4.18.2",
-    "lit": "^3.1.2"
-  },
-  "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.14.6",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.12"
-  }
+  "type": "module",
+  "workspaces": [
+    "src/frontend"
+  ]
 }

@@ -1,5 +1,25 @@
-node_modules/
-docs/diagrams/.$Account Deposits.drawio.bkp
+# Various IDEs and Editors
+.vscode/
+.idea/
+**/*~
+
+# Mac OSX temporary files
 .DS_Store
-.azle/
+**/.DS_Store
+
+# dfx temporary files
 .dfx/
+
+# generated files
+**/declarations/
+
+# rust
+target/
+
+# frontend code
+node_modules/
+dist/
+.svelte-kit/
+
+# environment variables
+.env

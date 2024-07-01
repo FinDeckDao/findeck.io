@@ -1,10 +1,14 @@
-import React from 'react'
+import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import './global.css'
-import App from './App.tsx'
+import './Styles/index.css'
+import App from './App'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+// This is the root element that the React app will be mounted to
+const root = document.getElementById('root')
+
+// Render the React app
+ReactDOM.createRoot(root!).render(
+  <StrictMode>
     <App />
-  </React.StrictMode >,
+  </StrictMode >,
 )

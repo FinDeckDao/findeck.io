@@ -1,21 +1,32 @@
 {
-  "name": "trade-support",
+  "name": "frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "tsc && vite build",
+    "dev": "VITE_CANISTER_ORIGIN=http://$(dfx canister id frontend).localhost:8000 vite",
+    "format": "prettier --write \"src/**/*.{json,js,jsx,ts,tsx,css,scss}\"",
+    "generate": "dfx generate",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "prebuild": "npm run generate",
+    "predev": "npm run generate",
+    "prestart": "npm run generate && echo '' && echo Frontend: http://$(dfx canister id frontend).localhost:8000 && echo ''",
+    "preview": "vite preview",
+    "setup": "npm i && dfx canister create backend && dfx generate backend && dfx deploy",
+    "start": "vite --port 3000",
+    "test": "vitest run"
   },
   "dependencies": {
-    "@dfinity/auth-client": "^1.2.0",
+    "@dfinity/agent": "^1.4.0",
+    "@dfinity/auth-client": "^1.4.0",
+    "@dfinity/candid": "^1.4.0",
+    "@dfinity/principal": "^1.4.0",
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.3",
-    "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
+    "react": "^18.2.0",
     "ts-md5": "^1.3.1"
   },
   "devDependencies": {
@@ -23,19 +34,26 @@
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@types/jest": "^29.5.12",
-    "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
+    "@types/react": "^18.2.55",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
+    "cross-fetch": "^3.1.6",
     "daisyui": "^4.10.2",
-    "eslint": "^8.56.0",
+    "dotenv": "^16.3.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "eslint": "^8.56.0",
+    "jsdom": "^22.1.0",
+    "nodemon": "^3.1.4",
     "postcss": "^8.4.38",
+    "sass": "^1.63.6",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.2.2",
-    "vite": "^5.1.0"
+    "vite-plugin-environment": "^1.1.3",
+    "vite": "^5.1.0",
+    "vitest": "^0.32.2"
   }
 }
