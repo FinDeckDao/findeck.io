@@ -12,11 +12,19 @@ export const ComingSoon = () => {
         but we are working on this every day.
       </p>
 
-      <div>
-        <h2>Podcast Episode 1 - Explains the goals of this dApp.</h2>
-        <YouTube src="https://www.youtube.com/embed/yHnque24WHc?si=G6ShcswkkJfHSfQY" />
-        <h2>Podcast Episode 2 - Explains how this dApp informs a trader's decisions.</h2>
-        <YouTube src="https://www.youtube.com/embed/8B3UjcPlndg?si=ts6eI_cFsOdMJkfI" />
+      <div className=" xl:columns-3 lg:columns-1 md:columns-1 sm:columns-1 xs:columns-1">
+        <div className="width-full">
+          <h2>Podcast Episode 1 - Explains the goals of this dApp and why it's being built.</h2>
+          <YouTube src="https://www.youtube.com/embed/yHnque24WHc?si=G6ShcswkkJfHSfQY" />
+        </div>
+        <div className="width-full">
+          <h2>Podcast Episode 2 - Explains how this dApp informs a trader's decisions.</h2>
+          <YouTube src="https://www.youtube.com/embed/8B3UjcPlndg?si=ts6eI_cFsOdMJkfI" />
+        </div>
+        <div className="width-full">
+          <h2>Podcast Episode 3  - Explains the math behind the features being build in this dApp.</h2>
+          <YouTube src="https://www.youtube.com/embed/FpXCyenlE4A?si=NjMEm4Pk8JOSGlIt" />
+        </div>
       </div>
 
       <div className="mb-8 text-center">

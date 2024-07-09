@@ -16,7 +16,7 @@
     "start": "npm start --workspaces --if-present",
     "test": "npm test --workspaces --if-present",
     "preupdate": "dfx generate",
-    "update": "dfx deploy frontend --mode=reinstall --yes"
+    "update:frontend": "dfx deploy frontend --mode=reinstall --yes"
   },
   "type": "module",
   "workspaces": [
