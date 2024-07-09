@@ -2,13 +2,24 @@
   "canisters": {
     "backend": {
       "main": "src/backend/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "dependencies": ["internet_identity", "xrc"],
+      "remote": {
+        "id": {
+          "ic": "xmbh5-wqaaa-aaaan-qmoyq-cai"
+        }
+      }
     },
     "frontend": {
       "dependencies": ["backend"],
       "source": ["src/frontend/dist"],
       "type": "assets",
-      "workspace": "frontend"
+      "workspace": "frontend",
+      "remote": {
+        "id": {
+          "ic": "xlabj-3iaaa-aaaan-qmoya-cai"
+        }
+      }
     },
     "internet_identity": {
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
@@ -20,17 +31,22 @@
       },
       "type": "custom",
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
-    }
-  },
-  "defaults": {
-    "bitcoin": {
-      "enabled": true,
-      "log_level": "info",
-      "nodes": ["127.0.0.1:18444"]
     },
-    "build": {
-      "args": "",
-      "packtool": ""
+    "xrc_demo": {
+      "main": "src/xrc_demo/src/xrc_demo/main.mo",
+      "type": "motoko",
+      "dependencies": ["xrc"]
+    },
+    "xrc": {
+      "type": "custom",
+      "candid": "src/xrc_demo/xrc/xrc.did",
+      "wasm": "src/xrc_demo/xrc/xrc.wasm.gz",
+      "remote": {
+        "candid": "src/xrc_demo/xrc/xrc.did",
+        "id": {
+          "ic": "uf6dk-hyaaa-aaaaq-qaaaq-cai"
+        }
+      }
     }
   },
   "output_env_file": ".env",
@@ -38,6 +54,13 @@
   "networks": {
     "ic": {
       "providers": ["https://ic0.app", "https://mainnet.dfinity.network"]
+    },
+    "local": {
+      "bind": "127.0.0.1:8080",
+      "type": "ephemeral",
+      "replica": {
+        "subnet_type": "system"
+      }
     }
   }
 }

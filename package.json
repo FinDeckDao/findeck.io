@@ -7,6 +7,7 @@
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "deploy": "dfx deploy",
+    "reinstall:backend": "dfx deploy --mode reinstall backend",
     "deploy:ic": "dfx deploy --ic",
     "dev": "npm run dev --workspaces --if-present",
     "dfx": "dfx start --clean --host 127.0.0.1:8000",

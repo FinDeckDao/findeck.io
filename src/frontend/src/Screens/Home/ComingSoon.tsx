@@ -19,7 +19,7 @@ export const ComingSoon = () => {
         <YouTube src="https://www.youtube.com/embed/8B3UjcPlndg?si=ts6eI_cFsOdMJkfI" />
       </div>
 
-      <div className="text-left mb-8 text-center">
+      <div className="mb-8 text-center">
         <p>
           To stay in touch we have some options, bookmark this site, follow us on Twitter/X, and Subscribe on YouTube.
         </p>
