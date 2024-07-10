@@ -3,23 +3,13 @@
     "backend": {
       "main": "src/backend/main.mo",
       "type": "motoko",
-      "dependencies": ["internet_identity", "xrc"],
-      "remote": {
-        "id": {
-          "ic": "xmbh5-wqaaa-aaaan-qmoyq-cai"
-        }
-      }
+      "dependencies": ["internet_identity", "xrc"]
     },
     "frontend": {
       "dependencies": ["backend"],
       "source": ["src/frontend/dist"],
       "type": "assets",
-      "workspace": "frontend",
-      "remote": {
-        "id": {
-          "ic": "xlabj-3iaaa-aaaan-qmoya-cai"
-        }
-      }
+      "workspace": "frontend"
     },
     "internet_identity": {
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
