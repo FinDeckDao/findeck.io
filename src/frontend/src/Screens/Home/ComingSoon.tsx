@@ -12,7 +12,7 @@ export const ComingSoon = () => {
         but we are working on this every day.
       </p>
 
-      <div className=" xl:columns-3 lg:columns-1 md:columns-1 sm:columns-1 xs:columns-1">
+      <div className=" xl:columns-2 lg:columns-1 md:columns-1 sm:columns-1 xs:columns-1">
         <div className="width-full">
           <h2>Podcast Episode 1 - Explains the goals of this dApp and why it's being built.</h2>
           <YouTube src="https://www.youtube.com/embed/yHnque24WHc?si=G6ShcswkkJfHSfQY" />
@@ -21,9 +21,16 @@ export const ComingSoon = () => {
           <h2>Podcast Episode 2 - Explains how this dApp informs a trader's decisions.</h2>
           <YouTube src="https://www.youtube.com/embed/8B3UjcPlndg?si=ts6eI_cFsOdMJkfI" />
         </div>
+      </div>
+
+      <div className=" xl:columns-2 lg:columns-1 md:columns-1 sm:columns-1 xs:columns-1">
         <div className="width-full">
-          <h2>Podcast Episode 3  - Explains the math behind the features being build in this dApp.</h2>
+          <h2>Podcast Episode 3  - Explains the math behind the features being built into this dApp.</h2>
           <YouTube src="https://www.youtube.com/embed/FpXCyenlE4A?si=NjMEm4Pk8JOSGlIt" />
+        </div>
+        <div className="width-full">
+          <h2>Podcast Episode 4  - Talks about the psychological guard rails being built into this dApp.</h2>
+          <YouTube src="https://www.youtube.com/embed/oTpwT6h0Vg4?si=-clCy4wV8AfX8_ys" />
         </div>
       </div>
 
