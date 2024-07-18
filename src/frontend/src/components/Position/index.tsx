@@ -7,8 +7,6 @@ import { PositionsTable } from "./Table"
 export const Positions = () => {
   const { display } = useContext(DisplayContext)
 
-  console.log("Positions display:", display)
-
   switch (display) {
     case "cards":
       return <GetPositionCards />

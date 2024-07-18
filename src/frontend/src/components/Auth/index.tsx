@@ -14,6 +14,10 @@ export const Auth = (props: PropsWithChildren) => {
   // Takes authentication state from client library and adds it to the local app state.
   const handleAuthentication = async () => {
     authClient.login({
+      // TODO: Add the identity provider URL to the environment variables.
+      //       Use local II for development and public II for production.
+      // identityProvider: process.env.II_URL,
+
       // 8 hours in nanoseconds
       maxTimeToLive: BigInt(28800000000000),
       onSuccess: async () => {

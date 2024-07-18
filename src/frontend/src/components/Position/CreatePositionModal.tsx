@@ -25,7 +25,6 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
   const [quote, setQuote] = useState<string>("")
   const [amount, setAmount] = useState<number | string>("")
   const [spent, setSpent] = useState<number | string>("")
-  const [marketPrice, setMarketPrice] = useState<number | string>("")
   const [date, setDate] = useState<string>('')
   const [time, setTime] = useState<string>('')
 
@@ -70,14 +69,13 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
 
   // Adds the new trade to the trades array within the signal.
   const createNewPosition = () => {
-    // // Guard against missing inputs.
-    if (!base || !quote || !amount || !spent || !marketPrice || !date || !auth.isAuthenticated || !time) {
+    // Guard against missing inputs.
+    if (!base || !quote || !amount || !spent || !date || !auth.isAuthenticated || !time) {
       alert(`Missing Inputs: 
       base: ${base} 
       quote: ${quote} 
       amount: ${amount} 
       spent: ${spent} 
-      marketplace: ${marketPrice} 
       date: ${date}
       time: ${time}
       user: ${auth.identity}`)
@@ -114,7 +112,9 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     // 2. A new position is created when the calculated position does exist using the existing position.
     const newPosition: Position = {
       assetPair: calculatedPosition.length > 0 ? calculatedPosition[0].assetPair : { base: baseFromInput, quote: quoteFromInput },
-      owner: auth.identity
+      owner: auth.identity,
+      price: 0,
+      priceDate: new Date(0).toISOString()
     }
 
     // Find an existing position.
@@ -208,7 +208,6 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     setQuote('')
     setAmount('')
     setSpent('')
-    setMarketPrice('')
     setDate('')
     setTime('')
   }
@@ -259,15 +258,6 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
               placeholder="Example: 9.11"
               value={spent}
               onChange={(e) => setSpent(e.currentTarget.value)} />
-          </label>
-
-          <label className="label block">Current Market Price
-            <input
-              type="number"
-              className="input w-full bg-slate-800 mt-1 mb-4"
-              value={marketPrice}
-              onChange={(e) => setMarketPrice(e.currentTarget.value)}
-              placeholder='Example: 13.33' />
           </label>
 
           <label className="label block">Date Of Trade

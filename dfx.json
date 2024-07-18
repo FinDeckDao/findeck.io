@@ -12,17 +12,21 @@
       "workspace": "frontend"
     },
     "internet_identity": {
-      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
-      "frontend": {},
       "type": "custom",
-      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz",
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "frontend": {}
     },
     "xrc": {
       "type": "custom",
       "candid": "src/xrc_demo/xrc/xrc.did",
       "wasm": "src/xrc_demo/xrc/xrc.wasm.gz",
       "remote": {
-        "candid": "src/xrc_demo/xrc/xrc.did",
         "id": {
           "ic": "uf6dk-hyaaa-aaaaq-qaaaq-cai"
         }

@@ -1,4 +1,4 @@
-import { useRef, useState, useContext, FC, useEffect } from "react"
+import { useRef, useContext, FC } from "react"
 import { Position } from "../../Contexts/Position"
 import { OptionsModal } from "./OptionsModal"
 import { PositionContext } from '../../Contexts/Position'
@@ -7,7 +7,7 @@ import { TradesContext } from "../../Contexts/Trade"
 import { AssetPairContext } from "../../Contexts/AssetPair"
 import { DeleteButton } from "../Buttons/Delete"
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal"
-import { deletePosition, updatePosition } from "../../Contexts/Position/helpers"
+import { deletePosition } from "../../Contexts/Position/helpers"
 
 export const GetPositionCards: FC = () => {
   const { positions } = useContext(PositionContext)
@@ -39,7 +39,6 @@ interface PositionCardProps {
 export const PositionCard = (props: PositionCardProps) => {
   const { position } = props
   const { assetPair } = position
-  const [currentValue, setCurrentValue] = useState<number | null>(null)
   const { trades, setTrades } = useContext(TradesContext)
   const { setAssetPair } = useContext(AssetPairContext)
   const { positions, setPositions } = useContext(PositionContext)
@@ -100,7 +99,7 @@ export const PositionCard = (props: PositionCardProps) => {
     }, 0)
 
     // Return the total value of the position.
-    return longTotal - shortTotal
+    return longTotal - shortTotal || 0
   }
 
   // const auth = useContext(AuthContext)
@@ -121,7 +120,7 @@ export const PositionCard = (props: PositionCardProps) => {
   }
 
   const calculateRoi = (currentValue: number) => {
-    return ((currentValue - calculateCostBasis()) / calculateCostBasis() * 100).toFixed(2)
+    return ((currentValue - calculateCostBasis()) / calculateCostBasis() * 100 || 0).toFixed(2)
   }
 
   // const auth = useContext(AuthContext)
@@ -131,49 +130,6 @@ export const PositionCard = (props: PositionCardProps) => {
     deleteConfirmationModalRef.current?.showModal()
   }
 
-  // Handle fetching the current value of the asset from the API.
-  useEffect(() => {
-    // Handles the updating of the position price data.
-    // Define header for the fetch request.
-    const headers = new Headers()
-    headers.append('X-CMC_PRO_API_KEY', 'de24431a-dbd0-4b91-8eef-221a85004add')
-
-    const updatePriceData = () => {
-      fetch(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${assetPair.base.symbol}`, { headers })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data)
-          const newPosition = {
-            ...position,
-            price: data.quotes.USD.price,
-            priceDate: new Date().toISOString()
-          }
-          updatePosition({ positions, position: newPosition, setter: setPositions })
-        }).catch((error) => {
-          // TODO: Handle this error more gracefully (present something to the user).
-          console.error(error)
-        })
-    }
-
-    // If there is no price data, we'll fetch the current price from the coinpaprika api.
-    if (!position.price && !position.priceDate) {
-      updatePriceData()
-    }
-
-    // If there is price data, we'll only update it if it's more than an hour old.
-    if (position.price && position.priceDate) {
-      // If the price is more than 1 hours old, we'll use the cached price.
-      const priceDate = new Date(position.priceDate)
-      const currentDate = new Date()
-
-      // If the price is more than 1 hour old, we'll use the cached price.
-      if (currentDate.getTime() - priceDate.getTime() > 3600000) {
-        // If we don't have a cached price, we'll fetch the current price from the coinpaprika api.
-        updatePriceData()
-      }
-    }
-  }, [])
-
   return (
     <div className="bg-slate-800 shadow-xl rounded-xl">
       <div className="card-body p-4">
@@ -181,27 +137,17 @@ export const PositionCard = (props: PositionCardProps) => {
         <p className="text-left mb-0"><span className="font-bold">Total Assets Held:</span> {getAssetsHeld().toLocaleString("en-US", { style: "decimal" })} ${assetPair.base.symbol}</p>
         <p className="text-left mb-0"><span className="font-bold">Total At Risk:</span> {getTotalInvested().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}</p>
         <p className="text-left mb-0"><span className="font-bold">Cost Basis:</span> {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}</p>
-
-        <label className='label block text-left font-bold'>Current Value of {assetPair.base.symbol}
-          <input
-            type='number'
-            className="input w-full"
-            placeholder='Example: 13.00 - You can get this value from coinmarketcap.com'
-            value={currentValue || ""}
-            onChange={(e) => setCurrentValue(Number(e.currentTarget.value))}
-          />
-        </label>
+        <p className="text-left mb-0">
+          <span className="font-bold">Current Value of {assetPair.base.symbol}: </span>
+          {`${Number(position.price | 0).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`}
+        </p>
         <p className="text-left mb-0">
           <span className="font-bold">Current ROI: </span>
-          {currentValue
-            ? `${calculateRoi(currentValue)}%`
-            : `enter current value of ${assetPair.base.symbol} to calculate`}
+          {calculateRoi((position.price | 0))}%
         </p>
         <p className="text-left mb-0">
           <span className="font-bold">Current Position Value: </span>
-          {currentValue
-            ? `${(getAssetsHeld() * currentValue).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`
-            : `enter current value of ${assetPair.base.symbol} to calculate`}
+          {`${(getAssetsHeld() * (position.price | 0)).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`}
         </p>
         <div className="card-actions justify-end">
           <div className="flex justify-between w-full">
