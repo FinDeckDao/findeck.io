@@ -12,6 +12,11 @@ export const ConfirmDeleteModal = (props: ConfirmDeleteModalProps) => {
     modalRef.current?.close()
   }
 
+  const deleteAndCloseModal = () => {
+    deleteAction()
+    closeModal()
+  }
+
   return (
     <dialog className="modal" ref={modalRef} >
       <div className="modal-box">
@@ -24,7 +29,7 @@ export const ConfirmDeleteModal = (props: ConfirmDeleteModalProps) => {
         <h3 className="font-bold text-lg">Are you sure?</h3>
         <p>You're about to delete all trades for this position.</p>
         <div className='modal-action'>
-          <button className="btn btn-warning btn-outline uppercase" onClick={deleteAction}>
+          <button className="btn btn-warning btn-outline uppercase" onClick={deleteAndCloseModal}>
             <CheckIcon className="h-6 w-6" aria-hidden="true" />
             Yes
           </button>

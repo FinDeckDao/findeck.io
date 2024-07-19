@@ -1,4 +1,4 @@
-import { useRef, useContext, FC } from "react"
+import { useRef, useContext, FC, useEffect, useState } from "react"
 import { Position } from "../../Contexts/Position"
 import { OptionsModal } from "./OptionsModal"
 import { PositionContext } from '../../Contexts/Position'
@@ -8,6 +8,8 @@ import { AssetPairContext } from "../../Contexts/AssetPair"
 import { DeleteButton } from "../Buttons/Delete"
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal"
 import { deletePosition } from "../../Contexts/Position/helpers"
+import { backend } from "../../../../declarations/backend"
+import { updatePosition } from "../../Contexts/Position/helpers"
 
 export const GetPositionCards: FC = () => {
   const { positions } = useContext(PositionContext)
@@ -42,6 +44,45 @@ export const PositionCard = (props: PositionCardProps) => {
   const { trades, setTrades } = useContext(TradesContext)
   const { setAssetPair } = useContext(AssetPairContext)
   const { positions, setPositions } = useContext(PositionContext)
+  const [price, setPrice] = useState<number>(position.price)
+  const [fetching, setFetching] = useState<boolean>(false)
+
+  useEffect(() => {
+    // Get the current price of the asset.
+    const updatePrice = async () => {
+      setFetching(true)
+
+      const currentPrice = await backend.get_exchange_rate(
+        assetPair.base.symbol,
+        assetPair.quote.symbol
+      )
+      // Update the price for use in this component.
+      setPrice(currentPrice)
+
+      const updatedPosition = {
+        ...position,
+        price: currentPrice,
+        priceDate: new Date().toISOString()
+      }
+
+      setFetching(false)
+
+      // Update the price in the position context.
+      updatePosition({ positions, position: updatedPosition, setter: setPositions })
+    }
+
+    // Review price and time.
+    // Convert the price data to a date object.
+    const existingTime = new Date(position.priceDate).getTime()
+    const currentTime = new Date().getTime()
+
+    // // if the priceDate is older than 60 minutes (3600000) then update the price.
+    // // 20 seconds in milliseconds is 20000.
+    if ((currentTime - existingTime) > 3600000) {
+      // Get the current price of the asset.
+      updatePrice()
+    }
+  }, [])
 
   // Guard against null trades.
   // TODO: Handle this in the Position Context when the trade is added to the position.
@@ -134,20 +175,69 @@ export const PositionCard = (props: PositionCardProps) => {
     <div className="bg-slate-800 shadow-xl rounded-xl">
       <div className="card-body p-4">
         <h2 className="card-title">{assetPair.base.symbol}/{assetPair.quote.symbol}</h2>
-        <p className="text-left mb-0"><span className="font-bold">Total Assets Held:</span> {getAssetsHeld().toLocaleString("en-US", { style: "decimal" })} ${assetPair.base.symbol}</p>
-        <p className="text-left mb-0"><span className="font-bold">Total At Risk:</span> {getTotalInvested().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}</p>
-        <p className="text-left mb-0"><span className="font-bold">Cost Basis:</span> {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}</p>
+        <p className="text-left mb-0">
+          {/* <div className="group relative m-12 flex justify-center">
+            <button className="rounded bg-amber-500 px-4 py-2 text-sm text-white shadow-sm">Hover me!</button>
+            <span className="absolute top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">✨ You hover me!</span>
+          </div> */}
+          <span className="font-bold">Total Assets Held:
+            {" "}{getAssetsHeld().toLocaleString("en-US", { style: "decimal" })}
+            {" "}${assetPair.base.symbol}
+          </span>
+        </p>
+        <p className="text-left mb-0">
+          <span className="font-bold">Total At Risk:
+            {" "}{getTotalInvested().toLocaleString("en-US", { style: "decimal" })}
+            {" "}${assetPair.quote.symbol}
+          </span>
+        </p>
+        <p className="text-left mb-0">
+          <span className="font-bold">Cost Basis: </span>
+          {calculateCostBasis() < price
+            ?
+            <span className="text-green-500">
+              {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })}{" "}
+              ${assetPair.quote.symbol}
+            </span>
+            :
+            <span className="text-red-500">
+              {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })}{" "}
+              ${assetPair.quote.symbol}
+            </span>
+          }
+        </p>
         <p className="text-left mb-0">
           <span className="font-bold">Current Value of {assetPair.base.symbol}: </span>
-          {`${Number(position.price | 0).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`}
+          {
+            fetching
+              ? "Getting Current Price"
+              : `${Number(price).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`
+          }
         </p>
         <p className="text-left mb-0">
           <span className="font-bold">Current ROI: </span>
-          {calculateRoi((position.price | 0))}%
+          {
+            fetching
+              ? "Waiting on Current Price"
+              : <span className={`${Number(calculateRoi((price))) > 0 ? "text-green-500" : "text-red-500"}`}>{calculateRoi((price))}%</span>
+          }
         </p>
         <p className="text-left mb-0">
           <span className="font-bold">Current Position Value: </span>
-          {`${(getAssetsHeld() * (position.price | 0)).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`}
+          {
+            fetching
+              ? "Waiting on Current Price"
+              : getTotalInvested() < getAssetsHeld() * (price)
+                ?
+                <span className="text-green-500">
+                  {`${(getAssetsHeld() * (price)).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`}
+                </span>
+                :
+                <span className="text-red-500">
+                  {`${(getAssetsHeld() * (price)).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`}
+                </span>
+
+          }
         </p>
         <div className="card-actions justify-end">
           <div className="flex justify-between w-full">

@@ -21,7 +21,7 @@ export const PositionsTable: FC = () => {
                 Holdings
               </th>
               <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-3">
-                Value At Risk
+                Value at Risk
               </th>
               <td className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-3">
                 Cost Basis
@@ -41,8 +41,14 @@ export const PositionsTable: FC = () => {
                     {assetsHeld.toLocaleString("en-US", { style: "decimal" })}{" "}
                     ${position.assetPair.base.symbol}
                   </td>
-                  <td>{valueAtRisk} ${position.assetPair.quote.symbol}</td>
-                  <td>{getCostBasis(valueAtRisk, assetsHeld).toLocaleString("en-US", { style: "decimal" })}</td>
+                  <td>
+                    {valueAtRisk.toLocaleString("en-US", { style: "decimal" })}{" "}
+                    ${position.assetPair.quote.symbol}
+                  </td>
+                  <td>
+                    {getCostBasis(valueAtRisk, assetsHeld).toLocaleString("en-US", { style: "decimal" })}{" "}
+                    ${position.assetPair.quote.symbol}
+                  </td>
                 </tr>
               )
             })}

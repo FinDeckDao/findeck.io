@@ -42,7 +42,7 @@ export const deletePosition = (props: DeletePositionProps) => {
   // TODO: For paid customers, add an additional layer to store this data on the ICP network.
 }
 
-interface UpdatePositionProps {
+export interface UpdatePositionProps {
   positions: Position[],
   position: Position,
   setter: Dispatch<SetStateAction<Position[]>> | null

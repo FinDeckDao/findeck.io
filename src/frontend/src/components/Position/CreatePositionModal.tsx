@@ -45,7 +45,6 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     const fetchPrice = async () => {
       // Get the identity from the auth client.
       const result = await backend.get_exchange_rate(base, quote)
-      console.log(`Result for ${base}/${quote}: ${result}`)
       setPrice(result)
     }
 
@@ -145,7 +144,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
       assetPair: calculatedPosition.length > 0 ? calculatedPosition[0].assetPair : { base: baseFromInput, quote: quoteFromInput },
       owner: auth.identity,
       price: Number(price),
-      priceDate: new Date(0).toISOString()
+      priceDate: new Date().toISOString()
     }
 
     // Find an existing position.
