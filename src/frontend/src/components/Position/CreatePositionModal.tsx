@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { XCircleIcon, CheckCircleIcon } from "@heroicons/react/24/outline"
 import { SupportedAssets } from '../../../../fixtures/assets'
 import { AuthContext } from '../../Contexts/Auth'
@@ -6,6 +6,7 @@ import { Position, PositionContext } from '../../Contexts/Position'
 import { AssetSelector } from '../AssetSelector'
 import { AssetPairContext } from '../../Contexts/AssetPair'
 import { TradesContext, Trade } from '../../Contexts/Trade'
+import { backend } from '../../../../declarations/backend'
 
 interface CreatePositionModalProps {
   modalRef: React.RefObject<HTMLDialogElement>
@@ -27,11 +28,31 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
   const [spent, setSpent] = useState<number | string>("")
   const [date, setDate] = useState<string>('')
   const [time, setTime] = useState<string>('')
+  const [price, setPrice] = useState<number | string>("")
 
   // These are essential global states.
   const { positions, setPositions } = useContext(PositionContext)
   const { assetPair, setAssetPair } = useContext(AssetPairContext)
   const { trades, setTrades } = useContext(TradesContext)
+
+  useEffect(() => {
+    // Guard against missing global state.
+    if (!auth.isAuthenticated) {
+      console.error('User is not authenticated.')
+      return
+    }
+
+    const fetchPrice = async () => {
+      // Get the identity from the auth client.
+      const result = await backend.get_exchange_rate(base, quote)
+      console.log(`Result for ${base}/${quote}: ${result}`)
+      setPrice(result)
+    }
+
+    if (base && quote) {
+      fetchPrice()
+    }
+  }, [auth.isAuthenticated, base, quote])
 
   // Guard against missing global state.
   if (!setPositions || !setAssetPair) {
@@ -70,13 +91,23 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
   // Adds the new trade to the trades array within the signal.
   const createNewPosition = () => {
     // Guard against missing inputs.
-    if (!base || !quote || !amount || !spent || !date || !auth.isAuthenticated || !time) {
+    if (
+      !auth.isAuthenticated ||
+      !time ||
+      !amount ||
+      !base ||
+      !date ||
+      !price ||
+      !quote ||
+      !spent
+    ) {
       alert(`Missing Inputs: 
-      base: ${base} 
-      quote: ${quote} 
       amount: ${amount} 
-      spent: ${spent} 
+      base: ${base} 
       date: ${date}
+      price: ${price}
+      quote: ${quote} 
+      spent: ${spent} 
       time: ${time}
       user: ${auth.identity}`)
       return
@@ -113,7 +144,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     const newPosition: Position = {
       assetPair: calculatedPosition.length > 0 ? calculatedPosition[0].assetPair : { base: baseFromInput, quote: quoteFromInput },
       owner: auth.identity,
-      price: 0,
+      price: Number(price),
       priceDate: new Date(0).toISOString()
     }
 

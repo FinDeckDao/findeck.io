@@ -53,11 +53,10 @@ export const Auth = (props: PropsWithChildren) => {
 
       // Guard for missing AuthContext
       if (!authContext) {
-        handleAuthentication()
         // If it doesn't exist then we will need to authenticate the user.
+        handleAuthentication()
       }
       // If it exists then we can use it to authenticate the user.
-
     }
   }, [authState, pathname])
 

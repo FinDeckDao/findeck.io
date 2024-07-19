@@ -18,13 +18,15 @@
     "reinstall:backend:ic": "dfx canister install --mode reinstall backend --ic",
     "reinstall:frontend:ic": "dfx canister install --mode reinstall frontend --ic",
     "start": "npm start --workspaces --if-present",
-    "test": "npm test --workspaces --if-present"
+    "test": "npm test --workspaces --if-present",
+    "test:backend": "mo-dev --test"
   },
   "type": "module",
   "workspaces": [
     "src/frontend"
   ],
   "devDependencies": {
+    "mo-dev": "^0.13.0",
     "prettier": "^3.3.3",
     "prettier-plugin-motoko": "^0.9.0"
   }
