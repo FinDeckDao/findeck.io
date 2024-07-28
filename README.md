@@ -21,23 +21,79 @@ documentation available online:
 If you want to start working on your project right away, you might want to try
 the following commands:
 
-```bash
+```zsh
 cd findeck.io/
 dfx help
 dfx canister --help
 ```
 
+## System Dependencies for Development
+
+### Node Version Manager
+Please install node version manager.
+```zsh
+brew install nvm
+```
+
+Check to be sure nvm is installed correctly.
+```zsh
+nvm --version
+```
+
+You should see a value equal to or greater than `0.39.5`.
+
+### NodeJS
+Please install the latest stable version of NodeJS.
+
+```zsh
+nvm install stable
+```
+
+Check to be sure NodeJS is installed correctly.
+```zsh
+node --version
+```
+
+You should see a value equal to or greater than `v22.5.1`.
+
+### Motoko Development Server
+
+Please install motoko development server. Here are some docs related the [motoko development server](https://internetcomputer.org/blog/features/motoko-dev-server#continuous-integration).
+
+```zsh
+npm install -g mo-dev
+```
+
 ## Running the project locally
 
-If you want to test your project locally, you can use the following commands:
+### First Tab
+From the root directory (should be findeck.io) start up the canister environment.
+This environment is similar to a docker container (but is not docker).
 
-```bash
-# Starts the replica, running in the background
-dfx start --background
-
-# Deploys your canisters to the replica and generates your candid interface
-dfx deploy
+```zsh
+npm run dfx
 ```
+
+Confirm this went correctly by checking the output. You should end up with something that looks like this. But the port number will likely be different.
+```
+npm run dfx
+
+> dfx
+> dfx start --clean --host 127.0.0.1:8000
+
+Running dfx start for version 0.20.1
+Using project-specific network 'local' defined in /Users/jfgrissom/Repos/findeck.io/dfx.json
+Initialized replica.
+Dashboard: http://localhost:52554/_/dashboard
+```
+
+Got to the dashboard (in the above example `http://localhost:52554/_/dashboard`) and you should see a webpage that looks like a basic dashboard.
+
+### Second Tab
+From the root directory deploy the containers.
+
+
+
 
 Once the job completes, your application will be available at
 `http://localhost:4943?canisterId={asset_canister_id}`.
@@ -45,7 +101,7 @@ Once the job completes, your application will be available at
 If you have made changes to your backend canister, you can generate a new candid
 interface with
 
-```bash
+```zsh
 npm run generate
 ```
 
@@ -54,7 +110,7 @@ server, and will be run automatically any time you run `dfx deploy`.
 
 If you are making frontend changes, you can start a development server with
 
-```bash
+```zsh
 npm start
 ```
 
