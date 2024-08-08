@@ -24,19 +24,28 @@ It's worth taking the time to review this documentation to get an overview of th
 
 The group building this project can be reached here on the [FindeckDao OpenChat](https://oc.app/community/vmoft-nqaaa-aaaar-bh3pa-cai/?ref=ex43p-lqaaa-aaaar-bal2q-cai). 
 
+Following the next two steps makes it easier to interact with the rest of the group. Because it helps us all to understand that work is being done, we encourage everyone to share updates on completed work gets posted in our chat.
+- Please use an [Internet Identity](https://identity.ic0.app/) to sign into OpenChat (this ensures you can get notifications easily when installing the dApp to your mobile's home screen). Using other options (Ethereum or Email for example) makes it impossible for the dApp to send you notifications (because some of these methods don't have permissions to grant permissions for notifications).
+- Please add the chat dApp to your mobile device's home screen and enable notifications.
+
 ## System Dependencies for Development
 
-**NOTE:**
+***NOTE:***
 These notes assume MacOS as the development environment. If you want to develop on a different platform please share notes on how to do it for others here once you understand the process.
 
 ### Git
 
 Please be sure git is installed.
 ```zsh
+brew install git
+```
+
+Check to be sure nvm is installed correctly.
+```zsh
 git --version
 ```
 
-You should see a value equal to or greater than `git version 2.39.3 (Apple Git-146)`.
+You should see a value equal to or greater than `git version 2.46.0`.
 
 ### Node Version Manager
 
@@ -81,11 +90,52 @@ mo-dev --version
 
 You should see a value equal to or greater than `mo-dev 0.13.0`.
 
-## Running the project locally
+## Clone Repository
+
+Clone this repository to a directory on your local machine (usually `~/Repos`).
+```zsh
+cd ~/Repos
+git clone git@github.com:FinDeckDao/findeck.io.git
+```
+
+Confirm this was done correctly buy entering the repository.
+```zsh
+cd findeck.io
+ls -alh
+```
+
+You should see a listing that contains a file named `package.json`.
+
+## Install Dependencies
+
+Run the dependency installer.
+```zsh
+npm install
+```
+
+Confirm this was completed successfully.
+```zsh
+npm ls
+```
+
+You should see a tree output that looks something like this.
+```
+findeck.io@ /Users/<YourUserName>/Repos/findeck.io
+├── @testing-library/user-event@14.5.2 extraneous
+├── async@3.2.5 extraneous
+... 
+├─┬ frontend@0.0.0 -> ./src/frontend
+│ ├── @dfinity/agent@1.4.0
+...
+```
+
+## Running Project Locally
 
 ### Start a local environment similar to the InternetComputer in a Terminal.
 In a Terminal Tab - From the root directory (it should be findeck.io) start up the canister environment.
-This environment is similar to a docker container (but is not docker).
+This environment is similar to a docker container (but it is not powered by docker).
+
+The following command runs the script called "dfx" inside of `package.json`.
 
 ```zsh
 npm run dfx
@@ -131,7 +181,7 @@ npm start
 Which will start a server at `http://localhost:8080`, proxying API requests to
 the replica at port 4943.
 
-### Note on frontend environment variables
+### Note on Frontend environment variables
 
 If you are hosting frontend code somewhere without using DFX, you may need to
 make one of the following adjustments to ensure your project does not fetch the
