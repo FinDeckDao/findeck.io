@@ -26,10 +26,19 @@ The group building this project can be reached here on the [FindeckDao OpenChat]
 
 ## System Dependencies for Development
 
-### Node Version Manager
-
 **NOTE:**
 These notes assume MacOS as the development environment. If you want to develop on a different platform please share notes on how to do it for others here once you understand the process.
+
+### Git
+
+Please be sure git is installed.
+```zsh
+git --version
+```
+
+You should see a value equal to or greater than `git version 2.39.3 (Apple Git-146)`.
+
+### Node Version Manager
 
 Please install node version manager.
 ```zsh
@@ -41,7 +50,7 @@ Check to be sure nvm is installed correctly.
 nvm --version
 ```
 
-You should see a value equal to or greater than `0.39.5`.
+You should see a value equal to or greater than `0.40.0`.
 
 ### NodeJS
 Please install the latest stable version of NodeJS.
@@ -55,20 +64,27 @@ Check to be sure NodeJS is installed correctly.
 node --version
 ```
 
-You should see a value equal to or greater than `v22.5.1`.
+You should see a value equal to or greater than `v22.6.0`.
 
 ### Motoko Development Server
 
-Please install motoko development server. Here are some docs related the [motoko development server](https://internetcomputer.org/blog/features/motoko-dev-server#continuous-integration).
+Please install motoko development server globally. If you need more information, here are some docs related the [motoko development server](https://internetcomputer.org/blog/features/motoko-dev-server#continuous-integration).
 
 ```zsh
 npm install -g mo-dev
 ```
 
+Check to be sure mo-de is installed correctly.
+```zsh
+mo-dev --version
+```
+
+You should see a value equal to or greater than `mo-dev 0.13.0`.
+
 ## Running the project locally
 
-### First Tab
-From the root directory (should be findeck.io) start up the canister environment.
+### Start a local environment similar to the InternetComputer in a Terminal.
+In a Terminal Tab - From the root directory (it should be findeck.io) start up the canister environment.
 This environment is similar to a docker container (but is not docker).
 
 ```zsh
@@ -88,13 +104,10 @@ Initialized replica.
 Dashboard: http://localhost:52554/_/dashboard
 ```
 
-Got to the dashboard (in the above example `http://localhost:52554/_/dashboard`) and you should see a webpage that looks like a basic dashboard.
+Got to the dashboard (in the above example `http://localhost:52554/_/dashboard`) and you should see a webpage that looks like a basic dashboard has an empty area for running canisters.
 
-### Second Tab
-From the root directory deploy the containers.
-
-
-
+### Compile and Deploy the existing canisters.
+In second Terminal Tab - From the root directory (it should be findeck.io) deploy the containers.
 
 Once the job completes, your application will be available at
 `http://localhost:4943?canisterId={asset_canister_id}`.
