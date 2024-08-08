@@ -1,35 +1,36 @@
-# `findeck.io`
-
-Welcome to your new `findeck.io` project and to the Internet Computer
-development community. By default, creating a new project adds this README and
-some template files to your project directory. You can edit these template files
-to customize your project and to include your own code to speed up the
-development cycle.
-
-To get started, you might want to explore the project directory structure and
-the default configuration file. Working with this project in your development
-environment will not affect any production deployment or identity tokens.
+# Findeck.io
 
 To learn more before you start working with `findeck.io`, see the following
 documentation available online:
 
-- [Quick Start](https://internetcomputer.org/docs/current/developer-docs/setup/deploy-locally)
-- [SDK Developer Tools](https://internetcomputer.org/docs/current/developer-docs/setup/install)
-- [Motoko Programming Language Guide](https://internetcomputer.org/docs/current/motoko/main/motoko)
-- [Motoko Language Quick Reference](https://internetcomputer.org/docs/current/motoko/main/language-manual)
+## Development Overview
 
-If you want to start working on your project right away, you might want to try
-the following commands:
+It's worth taking the time to review this documentation to get an overview of the core development tool used called DFX. 
 
-```zsh
-cd findeck.io/
-dfx help
-dfx canister --help
-```
+- [Quick Start](https://internetcomputer.org/docs/current/developer-docs/setup/deploy-locally) to learn more about DFX `dfx`.
+- [SDK Developer Tools](https://internetcomputer.org/docs/current/developer-docs/setup/install) to learn more about the DFX Version Manager `dfxvm`.
+
+## Backend Development
+- [Motoko Programming Language Guide](https://internetcomputer.org/docs/current/motoko/main/motoko) to learn more about language used on the backend.
+- [Motoko Language Quick Reference](https://internetcomputer.org/docs/current/motoko/main/language-manual) as a quick reference for language basics. 
+
+## Frontend Development
+- [React Developer Documentation](https://react.dev/) is the core frontend technology being used on this project.
+- [Vite](https://vitejs.dev/) is the specific implementation of React.
+- [Vitest](https://vitest.dev/) is the testing framework used for the frontend.
+- [Internet Identity Auth Client](https://forum.dfinity.org/t/new-package-dfinity-use-auth-client/33947) used to authenticate with the IC.
+
+## Join the Conversation
+
+The group building this project can be reached here on the [FindeckDao OpenChat](https://oc.app/community/vmoft-nqaaa-aaaar-bh3pa-cai/?ref=ex43p-lqaaa-aaaar-bal2q-cai). 
 
 ## System Dependencies for Development
 
 ### Node Version Manager
+
+**NOTE:**
+These notes assume MacOS as the development environment. If you want to develop on a different platform please share notes on how to do it for others here once you understand the process.
+
 Please install node version manager.
 ```zsh
 brew install nvm
