@@ -1,0 +1,51 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © jfgrissom
+
+//@version=5
+strategy("200DMA Entry", overlay=true, initial_capital=10000)
+
+// Define the 200-day moving average
+ma200 = ta.sma(close, 200)
+
+// Enter a trade when the previous bar closes above the 200 MA
+longCondition = ta.crossover(close[1], ma200)
+
+// Set the take profit level at 150% ROI
+takeProfitLevel = strategy.position_avg_price * 2.5
+
+// Variables to store the bar index and price of entry and exit
+var float entryPrice = na
+var int entryBarIndex = na
+var float orderSize = na
+
+// Enter long position using 1% of the total account equity
+if (longCondition)
+    orderSize := 0.01 * strategy.equity / close
+    strategy.entry("Long", strategy.long, qty=orderSize)
+    entryPrice := close
+    entryBarIndex := bar_index
+
+// Exit position when price reaches the take profit level
+if (strategy.position_size > 0 and close >= takeProfitLevel)
+    strategy.close("Long")
+    line.new(x1=entryBarIndex, y1=entryPrice, x2=bar_index, y2=close, color=color.red)
+
+// Plot the 200 MA on the chart
+plot(ma200, title="200-day MA", color=color.blue)
+
+// Function to format numbers to two decimal places
+formatNumber(value) =>
+    str.tostring(value, "#.00")
+
+// Calculate total holdings value
+totalHoldings = strategy.position_size != 0 ? (strategy.position_avg_price * strategy.position_size) + strategy.equity : strategy.equity
+
+// Create a single label to display equity, total holdings, and order size in the top right corner
+var label infoLabelTopRight = na
+if (na(infoLabelTopRight))
+    infoLabelTopRight := label.new(x=na, y=na, text="", xloc=xloc.bar_time, yloc=yloc.price, color=color.new(color.black, 0), textcolor=color.green, style=label.style_label_down)
+
+// Update the label position and text to keep it in the top right corner
+label.set_xy(infoLabelTopRight, time + 1, high * 1.05)
+label.set_text(infoLabelTopRight, "Equity: $" + formatNumber(strategy.equity) + "\nTotal Holdings: $" + formatNumber(totalHoldings) + "\nOrder Size: " + (not na(orderSize) ? str.tostring(orderSize, "#.000") : "N/A"))
+
