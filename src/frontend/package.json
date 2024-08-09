@@ -5,16 +5,14 @@
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
-    "dev": "VITE_CANISTER_ORIGIN=http://$(dfx canister id frontend).localhost:3000 vite --port 3000",
+    "dev": "vite --port 3000",
     "format": "prettier --write \"src/**/*.{json,js,jsx,ts,tsx,css,scss}\"",
     "generate": "dfx generate",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prebuild": "npm run generate",
     "predev": "npm run generate",
-    "prestart": "npm run generate && echo '' && echo Frontend: http://$(dfx canister id frontend).localhost:8000 && echo ''",
     "preview": "vite preview",
     "setup": "npm i && dfx canister create backend && dfx generate backend && dfx deploy",
-    "start": "vite --port 3000",
     "test": "vitest run"
   },
   "dependencies": {

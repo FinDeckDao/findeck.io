@@ -131,9 +131,12 @@ findeck.io@ /Users/<YourUserName>/Repos/findeck.io
 
 ## Running Project Locally
 
-### Start a local environment similar to the InternetComputer in a Terminal.
-In a Terminal Tab - From the root directory (it should be findeck.io) start up the canister environment.
+### Start the Dfinity Execution Environment (DFX).
+
+1. Open a Terminal Tab 
+2. From the root directory (it should be `~/Repos/findeck.io`) start up the canister environment.
 This environment is similar to a docker container (but it is not powered by docker).
+3. Leave the terminal open.
 
 The following command runs the script called "dfx" inside of `package.json`.
 
@@ -157,10 +160,60 @@ Dashboard: http://localhost:52554/_/dashboard
 Got to the dashboard (in the above example `http://localhost:52554/_/dashboard`) and you should see a webpage that looks like a basic dashboard has an empty area for running canisters.
 
 ### Compile and Deploy the existing canisters.
-In second Terminal Tab - From the root directory (it should be findeck.io) deploy the containers.
 
-Once the job completes, your application will be available at
-`http://localhost:4943?canisterId={asset_canister_id}`.
+1. Open a second Terminal Tab 
+2. From the root directory (it should be `~/Repos/findeck.io`) deploy the containers.
+3. Leave the terminal open.
+
+```zsh
+npm run deploy
+```
+
+You can check to be sure this deployed correctly by checking the dashboard (`http://localhost:53418/_/dashboard`) and you'll see canisters have been deployed. 
+
+Additionally you'll see http addresses for your canisters in the output that looks similar to this.
+```
+Frontend canister via browser
+    frontend:
+      - http://127.0.0.1:8000/?canisterId=bd3sg-teaaa-aaaaa-qaaba-cai
+      - http://bd3sg-teaaa-aaaaa-qaaba-cai.localhost:8000/
+    internet_identity:
+      - http://127.0.0.1:8000/?canisterId=be2us-64aaa-aaaaa-qaabq-cai
+      - http://be2us-64aaa-aaaaa-qaabq-cai.localhost:8000/
+  Backend canister via Candid interface:
+    backend: http://127.0.0.1:8000/?canisterId=bw4dl-smaaa-aaaaa-qaacq-cai&id=bkyz2-fmaaa-aaaaa-qaaaq-cai
+    internet_identity: http://127.0.0.1:8000/?canisterId=bw4dl-smaaa-aaaaa-qaacq-cai&id=be2us-64aaa-aaaaa-qaabq-cai
+    xrc: http://127.0.0.1:8000/?canisterId=bw4dl-smaaa-aaaaa-qaacq-cai&id=br5f7-7uaaa-aaaaa-qaaca-cai
+```
+
+If you can see the frontend in a browser using either of the two frontend addresses then you are all set to do local development.
+
+## Rapid Development
+
+To make changes quickly you need to start some additional watchers to compile your changes quickly once you save files.
+
+1. In the second terminal window startup mo-dev `npm run dev:backend`.
+1. In a third terminal window startup vite `npm run dev:frontend`
+
+At this point you should have 3 terminals open.
+
+1. Terminal 1 running the DFX Network (running `http://localhost:53418/_/dashboard`).
+1. Terminal 2 running mo-dev (running `[mo-dev] deploy backend` on the command line).
+
+## Simple Development LifeCycle
+
+1. Checkout a new branch `git checkout -b feature/your-feature-name`.
+1. Make your changes.
+1. Redeploy `npm run deploy`.
+1. Review your changes to make sure they do what you expect (please write tests to be sure others don't break your functionality in the future).
+1. Push your branch to github `git push`.
+1. Request a pull request (AKA: merge request) in github.
+1. Notify other developers in our OpenChat Community for a review and a merge of the change into the main branch.
+
+
+
+
+## Notes
 
 If you have made changes to your backend canister, you can generate a new candid
 interface with

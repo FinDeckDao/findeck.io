@@ -6,11 +6,12 @@
   "name": "findeck.io",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "deploy:ic": "dfx deploy --ic",
-    "deploy": "dfx deploy",
     "deploy:backend:ic": "dfx deploy backend --ic",
     "deploy:frontend:ic": "dfx deploy frontend --ic",
-    "dev": "npm run dev --workspaces --if-present",
+    "deploy:ic": "dfx deploy --ic",
+    "deploy": "dfx deploy",
+    "dev:frontend": "npm run dev --workspaces --if-present",
+    "dev:backend": "mo-dev -d -y -g --verbose",
     "dfx": "dfx start --clean --host 127.0.0.1:8000",
     "generate": "dfx generate",
     "prebuild": "npm run prebuild --workspaces --if-present",
@@ -18,8 +19,8 @@
     "reinstall:backend:ic": "dfx canister install --mode reinstall backend --ic",
     "reinstall:frontend:ic": "dfx canister install --mode reinstall frontend --ic",
     "start": "npm start --workspaces --if-present",
-    "test": "npm test --workspaces --if-present",
-    "test:backend": "mo-dev --test"
+    "test:backend": "mo-dev --test",
+    "test": "npm test --workspaces --if-present"
   },
   "type": "module",
   "workspaces": [
