@@ -61,7 +61,7 @@ nvm --version
 
 You should see a value equal to or greater than `0.40.0`.
 
-If you see the message “command not found: nvm,” please follow the [instructions](https://stackoverflow.com/questions/63757008/terminal-not-recognizing-nvm-after-installed-with-home-brew/63760780#63760780) and return to this step.
+If you see the message “command not found: nvm”, please follow the [instructions](https://stackoverflow.com/questions/63757008/terminal-not-recognizing-nvm-after-installed-with-home-brew/63760780#63760780) and return to this step.
 
 ### NodeJS
 Please install the latest stable version of NodeJS.
