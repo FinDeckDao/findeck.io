@@ -128,6 +128,8 @@ findeck.io@ /Users/<YourUserName>/Repos/findeck.io
 │ ├── @dfinity/agent@1.4.0
 ...
 ```
+If you see the message “command not found: npm”,
+run ```brew uninstall node``` and download the latest node installing .pkg from [their website](https://nodejs.org/it/).
 
 ## Running Project Locally
 
