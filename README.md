@@ -146,6 +146,11 @@ The following command runs the script called "dfx" inside of `package.json`.
 npm run dfx
 ```
 
+If you see the message “command not found: dfx”, install the dfx using following command and close the shell:
+```zsh
+sh -ci "$(curl -fsSL https://smartcontracts.org/install.sh)"
+```
+
 Confirm this went correctly by checking the output. You should end up with something that looks like this. But the port number will likely be different.
 ```
 npm run dfx
