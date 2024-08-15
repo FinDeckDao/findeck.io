@@ -3,7 +3,7 @@
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": false,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": false,
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
