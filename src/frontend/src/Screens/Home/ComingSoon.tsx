@@ -3,11 +3,11 @@ import { YouTube } from "../../Components/Video"
 
 export const ComingSoon = () => {
   return (
-    <div className="container mx-auto text-center">
-      <h1>Coming Soon</h1>
+    <div className="container mx-auto">
+      <h1 className="text-center">Coming Soon</h1>
 
-      <h2>Optimize your trading with data that supports your decisions</h2>
-      <p>
+      <h2 className="text-left">Optimize your trading with data that supports your decisions</h2>
+      <p className="text-left" style={{ marginBottom: '40px' }}>
         This project is being built in public so there isn't much here yet,
         but we are working on this every day.
       </p>
