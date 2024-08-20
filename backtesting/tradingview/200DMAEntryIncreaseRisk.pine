@@ -1,0 +1,46 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © jfgrissom
+
+//@version=5
+strategy("200DMA Entry", overlay=true, initial_capital=10000)
+
+// Define the 200-day moving average
+ma200 = ta.sma(close, 200)
+
+// Enter a trade when the previous bar closes above the 200 MA
+longCondition = ta.crossover(close[1], ma200)
+
+// Set the take profit level at 150% ROI
+takeProfitLevel = strategy.position_avg_price * 2.5
+
+// Variables to store the bar index and price of entry and exit
+var float entryPrice = na
+var int entryBarIndex = na
+var float orderSize = na
+var float existingTradeEntryPrice = na
+
+// Enter long position using 1% of the total account equity
+if (longCondition)
+    orderSize := 0.01 * strategy.equity / close
+    strategy.entry("Long", strategy.long, qty=orderSize)
+    entryPrice := close
+    entryBarIndex := bar_index
+    existingTradeEntryPrice := entryPrice
+
+// Calculate the price change from the existing trade entry price
+var float priceChange = na
+if (not na(existingTradeEntryPrice))
+    priceChange := (existingTradeEntryPrice - close) / existingTradeEntryPrice
+
+// If the current price is >= 80% below the existing trade entry price, create a new entry for double the amount
+if (not na(priceChange) and priceChange >= 0.8)
+    doubleOrderSize = 2 * orderSize
+    strategy.entry("Double Long", strategy.long, qty=doubleOrderSize)
+    existingTradeEntryPrice := close
+
+if (not na(existingTradeEntryPrice))
+    takeProfitLevel := existingTradeEntryPrice * 2.5
+
+// Exit position when price reaches the take profit level
+if (strategy.position_size > 0 and close >= takeProfitLevel)
+    strategy.close("Long")
