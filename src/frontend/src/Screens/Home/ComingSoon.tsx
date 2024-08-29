@@ -1,5 +1,5 @@
 import { Pricing } from "./Pricing"
-import { YouTube } from "../../Components/Video"
+import { YouTube, YouTubeChannelFeed } from "../../Components/Video"
 
 export const ComingSoon = () => {
   return (
@@ -32,6 +32,10 @@ export const ComingSoon = () => {
           <h2>Podcast Episode 4  - Talks about the psychological guard rails being built into this dApp.</h2>
           <YouTube src="https://www.youtube.com/embed/oTpwT6h0Vg4?si=-clCy4wV8AfX8_ys" />
         </div>
+      </div>
+
+      <div>
+        <YouTubeChannelFeed channelId="UCtOZqj1v82Vq7NpmpTlgsWw" />
       </div>
 
       <div className="mb-8 text-center">
