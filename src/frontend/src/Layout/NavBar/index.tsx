@@ -17,7 +17,7 @@ export const NavBar = () => {
     if (!auth.isAuthenticated) {
       return <Link
         to="/dashboard"
-        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-sky-100 hover:bg-slate-700"
+        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-slate-700"
       >
         <img src={iclogo} className="h-8 w-8 inline p-0 mb-1 mr-2 align-middle" />
         Login
@@ -26,7 +26,7 @@ export const NavBar = () => {
 
     return <a
       href="/"
-      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-sky-100 hover:bg-slate-700"
+      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-slate-700"
       onClick={() => { logOut() }}
     >
       <img src={iclogo} className="h-8 w-8 inline p-0 mb-1 mr-2 align-middle" />
@@ -34,11 +34,11 @@ export const NavBar = () => {
     </a>
   }
 
-  return <header className="col-span-12 bg-slate-800 text-sky-100 rounded-b-lg">
+  return <header className="col-span-12 bg-dark text-white rounded-b-lg">
     {/* Default Menu */}
     <nav className="mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
       <div className="flex lg:flex-1">
-        <Link to="/" className="text-sky-100 font-bold hover:bg-slate-700 block rounded-lg px-3 py-2.5">
+        <Link to="/" className="text-white font-bold hover:bg-slate-700 block rounded-lg px-3 py-2.5">
           FinDeck.io
         </Link>
       </div>
@@ -57,7 +57,7 @@ export const NavBar = () => {
           <Link
             key={item.name}
             to={item.href}
-            className="text-sm font-semibold leading-6 text-sky-100 hover:bg-slate-700 rounded-lg p-3"
+            className="text-sm font-semibold leading-6 text-white hover:bg-slate-700 rounded-lg p-3"
           >
             {item?.icon} {item.name}
           </Link>
@@ -72,10 +72,10 @@ export const NavBar = () => {
       <div className="fixed inset-0 z-10" />
       <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-slate-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
         <div className="flex items-center justify-between">
-          <Link to="#" className="text-sky-100 font-bold">FinDeck.io</Link>
+          <Link to="#" className="text-white font-bold">FinDeck.io</Link>
           <button
             type="button"
-            className="-m-2.5 rounded-md p-2.5 text-sky-100"
+            className="-m-2.5 rounded-md p-2.5 text-white"
             onClick={() => setMobileMenuOpen(false)}
           >
             <span className="sr-only">Close menu</span>
@@ -90,7 +90,7 @@ export const NavBar = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base leading-7 text-sky-100 hover:bg-slate-700 uppercase"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base leading-7 text-white hover:bg-slate-700 uppercase"
                 >
                   {item.name}
                 </Link>

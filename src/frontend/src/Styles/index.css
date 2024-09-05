@@ -13,6 +13,8 @@
   html,
   body {
     @apply p-0 m-0;
+    font-family: 'Inter', sans-serif; /* Changing the font to Inter */
+    color: white;
   }
   p {
     @apply mb-4 transform-none;
@@ -21,14 +23,3 @@
 
 @tailwind components;
 @tailwind utilities;
-
-/* Custom Fonts */
-@font-face {
-  font-family: 'Share Tech Mono';
-  src: url(/fonts/ShareTechMono-Regular.ttf) format('ttf');
-}
-
-html,
-body {
-  font-family: 'Share Tech Mono', monospace;
-}

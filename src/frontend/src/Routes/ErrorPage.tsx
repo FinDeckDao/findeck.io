@@ -5,7 +5,7 @@ export const ErrorPage = () => {
 
   return (
     <DefaultLayout>
-      <div id="error-page" className=" bg-slate-800 w-full h-auto text-sky-100 p-4 text-center">
+      <div id="error-page" className=" bg-slate-800 w-full h-auto text-white p-4 text-center">
         <h1>Sorry FinDeck.io doesn't understand what you're requesting.</h1>
         <p>Very sorry for the confusion.</p>
 
