@@ -81,7 +81,7 @@ export const Pricing = () => {
   const [frequency, setFrequency] = useState(frequencies[0])
 
   return (
-    <div className="bg-slate-800 p-8 rounded-3xl">
+    <div className="bg-dark p-8 pb-16 rounded-3xl">
       <div className="mx-auto max-w-7xl lg:px-8">
         <div className="flex justify-center">
           <RadioGroup

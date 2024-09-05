@@ -25,7 +25,7 @@ export const AssetSelector: FC<AssetSelectorProps> = (props) => {
 
   return (
     <select
-      className="select w-full mt-1 mb-4 bg-slate-800"
+      className="select w-full mt-1 mb-4 bg-dark"
       onChange={handleSelectedBase}
       value={value}
     >
