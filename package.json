@@ -10,15 +10,18 @@
     "deploy:frontend:ic": "dfx deploy frontend --ic",
     "deploy:ic": "dfx deploy --ic",
     "deploy": "dfx deploy",
-    "dev:frontend": "npm run dev --workspaces --if-present",
     "dev:backend": "mo-dev -d -y -g --verbose",
+    "dev:frontend": "npm run dev --workspaces --if-present",
     "dfx": "dfx start --clean --host 127.0.0.1:8000",
     "generate": "dfx generate",
     "prebuild": "npm run prebuild --workspaces --if-present",
+    "presetup": "rm -rf .env && dfx deploy",
     "pretest": "npm run prebuild --workspaces --if-present",
     "reinstall:backend:ic": "dfx canister install --mode reinstall backend --ic",
     "reinstall:frontend:ic": "dfx canister install --mode reinstall frontend --ic",
-    "start": "npm start --workspaces --if-present",
+    "setup": "npm run setup --workspaces --if-present",
+    "prestart": "npm run setup",
+    "start": "run-p dev:frontend dev:backend",
     "test:backend": "mo-dev --test",
     "test": "npm test --workspaces --if-present"
   },
@@ -28,6 +31,7 @@
   ],
   "devDependencies": {
     "mo-dev": "^0.13.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.3.3",
     "prettier-plugin-motoko": "^0.9.0"
   }
