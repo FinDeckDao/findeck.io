@@ -9,15 +9,18 @@ import { LoginButton } from "../../Components/Authenticate/LoginButton"
 
 export const NavBar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const domain = "FinDeck.io"
 
   if (mobileMenuOpen) {
     return (
       <header className="col-span-12 bg-slate-800 text-sky-100">
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
           <div className="fixed inset-0 z-10" />
-          <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-slate-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto
+                                bg-slate-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
+          >
             <div className="flex items-center justify-between">
-              <Link to="#" className="text-sky-100 font-bold">FinDeck.io</Link>
+              <Link to="#" className="text-sky-100 font-bold">{domain}</Link>
               <button
                 type="button"
                 className="-m-2.5 rounded-md p-2.5 text-sky-100"
@@ -35,7 +38,8 @@ export const NavBar = () => {
                       key={item.name}
                       to={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base leading-7 text-sky-100 hover:bg-slate-700 uppercase"
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base leading-7 text-sky-100
+                               hover:bg-slate-700 uppercase"
                     >
                       {item.name}
                     </Link>
@@ -56,7 +60,7 @@ export const NavBar = () => {
     <nav className="mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
       <div className="flex lg:flex-1">
         <Link to="/" className="text-sky-100 font-bold hover:bg-slate-700 block rounded-lg px-3 py-2.5">
-          dao.FinDeck.io
+          {domain}
         </Link>
       </div>
       <div className="flex lg:hidden">
