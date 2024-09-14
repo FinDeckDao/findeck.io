@@ -13,7 +13,7 @@ export const NavBar = () => {
 
   if (mobileMenuOpen) {
     return (
-      <header className="col-span-12 bg-slate-800 text-sky-100">
+      <header className="col-span-12 bg-dark text-white">
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
           <div className="fixed inset-0 z-10" />
           <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto
@@ -56,7 +56,7 @@ export const NavBar = () => {
     )
   }
 
-  return <header className="col-span-12 bg-slate-800 text-sky-100">
+  return <header className="col-span-12 bg-dark text-white">
     <nav className="mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
       <div className="flex lg:flex-1">
         <Link to="/" className="text-sky-100 font-bold hover:bg-slate-700 block rounded-lg px-3 py-2.5">
