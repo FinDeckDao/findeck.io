@@ -40,7 +40,7 @@
       "providers": ["https://ic0.app", "https://mainnet.dfinity.network"]
     },
     "local": {
-      "bind": "127.0.0.1:8080",
+      "bind": "127.0.0.1:8000",
       "type": "ephemeral",
       "replica": {
         "subnet_type": "system"
