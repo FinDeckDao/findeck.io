@@ -12,9 +12,10 @@
   }
   html,
   body {
-    @apply p-0 m-0;
+    @apply p-0 m-0 bg-dark;
     font-family: 'Inter', sans-serif; /* Changing the font to Inter */
-    color: white;
+    color: white; /* Changing the text color to white */
+    min-height: 100vh; /* Making the body at least 100% of the viewport height */
   }
   p {
     @apply mb-4 transform-none;

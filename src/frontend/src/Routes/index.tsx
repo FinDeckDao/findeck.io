@@ -82,7 +82,9 @@ export const router = createBrowserRouter([
     path: '/trades',
     element: (
       <DefaultLayout>
-        <TradesScreen />
+        <Authenticate>
+          <TradesScreen />
+        </Authenticate>
       </DefaultLayout>
     )
   }
