@@ -8,7 +8,6 @@ import { ComingSoon } from '../Screens/Home/ComingSoon'
 import { DashboardScreen } from "../Screens/Dashboard"
 import { PositionsScreen } from "../Screens/Positions"
 import { ResourcesScreen } from "../Screens/Resources"
-import { ProtectedContent } from "../Components/Auth/index.tsx"
 import {
   //RectangleGroupIcon,
   MapPinIcon,
@@ -16,6 +15,7 @@ import {
   ArrowsRightLeftIcon,
 } from "@heroicons/react/24/outline"
 import { TradesScreen } from '../Screens/Trades'
+import { Authenticate } from "../Components/Authenticate/index.tsx"
 
 interface NavigationItem {
   name: string
@@ -52,10 +52,10 @@ export const router = createBrowserRouter([
     path: "/positions",
     element: (
       <DefaultLayout>
-        <ProtectedContent>
+        <Authenticate>
           <PositionsScreen />
-        </ProtectedContent>
-      </DefaultLayout>
+        </Authenticate>
+      </DefaultLayout >
     ),
     errorElement: <ErrorPage />
   },
@@ -64,9 +64,9 @@ export const router = createBrowserRouter([
     path: "/dashboard",
     element: (
       <DefaultLayout>
-        <ProtectedContent>
+        <Authenticate>
           <DashboardScreen />
-        </ProtectedContent>
+        </Authenticate>
       </DefaultLayout>
     )
   },
