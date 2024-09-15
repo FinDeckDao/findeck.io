@@ -1,14 +1,94 @@
-import XRC "canister:xrc";
-import Cycles "mo:base/ExperimentalCycles";
-import Nat32 "mo:base/Nat32";
-import Nat64 "mo:base/Nat64";
-import Float "mo:base/Float";
 import Array "mo:base/Array";
 import Asset "modules/Asset";
+import Cycles "mo:base/ExperimentalCycles";
+import Float "mo:base/Float";
+import HashMap "mo:base/HashMap";
+import Iter "mo:base/Iter";
+import Nat32 "mo:base/Nat32";
+import Nat64 "mo:base/Nat64";
 import Option "mo:base/Option";
+import Principal "mo:base/Principal";
 import Text "mo:base/Text";
+import Types "types";
+import XRC "canister:xrc";
 
-actor ExchangeRate {
+actor Backend {
+  //////////////////////////////////////////////////////////////////////
+  // Profile Functions
+  //////////////////////////////////////////////////////////////////////
+
+  // Create a stable variable to store the data
+  private stable var profileEntries : [(Principal, Types.Profile)] = [];
+
+  // Create a HashMap to store the profiles
+  private var profiles = HashMap.HashMap<Principal, Types.Profile>(10, Principal.equal, Principal.hash);
+
+  // Initialize the HashMap with the stable data
+  system func preupgrade() {
+    profileEntries := Iter.toArray(profiles.entries());
+  };
+
+  system func postupgrade() {
+    profiles := HashMap.fromIter<Principal, Types.Profile>(profileEntries.vals(), 10, Principal.equal, Principal.hash);
+  };
+
+  // CRUD Functions
+
+  // Create: Add a new profile
+  public shared (msg) func createProfile(profile : Types.Profile) : async Bool {
+    let caller = msg.caller;
+    switch (profiles.get(caller)) {
+      case (null) {
+        profiles.put(caller, profile);
+        true;
+      };
+      case (?_existing) {
+        false // Profile already exists
+      };
+    };
+  };
+
+  // Read: Get a profile by principal
+  public shared query (msg) func getProfile() : async ?Types.Profile {
+    let caller = msg.caller;
+    profiles.get(caller);
+  };
+
+  // Update: Update an existing profile
+  public shared (msg) func updateProfile(updatedProfile : Types.Profile) : async Bool {
+    let caller = msg.caller;
+    switch (profiles.get(caller)) {
+      case (null) {
+        false // Profile doesn't exist
+      };
+      case (?_existing) {
+        profiles.put(caller, updatedProfile);
+        true;
+      };
+    };
+  };
+
+  // Delete: Remove a profile
+  public shared (msg) func deleteProfile() : async Bool {
+    let caller = msg.caller;
+    switch (profiles.remove(caller)) {
+      case (null) {
+        false // Profile doesn't exist
+      };
+      case (?_existing) {
+        true;
+      };
+    };
+  };
+
+  // Additional helper function to get all profiles (for administrative purposes)
+  public shared query (_msg) func getAllProfiles() : async [(Principal, Types.Profile)] {
+    Iter.toArray(profiles.entries());
+  };
+
+  //////////////////////////////////////////////////////////////////////
+  // Exchange Rate Functions
+  //////////////////////////////////////////////////////////////////////
 
   func getSupportedAsset(Symbol : Text) : Asset.AssetType {
     let foundAsset = Array.find<Asset.AssetType>(
