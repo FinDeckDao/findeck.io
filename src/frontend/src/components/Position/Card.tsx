@@ -172,7 +172,7 @@ export const PositionCard = (props: PositionCardProps) => {
   }
 
   return (
-    <div className="bg-slate-800 shadow-xl rounded-xl">
+    <div className="bg-dark shadow-xl rounded-xl">
       <div className="card-body p-4">
         <h2 className="card-title">{assetPair.base.symbol}/{assetPair.quote.symbol}</h2>
         <p className="text-left mb-0">
