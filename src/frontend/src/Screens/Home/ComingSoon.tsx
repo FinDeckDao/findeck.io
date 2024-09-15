@@ -1,12 +1,13 @@
 import { Pricing } from "./Pricing"
 import { YouTube } from "../../Components/Video"
+import GrantWinner from "../../assets/Dfinity_processed.png"
 
 export const ComingSoon = () => {
   return (
     <>
      {/* Grant Winner logo aligned to the right, no top/bottom margins */}
      <div className="flex justify-center mt-0 mb-0">
-  <img src="/assets/Dfinity_processed.png" alt="Dfinity Developer Grant Winner" className="h-60" />
+  <img src={GrantWinner} alt="Dfinity Developer Grant Winner" className="h-60" />
 </div>
 
       <div className="container mx-auto">
