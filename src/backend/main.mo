@@ -8,11 +8,15 @@ import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
 import Option "mo:base/Option";
 import Principal "mo:base/Principal";
+import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Types "types";
 import XRC "canister:xrc";
 
 actor Backend {
+  // Globals
+  type Result = Result.Result<Text, Text>;
+
   //////////////////////////////////////////////////////////////////////
   // Profile Functions
   //////////////////////////////////////////////////////////////////////
@@ -21,37 +25,73 @@ actor Backend {
   private stable var profileEntries : [(Principal, Types.Profile)] = [];
 
   // Create a HashMap to store the profiles
-  private var profiles = HashMap.HashMap<Principal, Types.Profile>(10, Principal.equal, Principal.hash);
+  private var profiles = HashMap.HashMap<Principal, Types.Profile>(
+    10,
+    Principal.equal,
+    Principal.hash,
+  );
 
+  // LifeCycle hooks to handle upgrades properly.
   // Initialize the HashMap with the stable data
   system func preupgrade() {
     profileEntries := Iter.toArray(profiles.entries());
   };
 
+  // Write the HashMap back to the stable variable
   system func postupgrade() {
-    profiles := HashMap.fromIter<Principal, Types.Profile>(profileEntries.vals(), 10, Principal.equal, Principal.hash);
+    profiles := HashMap.fromIter<Principal, Types.Profile>(
+      profileEntries.vals(),
+      10,
+      Principal.equal,
+      Principal.hash,
+    );
   };
 
-  // CRUD Functions
-
   // Create: Add a new profile
-  public shared (msg) func createProfile(profile : Types.Profile) : async Bool {
-    let caller = msg.caller;
+  public shared ({ caller }) func createProfile(profile : Types.Profile) : async Result {
+    // Define a helper function to convert Float to ?Float
+    func toOption(value : Float) : ?Float {
+      if (value <= 0) { null } else { ?value };
+    };
+
+    // These values wil be set on the UI by default but this ensures that they are set in the backend.
+    var capitalGains : Types.CapitalGainsTaxRate = {
+      // Set short term capital gains tax to 30% if it's null (i.e., 0 or negative).
+      shortTerm = Option.get(toOption(profile.capitalGainsTaxRate.shortTerm), 30.0);
+      // Set long term capital gains tax to 20% if it's null (i.e., 0 or negative).
+      longTerm = Option.get(toOption(profile.capitalGainsTaxRate.longTerm), 20.0);
+    };
+
+    // Construct a new profile from the data provided ()
+    var newProfile : Types.Profile = {
+      name = profile.name;
+      // Assign the caller to the role of Member by default. The DAO can upgrade this user to an admin after a vote.
+      role = #Member;
+      capitalGainsTaxRate = capitalGains;
+      theme = profile.theme;
+    };
+
     switch (profiles.get(caller)) {
       case (null) {
-        profiles.put(caller, profile);
-        true;
+        profiles.put(caller, newProfile);
+        #ok("Profile for " # Principal.toText(caller) # " created successfully");
       };
       case (?_existing) {
-        false // Profile already exists
+        #err("Profile for " # Principal.toText(caller) # " already exists");
       };
     };
   };
 
   // Read: Get a profile by principal
-  public shared query (msg) func getProfile() : async ?Types.Profile {
-    let caller = msg.caller;
-    profiles.get(caller);
+  public shared query ({ caller }) func getProfile() : async Result.Result<Types.Profile, Text> {
+    switch (profiles.get(caller)) {
+      case (null) {
+        #err("Profile for " # Principal.toText(caller) # " doesn't exists.");
+      };
+      case (?existing) {
+        #ok(existing);
+      };
+    };
   };
 
   // Update: Update an existing profile
@@ -69,20 +109,19 @@ actor Backend {
   };
 
   // Delete: Remove a profile
-  public shared (msg) func deleteProfile() : async Bool {
-    let caller = msg.caller;
+  public shared ({ caller }) func deleteProfile() : async Result {
     switch (profiles.remove(caller)) {
       case (null) {
-        false // Profile doesn't exist
+        #err("Profile for " # Principal.toText(caller) # " doesn't exists.");
       };
       case (?_existing) {
-        true;
+        #ok("Profile for " # Principal.toText(caller) # " deleted successfully.");
       };
     };
   };
 
   // Additional helper function to get all profiles (for administrative purposes)
-  public shared query (_msg) func getAllProfiles() : async [(Principal, Types.Profile)] {
+  public shared query ({ caller = _ }) func getAllProfiles() : async [(Principal, Types.Profile)] {
     Iter.toArray(profiles.entries());
   };
 
