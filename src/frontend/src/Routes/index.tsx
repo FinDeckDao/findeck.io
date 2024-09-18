@@ -17,6 +17,8 @@ import {
 import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "../Components/Authenticate/index.tsx"
 import { ProfileScreen } from "@/Screens/Profile/index.tsx"
+import { CreateProfile } from "@/Screens/Profile/CreateProfile.tsx"
+import { EditProfile } from "@/Screens/Profile/EditProfile.tsx"
 
 interface NavigationItem {
   name: string
@@ -93,6 +95,26 @@ export const router = createBrowserRouter([
       <DefaultLayout>
         <Authenticate>
           <ProfileScreen />
+        </Authenticate>
+      </DefaultLayout>
+    )
+  },
+  {
+    path: '/profile/create',
+    element: (
+      <DefaultLayout>
+        <Authenticate>
+          <CreateProfile />
+        </Authenticate>
+      </DefaultLayout>
+    )
+  },
+  {
+    path: '/profile/edit',
+    element: (
+      <DefaultLayout>
+        <Authenticate>
+          <EditProfile />
         </Authenticate>
       </DefaultLayout>
     )

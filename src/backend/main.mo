@@ -10,6 +10,7 @@ import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
+import Int "mo:base/Int";
 import Types "types";
 import XRC "canister:xrc";
 
@@ -49,17 +50,31 @@ actor Backend {
 
   // Create: Add a new profile
   public shared ({ caller }) func createProfile(profile : Types.Profile) : async Result {
-    // Define a helper function to convert Float to ?Float
-    func toOption(value : Float) : ?Float {
-      if (value <= 0) { null } else { ?value };
+
+    // Utility function to convert percentage to float (handles both Int and Float)
+    func convertToFloat(value : Float) : Float {
+      if (value >= 1.0) {
+        return value / 100.0;
+      } else {
+        return value;
+      };
     };
 
-    // These values wil be set on the UI by default but this ensures that they are set in the backend.
-    var capitalGains : Types.CapitalGainsTaxRate = {
-      // Set short term capital gains tax to 30% if it's null (i.e., 0 or negative).
-      shortTerm = Option.get(toOption(profile.capitalGainsTaxRate.shortTerm), 30.0);
-      // Set long term capital gains tax to 20% if it's null (i.e., 0 or negative).
-      longTerm = Option.get(toOption(profile.capitalGainsTaxRate.longTerm), 20.0);
+    // Utility function to process rate with a default value
+    func processRate(rate : Float, defaultValue : Float) : Float {
+      if (rate == 0.0) {
+        defaultValue;
+      } else {
+        convertToFloat(rate);
+      };
+    };
+
+    // Handle the capital gains tax rates.
+    let capitalGains : Types.CapitalGainsTaxRate = {
+      // Set short term capital gains tax to 30% if it's 0, otherwise convert from float
+      shortTerm = processRate(profile.capitalGainsTaxRate.shortTerm, 0.30);
+      // Set long term capital gains tax to 20% if it's 0, otherwise convert from float
+      longTerm = processRate(profile.capitalGainsTaxRate.longTerm, 0.20);
     };
 
     // Construct a new profile from the data provided ()

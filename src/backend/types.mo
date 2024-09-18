@@ -10,6 +10,7 @@ module {
   public type Theme = {
     #Light;
     #Dark;
+    #System;
   };
 
   // Defined capital gains tax rate
