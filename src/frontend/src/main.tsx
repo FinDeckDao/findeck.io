@@ -4,13 +4,13 @@ import App from './App'
 import ReactDOM from 'react-dom/client'
 import {
   ActorProvider,
-  AgentProvider
 } from '@ic-reactor/react'
 import {
   idlFactory as backendIdlFactory,
   canisterId as backendCanisterId
 } from '../../declarations/backend'
 import { ErrorPage } from './Components/Error'
+import { EnvironmentWrapper } from './Components/Environment/Wrapper'
 
 // This is the root element that the React app will be mounted to
 const root = document.getElementById('root')
@@ -18,8 +18,7 @@ const root = document.getElementById('root')
 // Render the React app
 ReactDOM.createRoot(root!).render(
   <StrictMode>
-    {/* <AgentProvider withLocalEnv port={8000}> */}
-    <AgentProvider>
+    <EnvironmentWrapper>
       <ActorProvider idlFactory={backendIdlFactory}
         canisterId={backendCanisterId}
         errorComponent={() => (
@@ -29,6 +28,6 @@ ReactDOM.createRoot(root!).render(
         )}>
         <App />
       </ActorProvider>
-    </AgentProvider>
-  </StrictMode >
+    </EnvironmentWrapper>
+  </StrictMode>
 )

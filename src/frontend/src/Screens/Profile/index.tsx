@@ -1,13 +1,11 @@
-import {
-  FC,
-  //useState
-} from 'react'
-import { useAuthState, useQueryCall, useUpdateCall } from '@ic-reactor/react'
-import { Profile } from '../../../../declarations/backend/backend.did'
+import { FC } from 'react'
 import { ContentWrapper } from './ContentWrapper'
-import { hasKey } from '../../lib/utils'
-import { ProfileForm } from './Form'
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { getValidTheme, getValidRole } from './utils'
+import { hasKey } from '../../lib/utils'
+import { Profile } from '../../../../declarations/backend/backend.did'
+import { ProfileForm } from './Form'
+import { useAuthState, useQueryCall, useUpdateCall } from '@ic-reactor/react'
 
 // There are 3 conditions that a user profile can be in:
 // 1. The user has a profile and the data is returned.
@@ -90,6 +88,25 @@ export const ProfileScreen: FC = () => {
     return (
       <ContentWrapper>
         <h1 className='text-2xl'>Create Your Member Profile</h1>
+        <div className="rounded-md bg-yellow-50 m-4 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <ExclamationTriangleIcon aria-hidden="true" className="h-5 w-5 text-yellow-400" />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-yellow-800">Attention needed</h3>
+              <div className="mt-2 text-sm text-yellow-700">
+                <p>
+                  Please fill out your profile information and click "Save Changes" below.
+                </p>
+                <p>
+                  This information helps us to customize your experience and to provide you with
+                  calculations that more closely match what you need.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
         <ProfileForm
           userName=""
           shortTerm="0.2"

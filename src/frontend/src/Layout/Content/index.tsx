@@ -5,7 +5,7 @@ export const Content = (props: PropsWithChildren) => {
   return (
     <div
       id='content'
-      className="bg-medium text-white pb-4 pt-4">
+      className="bg-medium text-white p-4">
       {children}
     </div>
   )
