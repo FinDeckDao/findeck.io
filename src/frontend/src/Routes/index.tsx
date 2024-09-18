@@ -16,6 +16,7 @@ import {
 } from "@heroicons/react/24/outline"
 import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "../Components/Authenticate/index.tsx"
+import { ProfileScreen } from "@/Screens/Profile/index.tsx"
 
 interface NavigationItem {
   name: string
@@ -47,7 +48,6 @@ export const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage />
   },
-  // Positions screen is protected by the AuthContext.
   {
     path: "/positions",
     element: (
@@ -59,7 +59,6 @@ export const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage />
   },
-  // Dashboard screen is protected by the AuthContext.
   {
     path: "/dashboard",
     element: (
@@ -87,6 +86,15 @@ export const router = createBrowserRouter([
         </Authenticate>
       </DefaultLayout>
     )
+  },
+  {
+    path: '/profile',
+    element: (
+      <DefaultLayout>
+        <Authenticate>
+          <ProfileScreen />
+        </Authenticate>
+      </DefaultLayout>
+    )
   }
-
 ])

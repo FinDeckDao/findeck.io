@@ -17,13 +17,21 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["vite/client", "@testing-library/jest-dom"],
+    /* Testing types */
+    "types": ["vitest/globals", "vite/client", "@testing-library/jest-dom"],
 
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* ShadCN UI Components */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

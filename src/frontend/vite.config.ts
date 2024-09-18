@@ -1,13 +1,14 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite'
+import { mergeConfig } from 'vite'
 import { fileURLToPath, URL } from 'url'
 import dotenv from 'dotenv'
 import environment from 'vite-plugin-environment'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 dotenv.config({ path: '../../.env' })
 
-export default defineConfig({
+const viteConfig = {
   build: {
     emptyOutDir: true,
     target: 'esnext'
@@ -32,16 +33,20 @@ export default defineConfig({
     environment('all', { prefix: 'CANISTER_' }),
     environment('all', { prefix: 'DFX_' })
   ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "declarations": fileURLToPath(new URL('../declarations', import.meta.url))
+    }
+  }
+}
+
+const vitestConfig = {
   test: {
     environment: 'jsdom',
-    setupFiles: 'src/setupTests.ts'
-  },
-  resolve: {
-    alias: [
-      {
-        find: 'declarations',
-        replacement: fileURLToPath(new URL('../declarations', import.meta.url))
-      }
-    ]
+    setupFiles: 'src/setupTests.ts',
+    css: true
   }
-})
+}
+
+export default mergeConfig(viteConfig, vitestConfig)
