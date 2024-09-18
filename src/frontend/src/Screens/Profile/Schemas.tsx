@@ -12,10 +12,12 @@ export const formSchema = z.object({
     z.literal("System"),
     z.literal("Dark")
   ]),
+
   role: z.union([
     z.literal("Member"),
     z.literal("Administrator")
   ]),
+
   saveProfile: z.function(),
   error: z.string().optional(),
   loading: z.boolean().optional()

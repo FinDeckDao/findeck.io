@@ -10,7 +10,6 @@ import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
-import Int "mo:base/Int";
 import Types "types";
 import XRC "canister:xrc";
 

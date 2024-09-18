@@ -20,16 +20,18 @@ import {
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from 'react-hook-form'
-import { Profile, Theme, Role } from '../../../../declarations/backend/backend.did'
+import { Profile } from '../../../../declarations/backend/backend.did'
 import { getThemeVariant, getRoleVariant } from './utils'
 import { ProfileFormProps, formSchema } from './Schemas'
+import { FaRegSave } from "react-icons/fa"
+import { TbFidgetSpinner } from "react-icons/tb"
 
 // This form could be used under multiple conditions.
 // 1. The user is creating a profile.
 // 2. The user is editing their profile.
 // Pass in the appropriate function (updater or creator) to handle the form submission.
 export const ProfileForm: FC<ProfileFormProps> = (props) => {
-  const { userName, shortTerm, longTerm, theme, role, saveProfile, loading, error } = props
+  const { userName, shortTerm, longTerm, theme, role, saveProfile, loading } = props
 
   // 1. Define the form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -46,6 +48,8 @@ export const ProfileForm: FC<ProfileFormProps> = (props) => {
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Construct a profile object.
+    console.log("values: ", values)
+
     const profile: Profile = {
       name: values.userName,
       capitalGainsTaxRate: {
@@ -55,12 +59,12 @@ export const ProfileForm: FC<ProfileFormProps> = (props) => {
       theme: getThemeVariant(values.theme),
       role: getRoleVariant(values.role)
     }
-    saveProfile(profile)
+    saveProfile([profile])
   }
 
   return (
     <div className="p-4">
-      <Form {...form} >
+      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
           <FormField
@@ -70,7 +74,7 @@ export const ProfileForm: FC<ProfileFormProps> = (props) => {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} className="w-full rounded-md border-0 p-2 bg-dark text-white shadow-sm ring-1 ring-inset
+                  <Input placeholder="Enter you name here" {...field} className="w-full rounded-md border-0 p-2 bg-dark text-white shadow-sm ring-1 ring-inset
                     ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset
                     focus:ring-indigo-600 text-sm leading-6"/>
                 </FormControl>
@@ -181,22 +185,10 @@ export const ProfileForm: FC<ProfileFormProps> = (props) => {
 
           <Button type="submit"
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => {
-              const themeObject: Theme = getThemeVariant(theme)
-              // Static value set for the role because the UI doesn't control this the DAO does.
-              const roleObject: Role = getRoleVariant("Member")
-
-              const profile: Profile = {
-                name: userName,
-                theme: themeObject,
-                role: roleObject,
-                capitalGainsTaxRate: {
-                  longTerm: Number(longTerm),
-                  shortTerm: Number(shortTerm)
-                }
-              }
-              saveProfile([profile])
-            }}>{loading ? "Loading..." : "Save Changes"}</Button>
+            onClick={() => onSubmit(form.getValues())}
+          >
+            {loading ? <span>Loading... <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" /></span> : <span>Save Changes <FaRegSave className="h-6 w-6 inline-block" /></span>}
+          </Button>
         </form>
       </Form>
     </div>

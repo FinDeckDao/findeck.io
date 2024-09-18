@@ -24,15 +24,19 @@ export const ProfileScreen: FC = () => {
 
   // This gets called as soon as use the data variable.
   // No need to explicitly call it.
-  const { data, loading, error } = useQueryCall({
+  const { call: getProfile, data, loading, error } = useQueryCall({
     functionName: 'getProfile',
-    onSuccess: () => {
-      console.log("Profile data loaded")
+    onSuccess: (data) => {
+      if (hasKey(data, 'ok')) {
+        console.log("Profile data: ", data.ok)
+      }
+      //console.log("Profile data loaded")
     },
     onError: (error) => {
       console.log("Error loading profile data: ", error)
     }
   }) as {
+    call: () => void,
     data: { "ok": Profile } | { "err": string },
     loading: boolean,
     error: Error
@@ -47,7 +51,7 @@ export const ProfileScreen: FC = () => {
   } = useUpdateCall({
     functionName: 'createProfile',
     onSuccess: () => {
-      console.log("Profile created")
+      getProfile()
     },
     onError: (error) => {
       console.log("Error creating profile: ", error)
@@ -65,7 +69,7 @@ export const ProfileScreen: FC = () => {
   } = useUpdateCall({
     functionName: 'updateProfile',
     onSuccess: () => {
-      console.log("Profile Updated?")
+      getProfile()
     },
     onError: (error) => {
       console.log("Error creating profile: ", error)
@@ -81,8 +85,8 @@ export const ProfileScreen: FC = () => {
   if (error) return <ContentWrapper>Error: {error ? error.message : null}</ContentWrapper>
   if (loading) return <ContentWrapper>Loading...</ContentWrapper>
 
-  // Data is returned and the user doesn't have a profile.
-  if (data && !hasKey(data, 'ok')) {
+  // An error is returned so the user doesn't have a profile.
+  if (hasKey(data, 'err')) {
     return (
       <ContentWrapper>
         <h1 className='text-2xl'>Create Your Member Profile</h1>
