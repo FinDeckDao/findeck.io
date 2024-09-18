@@ -1,6 +1,7 @@
 import Array "mo:base/Array";
 import Asset "modules/Asset";
 import Cycles "mo:base/ExperimentalCycles";
+import Error "mo:base/Error";
 import Float "mo:base/Float";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
@@ -24,7 +25,7 @@ actor Backend {
   // Create a stable variable to store the data
   private stable var profileEntries : [(Principal, Types.Profile)] = [];
 
-  // Create a HashMap to store the profiles
+  // Create a HashMap to store the profiles (In-memory state)
   private var profiles = HashMap.HashMap<Principal, Types.Profile>(
     10,
     Principal.equal,
@@ -32,12 +33,12 @@ actor Backend {
   );
 
   // LifeCycle hooks to handle upgrades properly.
-  // Initialize the HashMap with the stable data
+  // Initialize the HashMap with existing stable data
+  // Lifecycle hooks
   system func preupgrade() {
     profileEntries := Iter.toArray(profiles.entries());
   };
 
-  // Write the HashMap back to the stable variable
   system func postupgrade() {
     profiles := HashMap.fromIter<Principal, Types.Profile>(
       profileEntries.vals(),
@@ -45,6 +46,19 @@ actor Backend {
       Principal.equal,
       Principal.hash,
     );
+  };
+
+  // The authorized principal (ensure that only a local dev can call the init function)
+  // TODO: Make this only possible from the DAO in the future.
+  private let AUTHORIZED_PRINCIPAL : Principal = Principal.fromText("yhjql-nw3u5-wp5r3-f2hid-ukmmv-7sy2z-on5ts-pl7fd-yrzpz-rjgdr-zqe");
+
+  // Initialize the canister
+  public shared ({ caller }) func init() : async () {
+    if (caller != AUTHORIZED_PRINCIPAL) {
+      throw Error.reject("Unauthorized: only the owner can initialize the canister");
+    };
+
+    profiles := HashMap.HashMap<Principal, Types.Profile>(10, Principal.equal, Principal.hash);
   };
 
   // Create: Add a new profile

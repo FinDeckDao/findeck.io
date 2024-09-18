@@ -18,8 +18,8 @@ const root = document.getElementById('root')
 // Render the React app
 ReactDOM.createRoot(root!).render(
   <StrictMode>
-    <AgentProvider withLocalEnv port={8000}>
-      {/* <AgentProvider> // Production */}
+    {/* <AgentProvider withLocalEnv port={8000}> */}
+    <AgentProvider>
       <ActorProvider idlFactory={backendIdlFactory}
         canisterId={backendCanisterId}
         errorComponent={() => (
