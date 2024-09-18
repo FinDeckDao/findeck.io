@@ -88,7 +88,7 @@ export const ProfileScreen: FC = () => {
     return (
       <ContentWrapper>
         <h1 className='text-2xl'>Create Your Member Profile</h1>
-        <div className="rounded-md bg-yellow-50 p-4 ml-20">
+        <div className="rounded-md bg-yellow-50 m-4 p-4">
           <div className="flex">
             <div className="flex-shrink-0">
               <ExclamationTriangleIcon aria-hidden="true" className="h-5 w-5 text-yellow-400" />
@@ -98,6 +98,8 @@ export const ProfileScreen: FC = () => {
               <div className="mt-2 text-sm text-yellow-700">
                 <p>
                   Please fill out your profile information and click "Save Changes" below.
+                </p>
+                <p>
                   This information helps us to customize your experience and to provide you with
                   calculations that more closely match what you need.
                 </p>

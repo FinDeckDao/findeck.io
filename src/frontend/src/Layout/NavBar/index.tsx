@@ -46,7 +46,7 @@ export const NavBar = () => {
                   ))}
                 </div>
                 <div className="py-6">
-                  <LoginButton />
+                  <LoginButton setMobileMenuOpen={setMobileMenuOpen} />
                 </div>
               </div>
             </div>
