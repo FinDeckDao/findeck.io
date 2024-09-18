@@ -17,7 +17,7 @@ export const NavBar = () => {
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
           <div className="fixed inset-0 z-10" />
           <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto
-                                bg-slate-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
+                                bg-dark px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
           >
             <div className="flex items-center justify-between">
               <Link to="#" className="text-sky-100 font-bold">{domain}</Link>
