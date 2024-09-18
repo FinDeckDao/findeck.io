@@ -40,7 +40,8 @@ export const LoginButton: FC<LoginButtonProps> = (props) => {
         onClick={(e) => {
           e.preventDefault()
           login({
-            identityProvider
+            identityProvider,
+            onSuccess: () => navigateTo('/profile'),
           })
         }}
         className={`-mx-3 flex items-center justify-start rounded-lg px-3 py-2.5 text-base font-semibold leading-7
