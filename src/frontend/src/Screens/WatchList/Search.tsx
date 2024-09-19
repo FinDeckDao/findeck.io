@@ -1,7 +1,9 @@
-import { useState, useEffect, FC } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
-import currencies from '../../lib/icons/coins.json'
+import { FixedSizeList as List } from 'react-window'
+import { debounce } from 'lodash-es'
+import currencyList from '../../lib/icons/coins.json'
 
 // Define the type for our currency items
 type CurrencyItem = {
@@ -11,18 +13,64 @@ type CurrencyItem = {
   img_url: string
 }
 
-export const SearchableCurrencyList: FC = () => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filteredList, setFilteredList] = useState<CurrencyItem[]>(currencies)
+// Create an index for faster searching
+const createSearchIndex = (items: CurrencyItem[]) => {
+  return items.reduce((acc, item) => {
+    const searchString = `${item.name} ${item.symbol} ${item.slug}`.toLowerCase()
+    acc[searchString] = item
+    return acc
+  }, {} as Record<string, CurrencyItem>)
+}
 
+const searchIndex = createSearchIndex(currencyList)
+
+export const SearchableCurrencyList: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filteredList, setFilteredList] = useState<CurrencyItem[]>(currencyList)
+
+  // Memoized search function
+  const searchItems = useMemo(() =>
+    (items: CurrencyItem[], term: string) => {
+      if (term.trim() === '') return items
+      const lowerTerm = term.toLowerCase()
+      return Object.keys(searchIndex)
+        .filter(key => key.includes(lowerTerm))
+        .map(key => searchIndex[key])
+    },
+    [searchIndex]
+  )
+
+  // Debounced search effect
   useEffect(() => {
-    const results = currencies.filter(item =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.slug.toLowerCase().includes(searchTerm.toLowerCase())
+    const debouncedSearch = debounce((term: string) => {
+      const results = searchItems(currencyList, term)
+      setFilteredList(results)
+    }, 300)
+
+    debouncedSearch(searchTerm)
+
+    return () => {
+      debouncedSearch.cancel()
+    }
+  }, [searchTerm, searchItems])
+
+  // Render item for virtualized list
+  const renderItem = useCallback(({ index }: { index: number }) => {
+    const item = filteredList[index]
+    return (
+      <div>
+        <Card className="m-2 overflow-hidden bg-dark text-white">
+          <CardContent className="p-4 flex items-center space-x-4">
+            <img src={item.img_url} alt={item.name} className="w-12 h-12 object-contain" />
+            <div>
+              <h3 className="font-bold">{item.name}</h3>
+              <p className="text-sm text-gray-500">{item.symbol}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     )
-    setFilteredList(results)
-  }, [searchTerm])
+  }, [filteredList])
 
   return (
     <div className="p-4">
@@ -31,21 +79,16 @@ export const SearchableCurrencyList: FC = () => {
         placeholder="Search currencies..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="mb-4 bg-dark"
+        className="mb-4 bg-dark text-white"
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredList.map((item) => (
-          <Card key={item.slug} className="overflow-hidden">
-            <CardContent className="p-4 flex items-center space-x-4">
-              <img src={item.img_url} alt={item.name} className="w-12 h-12 object-contain" />
-              <div>
-                <h3 className="font-bold">{item.name}</h3>
-                <p className="text-sm text-gray-500">{item.symbol}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <List
+        height={400}
+        itemCount={filteredList.length}
+        itemSize={80}
+        width="100%"
+      >
+        {renderItem}
+      </List>
     </div>
   )
 }

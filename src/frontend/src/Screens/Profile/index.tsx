@@ -24,12 +24,6 @@ export const ProfileScreen: FC = () => {
   // No need to explicitly call it.
   const { call: getProfile, data, loading, error } = useQueryCall({
     functionName: 'getProfile',
-    onSuccess: (data) => {
-      if (hasKey(data, 'ok')) {
-        console.log("Profile data: ", data.ok)
-      }
-      //console.log("Profile data loaded")
-    },
     onError: (error) => {
       console.log("Error loading profile data: ", error)
     }
