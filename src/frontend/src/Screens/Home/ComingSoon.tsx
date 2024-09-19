@@ -1,6 +1,5 @@
-import { Pricing } from "./Pricing"
-// import { YouTube } from "../../Components/Video"
-import GrantWinner from "../../assets/Dfinity_processed.png"
+import { Pricing } from "./Pricing";
+import GrantWinner from "../../assets/Dfinity_processed.png";
 
 export const ComingSoon = () => {
   return (
@@ -11,24 +10,45 @@ export const ComingSoon = () => {
       </div>
 
       <div className="container mx-auto">
-        <h1 className="text-left text-3xl font-bold mb-8">Coming Soon</h1>
+        {/* Use flexbox to align text and video widget side by side */}
+        <div className="flex flex-col md:flex-row justify-between items-start">
+          {/* Left side text content */}
+          <div className="w-full md:w-1/2 px-4 mb-6 md:mb-0 text-center md:text-left"> {/* Добавлено выравнивание текста */}
+            <h1 className="text-4xl font-bold mb-6">Coming Soon</h1>
+            <h2 className="text-3xl mb-4">Optimize your trading with data that supports your decisions</h2>
+            <p className="mb-8 text-lg">
+              This project is being built in public so there isn't much here yet,
+              but we are working on this every day.
+            </p>
+          </div>
 
-        {/* Subheading and description */}
-        <h2 className="text-left text-2xl mb-4">Optimize your trading with data that supports your decisions</h2>
-        <p className="text-left mb-8">
-          This project is being built in public so there isn't much here yet,
-          but we are working on this every day.
-        </p>
+          {/* Right side video widget */}
+          <div className="w-full md:w-1/2 px-4 flex justify-center">
+            <div className="text-center">
+              <div className="text-white font-semibold text-lg mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+                Check out our latest podcast episode
+              </div>
 
-        {/* Podcast section */}
-        {/* <div className="mb-8 mx-auto">
-          <h2 className="text-xl font-semibold mb-2">Latest Podcast</h2>
-          <YouTube videoId="40dYts0hCvc" />
-        </div> */}
-
+              {/* Video container to maintain aspect ratio */}
+              <div className="relative" style={{ paddingTop: '56.25%' }}>
+                <iframe
+                  width="560"
+                  height="315"
+                  src="https://www.youtube.com/embed/videoseries?list=PL--tYe1vMZqcvpYSCBX63aq7i3GvUlrFx&showinfo=0&modestbranding=1"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title="Latest Podcast Video"
+                  className="absolute top-0 left-0 rounded-lg"
+                  style={{ width: '100%', height: '100%', maxWidth: '560px', maxHeight: '315px' }} // Адаптивные размеры
+                ></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Social media links */}
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-center mt-8">
           <p className="mb-4">
             To stay in touch we have some options, bookmark this site, follow us on Twitter/X, and Subscribe on YouTube.
           </p>
@@ -50,6 +70,5 @@ export const ComingSoon = () => {
         <Pricing />
       </div>
     </>
-  )
-}
-
+  );
+};
