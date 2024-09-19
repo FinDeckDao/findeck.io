@@ -1,14 +1,15 @@
-import { useContext } from 'react'
-import { AuthContext } from '../../Contexts/Auth/index.tsx'
+import { FC } from 'react'
 import join from "../../Assets/join-findeck-on-openchat.png"
+import { useAuthState } from '@ic-reactor/react'
 
-export const DashboardScreen = () => {
-  const auth = useContext(AuthContext)
+export const DashboardScreen: FC = () => {
+  const { identity } = useAuthState()
+
 
   return (
     <div className='container mx-auto items-center justify-center text-center'>
-      <h1 className=' text-2xl'>Dashboard</h1>
-      <p>Here are your stats {auth.identity}.</p>
+      <h1 className='text-2xl'>Dashboard</h1>
+      <p><span className="font-extrabold">Here are your stats:</span> {identity?.getPrincipal().toString()}</p>
       <p className="mb-20">
         In the future this page will be a dashboard that shows all of the details of your trading.
         It will have things like your positions, your total equity, your total cost basis,

@@ -5,7 +5,7 @@ export const ErrorPage = () => {
 
   return (
     <DefaultLayout>
-      <div id="error-page" className=" bg-slate-800 w-full h-auto text-sky-100 p-4 text-center">
+      <div id="error-page" className=" bg-slate-800 w-full h-auto text-white p-4 text-center">
         <h1>Sorry FinDeck.io doesn't understand what you're requesting.</h1>
         <p>Very sorry for the confusion.</p>
 
@@ -17,7 +17,7 @@ export const ErrorPage = () => {
 
         <p>
           If you need additional help, want to propose changes, or just chat join us on {" "}
-          <a className='text-sky-400 hover:bg-slate-700 rounded-lg px-0.5 py-2.5'
+          <a className='text-white hover:bg-slate-700 rounded-lg px-0.5 py-2.5'
             target="_blank"
             href='https://oc.app/community/vmoft-nqaaa-aaaar-bh3pa-cai/?ref=ex43p-lqaaa-aaaar-bal2q-cai'>
             OpenChat

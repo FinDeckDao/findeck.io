@@ -8,7 +8,6 @@ import { ComingSoon } from '../Screens/Home/ComingSoon'
 import { DashboardScreen } from "../Screens/Dashboard"
 import { PositionsScreen } from "../Screens/Positions"
 import { ResourcesScreen } from "../Screens/Resources"
-import { ProtectedContent } from "../Components/Auth/index.tsx"
 import {
   //RectangleGroupIcon,
   MapPinIcon,
@@ -16,6 +15,8 @@ import {
   ArrowsRightLeftIcon,
 } from "@heroicons/react/24/outline"
 import { TradesScreen } from '../Screens/Trades'
+import { Authenticate } from "../Components/Authenticate/index.tsx"
+import { ProfileScreen } from "@/Screens/Profile/index.tsx"
 
 interface NavigationItem {
   name: string
@@ -47,26 +48,24 @@ export const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage />
   },
-  // Positions screen is protected by the AuthContext.
   {
     path: "/positions",
     element: (
       <DefaultLayout>
-        <ProtectedContent>
+        <Authenticate>
           <PositionsScreen />
-        </ProtectedContent>
-      </DefaultLayout>
+        </Authenticate>
+      </DefaultLayout >
     ),
     errorElement: <ErrorPage />
   },
-  // Dashboard screen is protected by the AuthContext.
   {
     path: "/dashboard",
     element: (
       <DefaultLayout>
-        <ProtectedContent>
+        <Authenticate>
           <DashboardScreen />
-        </ProtectedContent>
+        </Authenticate>
       </DefaultLayout>
     )
   },
@@ -82,9 +81,20 @@ export const router = createBrowserRouter([
     path: '/trades',
     element: (
       <DefaultLayout>
-        <TradesScreen />
+        <Authenticate>
+          <TradesScreen />
+        </Authenticate>
+      </DefaultLayout>
+    )
+  },
+  {
+    path: '/profile',
+    element: (
+      <DefaultLayout>
+        <Authenticate>
+          <ProfileScreen />
+        </Authenticate>
       </DefaultLayout>
     )
   }
-
 ])

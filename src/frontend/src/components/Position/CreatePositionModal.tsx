@@ -1,12 +1,12 @@
 import { useState, useContext, useEffect } from 'react'
 import { XCircleIcon, CheckCircleIcon } from "@heroicons/react/24/outline"
 import { SupportedAssets } from '../../../../fixtures/assets'
-import { AuthContext } from '../../Contexts/Auth'
 import { Position, PositionContext } from '../../Contexts/Position'
 import { AssetSelector } from '../AssetSelector'
 import { AssetPairContext } from '../../Contexts/AssetPair'
 import { TradesContext, Trade } from '../../Contexts/Trade'
 import { backend } from '../../../../declarations/backend'
+import { useAuthState } from '@ic-reactor/react'
 
 interface CreatePositionModalProps {
   modalRef: React.RefObject<HTMLDialogElement>
@@ -19,7 +19,7 @@ interface CreatePositionModalProps {
 // 2. trades
 export const CreatePositionModal = (props: CreatePositionModalProps) => {
   const { modalRef } = props
-  const auth = useContext(AuthContext)
+  const { authenticated, identity } = useAuthState()
 
   // There is a lot of state here but it's all local to this component.
   const [base, setBase] = useState<string>("")
@@ -37,7 +37,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
 
   useEffect(() => {
     // Guard against missing global state.
-    if (!auth.isAuthenticated) {
+    if (!authenticated) {
       console.error('User is not authenticated.')
       return
     }
@@ -51,7 +51,10 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     if (base && quote) {
       fetchPrice()
     }
-  }, [auth.isAuthenticated, base, quote])
+  }, [authenticated, base, quote])
+
+  //Guard for missing Auth
+  if (!identity || identity === null) { return <div>Sorry, you must be logged in to view this content.</div> }
 
   // Guard against missing global state.
   if (!setPositions || !setAssetPair) {
@@ -91,7 +94,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
   const createNewPosition = () => {
     // Guard against missing inputs.
     if (
-      !auth.isAuthenticated ||
+      !authenticated ||
       !time ||
       !amount ||
       !base ||
@@ -108,7 +111,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
       quote: ${quote} 
       spent: ${spent} 
       time: ${time}
-      user: ${auth.identity}`)
+      user: ${identity}`)
       return
     }
 
@@ -142,7 +145,7 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
     // 2. A new position is created when the calculated position does exist using the existing position.
     const newPosition: Position = {
       assetPair: calculatedPosition.length > 0 ? calculatedPosition[0].assetPair : { base: baseFromInput, quote: quoteFromInput },
-      owner: auth.identity,
+      owner: identity.getPrincipal.toString(),
       price: Number(price),
       priceDate: new Date().toISOString()
     }
@@ -154,14 +157,14 @@ export const CreatePositionModal = (props: CreatePositionModalProps) => {
       // 1. The asset pair is the same (buy).
       if (position.assetPair.base.symbol === newPosition.assetPair.base.symbol
         && position.assetPair.quote.symbol === newPosition.assetPair.quote.symbol
-        && position.owner === auth.identity) {
+        && position.owner === identity.getPrincipal.toString()) {
         return position
       }
 
       // 2. The asset pair is the same but reversed (sell).
       if (position.assetPair.base.symbol === newPosition.assetPair.quote.symbol
         && position.assetPair.quote.symbol === newPosition.assetPair.base.symbol
-        && position.owner === auth.identity) {
+        && position.owner === identity.getPrincipal.toString()) {
         return position
       }
     })

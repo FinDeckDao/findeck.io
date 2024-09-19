@@ -1,13 +1,13 @@
 import { FC, useState, useEffect } from 'react'
 
 export interface YouTubeProps {
-  src: string
+  videoId: string
   width?: number
   height?: number
 }
 
 export const YouTube: FC<YouTubeProps> = (props) => {
-  const { src, width, height } = props
+  const { width, height, videoId } = props
   return <div className="aspect-w-16 aspect-h-9 w-full ml-0">
     <iframe
       className="mx-auto my-auto mb-8"
