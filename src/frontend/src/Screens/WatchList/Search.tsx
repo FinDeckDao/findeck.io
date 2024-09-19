@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { FixedSizeList as List } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { debounce } from 'lodash-es'
-import currencyList from '../../lib/icons/coins.json'
+import searchIndex from '../../../../fixtures/icons/searchIndex.json'
 
 type CurrencyItem = {
   name: string
@@ -13,17 +13,13 @@ type CurrencyItem = {
   img_url: string
 }
 
-const createSearchIndex = (items: CurrencyItem[]) => {
-  return items.reduce((acc, item) => {
-    const searchString = `${item.name} ${item.symbol} ${item.slug}`.toLowerCase()
-    acc[searchString] = item
-    return acc
-  }, {} as Record<string, CurrencyItem>)
+type SearchIndex = {
+  items: CurrencyItem[]
+  nameIndex: Record<string, number[]>
+  symbolIndex: Record<string, number[]>
+  slugIndex: Record<string, number[]>
 }
 
-const searchIndex = createSearchIndex(currencyList)
-
-// Set a height for each item in the list to prevent from overlapping.
 const ITEM_HEIGHT = 108
 
 const ItemRenderer = React.memo(({ data, index, style }: { data: CurrencyItem[], index: number, style: React.CSSProperties }) => {
@@ -55,35 +51,51 @@ ItemRenderer.displayName = 'ItemRenderer'
 
 export const SearchableCurrencyList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [filteredList, setFilteredList] = useState<CurrencyItem[]>(currencyList)
+  const [filteredList, setFilteredList] = useState<CurrencyItem[]>(searchIndex.items)
 
   const searchItems = useMemo(() =>
-    (items: CurrencyItem[], term: string) => {
-      if (term.trim() === '') return items
+    (index: SearchIndex, term: string) => {
+      if (term.trim() === '') return index.items
       const lowerTerm = term.toLowerCase()
 
-      const exactMatches: CurrencyItem[] = []
-      const partialMatches: CurrencyItem[] = []
+      const exactMatches = new Set<number>()
+      const partialMatches = new Set<number>()
 
-      Object.keys(searchIndex).forEach(key => {
-        const item = searchIndex[key]
-        if (item.name.toLowerCase() === lowerTerm ||
-          item.symbol.toLowerCase() === lowerTerm ||
-          item.slug.toLowerCase() === lowerTerm) {
-          exactMatches.push(item)
-        } else if (key.includes(lowerTerm)) {
-          partialMatches.push(item)
-        }
-      })
+      // Helper function to add matches
+      const addMatches = (searchIndex: Record<string, number[]>, searchTerm: string, exact: boolean) => {
+        Object.keys(searchIndex).forEach(key => {
+          if (exact ? key === searchTerm : key.includes(searchTerm)) {
+            searchIndex[key].forEach(idx =>
+              exact ? exactMatches.add(idx) : partialMatches.add(idx)
+            )
+          }
+        })
+      }
 
-      return [...exactMatches, ...partialMatches]
+      // Check for exact matches
+      addMatches(index.nameIndex, lowerTerm, true)
+      addMatches(index.symbolIndex, lowerTerm, true)
+      addMatches(index.slugIndex, lowerTerm, true)
+
+      // Check for partial matches
+      addMatches(index.nameIndex, lowerTerm, false)
+      addMatches(index.symbolIndex, lowerTerm, false)
+      addMatches(index.slugIndex, lowerTerm, false)
+
+      // Combine results, with exact matches first
+      const results = [
+        ...Array.from(exactMatches).map(i => index.items[i]),
+        ...Array.from(partialMatches).filter(i => !exactMatches.has(i)).map(i => index.items[i])
+      ]
+
+      return results
     },
-    [searchIndex]
+    []
   )
 
   useEffect(() => {
     const debouncedSearch = debounce((term: string) => {
-      const results = searchItems(currencyList, term)
+      const results = searchItems(searchIndex as SearchIndex, term)
       setFilteredList(results)
     }, 300)
 
