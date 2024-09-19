@@ -9,7 +9,7 @@ import { SearchableCurrencyList } from './Search'
 // The purpose of this component is to present the user's watch list.
 export const WatchList: FC = () => {
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto min-h-96">
       <h1 className="text-4xl font-bold text-center mt-10">Watch List</h1>
       <SearchableCurrencyList />
     </div>

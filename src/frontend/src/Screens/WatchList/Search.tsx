@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { FixedSizeList as List } from 'react-window'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import { debounce } from 'lodash-es'
 import currencyList from '../../lib/icons/coins.json'
 
-// Define the type for our currency items
 type CurrencyItem = {
   name: string
   symbol: string
@@ -13,7 +13,6 @@ type CurrencyItem = {
   img_url: string
 }
 
-// Create an index for faster searching
 const createSearchIndex = (items: CurrencyItem[]) => {
   return items.reduce((acc, item) => {
     const searchString = `${item.name} ${item.symbol} ${item.slug}`.toLowerCase()
@@ -28,7 +27,6 @@ export const SearchableCurrencyList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredList, setFilteredList] = useState<CurrencyItem[]>(currencyList)
 
-  // Memoized search function
   const searchItems = useMemo(() =>
     (items: CurrencyItem[], term: string) => {
       if (term.trim() === '') return items
@@ -40,7 +38,6 @@ export const SearchableCurrencyList: React.FC = () => {
     [searchIndex]
   )
 
-  // Debounced search effect
   useEffect(() => {
     const debouncedSearch = debounce((term: string) => {
       const results = searchItems(currencyList, term)
@@ -54,14 +51,13 @@ export const SearchableCurrencyList: React.FC = () => {
     }
   }, [searchTerm, searchItems])
 
-  // Render item for virtualized list
-  const renderItem = useCallback(({ index }: { index: number }) => {
+  const ItemRenderer = useCallback(({ index, style }: { index: number, style: React.CSSProperties }) => {
     const item = filteredList[index]
     return (
-      <div>
+      <div style={style}>
         <Card className="m-2 overflow-hidden bg-dark text-white">
           <CardContent className="p-4 flex items-center space-x-4">
-            <img src={item.img_url} alt={item.name} className="w-12 h-12 object-contain" />
+            <img src={item.img_url} alt={item.name} className="w-12 h-12 object-contain" loading="lazy" />
             <div>
               <h3 className="font-bold">{item.name}</h3>
               <p className="text-sm text-gray-500">{item.symbol}</p>
@@ -73,7 +69,7 @@ export const SearchableCurrencyList: React.FC = () => {
   }, [filteredList])
 
   return (
-    <div className="p-4">
+    <div className="p-4 h-full">
       <Input
         type="text"
         placeholder="Search currencies..."
@@ -81,14 +77,21 @@ export const SearchableCurrencyList: React.FC = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="mb-4 bg-dark text-white"
       />
-      <List
-        height={400}
-        itemCount={filteredList.length}
-        itemSize={80}
-        width="100%"
-      >
-        {renderItem}
-      </List>
+      <div style={{ height: 'calc(100% - 60px)' }}>
+        <AutoSizer>
+          {({ height, width }) => (
+            <List
+              height={height}
+              itemCount={filteredList.length}
+              itemSize={80}
+              width={width}
+              overscanCount={5}
+            >
+              {ItemRenderer}
+            </List>
+          )}
+        </AutoSizer>
+      </div>
     </div>
   )
 }
