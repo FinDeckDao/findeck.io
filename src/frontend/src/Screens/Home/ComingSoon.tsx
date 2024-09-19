@@ -1,5 +1,5 @@
-import { Pricing } from "./Pricing";
-import GrantWinner from "../../assets/Dfinity_processed.png";
+import { Pricing } from "./Pricing"
+import GrantWinner from "../../assets/Dfinity_processed.png"
 
 export const ComingSoon = () => {
   return (
@@ -34,14 +34,13 @@ export const ComingSoon = () => {
                 <iframe
                   width="560"
                   height="315"
-                  src="https://www.youtube.com/embed/videoseries?list=PL--tYe1vMZqcvpYSCBX63aq7i3GvUlrFx&showinfo=0&modestbranding=1"
-                  frameBorder="0"
+                  src="https://www.youtube-nocookie.com/embed/videoseries?list=PL--tYe1vMZqcvpYSCBX63aq7i3GvUlrFx&showinfo=0&modestbranding=1"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   title="Latest Podcast Video"
                   className="absolute top-0 left-0 rounded-lg"
-                  style={{ width: '100%', height: '100%', maxWidth: '560px', maxHeight: '315px' }} // Адаптивные размеры
-                ></iframe>
+                  style={{ width: '100%', height: '100%', maxWidth: '560px', maxHeight: '315px' }} // Адаптивные размеры (Adaptive Sizes)
+                />
               </div>
             </div>
           </div>
@@ -70,5 +69,5 @@ export const ComingSoon = () => {
         <Pricing />
       </div>
     </>
-  );
-};
+  )
+}
