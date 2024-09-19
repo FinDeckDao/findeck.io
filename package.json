@@ -16,7 +16,7 @@
     "dfx": "dfx start --clean --host 127.0.0.1:8000",
     "generate": "dfx generate",
     "prebuild": "npm run prebuild --workspaces --if-present",
-    "presetup": "rm -rf .env",
+    "presetup": "rm -rf .env && npm run deploy",
     "pretest": "npm run prebuild --workspaces --if-present",
     "reinstall:backend:ic": "dfx canister install --mode reinstall backend --ic",
     "reinstall:frontend:ic": "dfx canister install --mode reinstall frontend --ic",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { FixedSizeList as List } from 'react-window'
@@ -23,6 +23,36 @@ const createSearchIndex = (items: CurrencyItem[]) => {
 
 const searchIndex = createSearchIndex(currencyList)
 
+// Set a height for each item in the list to prevent from overlapping.
+const ITEM_HEIGHT = 108
+
+const ItemRenderer = React.memo(({ data, index, style }: { data: CurrencyItem[], index: number, style: React.CSSProperties }) => {
+  const item = data[index]
+  return (
+    <div style={{
+      ...style,
+      height: `${parseInt(style.height as string) - 12}px`,
+    }}>
+      <Card className="bg-dark text-white h-full">
+        <CardContent className="p-4 flex items-center space-x-4">
+          <img
+            src={item.img_url}
+            alt={item.name}
+            className="w-16 h-16 object-contain mb-4"
+            loading="lazy"
+          />
+          <div>
+            <h3 className="font-bold">{item.name}</h3>
+            <p className="text-sm text-gray-500">{item.symbol}</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+})
+
+ItemRenderer.displayName = 'ItemRenderer'
+
 export const SearchableCurrencyList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredList, setFilteredList] = useState<CurrencyItem[]>(currencyList)
@@ -31,9 +61,22 @@ export const SearchableCurrencyList: React.FC = () => {
     (items: CurrencyItem[], term: string) => {
       if (term.trim() === '') return items
       const lowerTerm = term.toLowerCase()
-      return Object.keys(searchIndex)
-        .filter(key => key.includes(lowerTerm))
-        .map(key => searchIndex[key])
+
+      const exactMatches: CurrencyItem[] = []
+      const partialMatches: CurrencyItem[] = []
+
+      Object.keys(searchIndex).forEach(key => {
+        const item = searchIndex[key]
+        if (item.name.toLowerCase() === lowerTerm ||
+          item.symbol.toLowerCase() === lowerTerm ||
+          item.slug.toLowerCase() === lowerTerm) {
+          exactMatches.push(item)
+        } else if (key.includes(lowerTerm)) {
+          partialMatches.push(item)
+        }
+      })
+
+      return [...exactMatches, ...partialMatches]
     },
     [searchIndex]
   )
@@ -51,25 +94,10 @@ export const SearchableCurrencyList: React.FC = () => {
     }
   }, [searchTerm, searchItems])
 
-  const ItemRenderer = useCallback(({ index, style }: { index: number, style: React.CSSProperties }) => {
-    const item = filteredList[index]
-    return (
-      <div style={style}>
-        <Card className="m-2 overflow-hidden bg-dark text-white">
-          <CardContent className="p-4 flex items-center space-x-4">
-            <img src={item.img_url} alt={item.name} className="w-12 h-12 object-contain" loading="lazy" />
-            <div>
-              <h3 className="font-bold">{item.name}</h3>
-              <p className="text-sm text-gray-500">{item.symbol}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }, [filteredList])
+  const itemData = useMemo(() => filteredList, [filteredList])
 
   return (
-    <div className="p-4 h-full">
+    <div className="flex flex-col h-screen p-4">
       <Input
         type="text"
         placeholder="Search currencies..."
@@ -77,15 +105,24 @@ export const SearchableCurrencyList: React.FC = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="mb-4 bg-dark text-white"
       />
-      <div style={{ height: 'calc(100% - 60px)' }}>
+      <div className="text-white mb-2 pl-2">
+        {searchTerm ? (
+          `Found ${filteredList.length} Matching Asset${filteredList.length !== 1 ? 's' : ''}`
+        ) : (
+          `${filteredList.length} Total Assets Available`
+        )}
+      </div>
+      <div className="flex-grow">
         <AutoSizer>
           {({ height, width }) => (
             <List
               height={height}
               itemCount={filteredList.length}
-              itemSize={80}
+              itemSize={ITEM_HEIGHT}
               width={width}
+              itemData={itemData}
               overscanCount={5}
+              className="scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-300"
             >
               {ItemRenderer}
             </List>
