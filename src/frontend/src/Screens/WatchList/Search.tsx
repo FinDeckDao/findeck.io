@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { FixedSizeList as List } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { debounce } from 'lodash-es'
 import searchIndex from '../../../../fixtures/icons/searchIndex.json'
+import { Asset } from '@/lib/asset'
 
 type CurrencyItem = {
   name: string
@@ -13,23 +13,29 @@ type CurrencyItem = {
   img_url: string
 }
 
-type SearchIndex = {
-  items: CurrencyItem[]
-  nameIndex: Record<string, number[]>
-  symbolIndex: Record<string, number[]>
-  slugIndex: Record<string, number[]>
-}
-
 const ITEM_HEIGHT = 108
 
-const ItemRenderer = React.memo(({ data, index, style }: { data: CurrencyItem[], index: number, style: React.CSSProperties }) => {
+interface ItemRendererProps {
+  data: CurrencyItem[]
+  index: number
+  style: React.CSSProperties
+  onItemSelect: (item: CurrencyItem) => void
+  selectedItem: CurrencyItem | null
+}
+
+const ItemRenderer: React.FC<ItemRendererProps> = React.memo(({ data, index, style, onItemSelect, selectedItem }) => {
   const item = data[index]
+  const isSelected = selectedItem && selectedItem.symbol === item.symbol
+
   return (
-    <div style={{
-      ...style,
-      height: `${parseInt(style.height as string) - 12}px`,
-    }}>
-      <Card className="bg-dark text-white h-full">
+    <div
+      style={{
+        ...style,
+        height: `${parseInt(style.height as string) - 12}px`,
+      }}
+      onClick={() => onItemSelect(item)}
+    >
+      <Card className={`bg-dark text-white h-full cursor-pointer ${isSelected ? 'ring-2 ring-blue-500' : 'hover:bg-gray-700'}`}>
         <CardContent className="p-4 flex items-center space-x-4">
           <img
             src={item.img_url}
@@ -49,64 +55,78 @@ const ItemRenderer = React.memo(({ data, index, style }: { data: CurrencyItem[],
 
 ItemRenderer.displayName = 'ItemRenderer'
 
-export const SearchableCurrencyList: React.FC = () => {
+interface SearchableCurrencyListProps {
+  onSelect: (selectedAsset: Asset | null) => void
+}
+
+export interface SearchableCurrencyListRef {
+  clearState: () => void
+}
+
+export const SearchableCurrencyList = forwardRef<SearchableCurrencyListRef, SearchableCurrencyListProps>(({ onSelect }, ref) => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [filteredList, setFilteredList] = useState<CurrencyItem[]>(searchIndex.items)
+  const [selectedItem, setSelectedItem] = useState<CurrencyItem | null>(null)
 
-  const searchItems = useMemo(() =>
-    (index: SearchIndex, term: string) => {
-      if (term.trim() === '') return index.items
-      const lowerTerm = term.toLowerCase()
+  const filteredList = useMemo(() => {
+    if (!searchTerm) return searchIndex.items
+    const lowerSearchTerm = searchTerm.toLowerCase()
 
-      const exactMatches = new Set<number>()
-      const partialMatches = new Set<number>()
+    const exactMatches: CurrencyItem[] = []
+    const partialMatches: CurrencyItem[] = []
 
-      // Helper function to add matches
-      const addMatches = (searchIndex: Record<string, number[]>, searchTerm: string, exact: boolean) => {
-        Object.keys(searchIndex).forEach(key => {
-          if (exact ? key === searchTerm : key.includes(searchTerm)) {
-            searchIndex[key].forEach(idx =>
-              exact ? exactMatches.add(idx) : partialMatches.add(idx)
-            )
-          }
-        })
+    searchIndex.items.forEach(item => {
+      if (
+        item.name.toLowerCase() === lowerSearchTerm ||
+        item.symbol.toLowerCase() === lowerSearchTerm ||
+        item.slug.toLowerCase() === lowerSearchTerm
+      ) {
+        exactMatches.push(item)
+      } else if (
+        item.name.toLowerCase().includes(lowerSearchTerm) ||
+        item.symbol.toLowerCase().includes(lowerSearchTerm) ||
+        item.slug.toLowerCase().includes(lowerSearchTerm)
+      ) {
+        partialMatches.push(item)
       }
+    })
 
-      // Check for exact matches
-      addMatches(index.nameIndex, lowerTerm, true)
-      addMatches(index.symbolIndex, lowerTerm, true)
-      addMatches(index.slugIndex, lowerTerm, true)
+    return [...exactMatches, ...partialMatches]
+  }, [searchTerm])
 
-      // Check for partial matches
-      addMatches(index.nameIndex, lowerTerm, false)
-      addMatches(index.symbolIndex, lowerTerm, false)
-      addMatches(index.slugIndex, lowerTerm, false)
+  const clearState = useCallback(() => {
+    setSearchTerm('')
+    setSelectedItem(null)
+  }, [])
 
-      // Combine results, with exact matches first
-      const results = [
-        ...Array.from(exactMatches).map(i => index.items[i]),
-        ...Array.from(partialMatches).filter(i => !exactMatches.has(i)).map(i => index.items[i])
-      ]
+  useImperativeHandle(ref, () => ({
+    clearState
+  }))
 
-      return results
-    },
-    []
-  )
-
-  useEffect(() => {
-    const debouncedSearch = debounce((term: string) => {
-      const results = searchItems(searchIndex as SearchIndex, term)
-      setFilteredList(results)
-    }, 300)
-
-    debouncedSearch(searchTerm)
-
-    return () => {
-      debouncedSearch.cancel()
+  const handleItemSelect = useCallback((item: CurrencyItem) => {
+    if (selectedItem && selectedItem.symbol === item.symbol) {
+      setSelectedItem(null)
+      onSelect(null)
+    } else {
+      setSelectedItem(item)
+      onSelect({
+        name: item.name,
+        symbol: item.symbol,
+        img_url: item.img_url,
+        slug: item.slug,
+      })
     }
-  }, [searchTerm, searchItems])
+    setSearchTerm('')
+  }, [selectedItem, onSelect])
 
-  const itemData = useMemo(() => filteredList, [filteredList])
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value)
+    setSelectedItem(null)
+  }, [])
+
+  const itemData = useMemo(() =>
+    selectedItem ? [selectedItem] : filteredList,
+    [selectedItem, filteredList]
+  )
 
   return (
     <div className="flex flex-col h-screen p-4">
@@ -114,11 +134,13 @@ export const SearchableCurrencyList: React.FC = () => {
         type="text"
         placeholder="Search currencies..."
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={handleSearchChange}
         className="mb-4 bg-dark text-white"
       />
       <div className="text-white mb-2 pl-2">
-        {searchTerm ? (
+        {selectedItem ? (
+          "Selected Asset"
+        ) : searchTerm ? (
           `Found ${filteredList.length} Matching Asset${filteredList.length !== 1 ? 's' : ''}`
         ) : (
           `${filteredList.length} Total Assets Available`
@@ -129,20 +151,30 @@ export const SearchableCurrencyList: React.FC = () => {
           {({ height, width }) => (
             <List
               height={height}
-              itemCount={filteredList.length}
+              itemCount={itemData.length}
               itemSize={ITEM_HEIGHT}
               width={width}
               itemData={itemData}
               overscanCount={5}
               className="scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-300"
             >
-              {ItemRenderer}
+              {({ data, index, style }) => (
+                <ItemRenderer
+                  data={data}
+                  index={index}
+                  style={style}
+                  onItemSelect={handleItemSelect}
+                  selectedItem={selectedItem}
+                />
+              )}
             </List>
           )}
         </AutoSizer>
       </div>
     </div>
   )
-}
+})
+
+SearchableCurrencyList.displayName = 'SearchableCurrencyList'
 
 export default SearchableCurrencyList

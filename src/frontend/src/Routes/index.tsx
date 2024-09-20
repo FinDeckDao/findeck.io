@@ -19,7 +19,7 @@ import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "../Components/Authenticate/index.tsx"
 import { ProfileScreen } from "@/Screens/Profile/index.tsx"
 import { WatchList } from "@/Screens/WatchList/index.tsx"
-import { CreateWatchList } from "@/Screens/WatchList/create.tsx"
+import { CreateWatchList } from "@/Screens/WatchList/Create.tsx"
 
 interface NavigationItem {
   name: string

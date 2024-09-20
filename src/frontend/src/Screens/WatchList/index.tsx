@@ -7,6 +7,8 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline"  // Updated import
 export const WatchList: FC = () => {
   const navigate = useNavigate()
 
+
+
   const navigateTo = (path: string) => {
     navigate(path)
   }
