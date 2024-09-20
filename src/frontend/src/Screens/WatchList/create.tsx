@@ -5,6 +5,22 @@ import { Asset, AssetPair } from '../../lib/asset'
 import { Button } from '@/components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 
+import {
+  Breadcrumb,
+  BreadcrumbEllipsis,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 export const CreateWatchList: React.FC = () => {
   const [activeTab, setActiveTab] = useState('base')
   const [selectedBase, setSelectedBase] = useState<Asset | null>(null)
@@ -40,7 +56,19 @@ export const CreateWatchList: React.FC = () => {
 
   return (
     <div className="container mx-auto min-h-96 px-4">
-      <h1 className="text-4xl font-bold text-center mt-10 mb-6">Create Watch List</h1>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/watchlist">Watch List</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage className="text-white">Create Watch List Item</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      <h1 className="text-4xl font-bold text-center mt-10 mb-6">Create A Watch List Item</h1>
 
       {/* Selected Assets Display */}
       <div className="mt-8">
@@ -55,7 +83,7 @@ export const CreateWatchList: React.FC = () => {
           </div>
         ) : (
           <p className="text-gray-400">
-            Please search for a base asset or quote asset then click on it to select it.
+            Please search for a base asset and quote asset. Click on the item you want to select it.
           </p>
         )}
       </div>
@@ -99,7 +127,7 @@ export const CreateWatchList: React.FC = () => {
 
           <TabsContent value="quote">
             <div>
-              <h2 className="text-2xl font-semibold mb-2 text-white">Asset Used To Pay (Quote)</h2>
+              <h2 className="text-2xl font-semibold mb-2 text-white">Asset You'll Used To Pay (Quote)</h2>
               <SearchableCurrencyList ref={quoteListRef} onSelect={handleQuoteSelect} />
             </div>
           </TabsContent>
@@ -113,7 +141,7 @@ export const CreateWatchList: React.FC = () => {
           <SearchableCurrencyList ref={baseListRef} onSelect={handleBaseSelect} />
         </div>
         <div className="w-1/2">
-          <h2 className="text-2xl font-semibold mb-2">Asset Used To Pay (Quote)</h2>
+          <h2 className="text-2xl font-semibold mb-2">Asset You'll Used To Pay (Quote)</h2>
           <SearchableCurrencyList ref={quoteListRef} onSelect={handleQuoteSelect} />
         </div>
       </div>
