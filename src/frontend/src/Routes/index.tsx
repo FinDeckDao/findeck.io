@@ -19,6 +19,7 @@ import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "../Components/Authenticate/index.tsx"
 import { ProfileScreen } from "@/Screens/Profile/index.tsx"
 import { WatchList } from "@/Screens/WatchList/index.tsx"
+import { CreateWatchList } from "@/Screens/WatchList/create.tsx"
 
 interface NavigationItem {
   name: string
@@ -106,6 +107,16 @@ export const router = createBrowserRouter([
       <DefaultLayout>
         <Authenticate>
           <WatchList />
+        </Authenticate>
+      </DefaultLayout>
+    )
+  },
+  {
+    path: "/watchlist/create",
+    element: (
+      <DefaultLayout>
+        <Authenticate>
+          <CreateWatchList />
         </Authenticate>
       </DefaultLayout>
     )
