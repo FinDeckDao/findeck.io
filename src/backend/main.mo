@@ -30,14 +30,14 @@ actor Backend {
   private stable var profileEntries : [(Principal, Types.Profile)] = [];
   private stable var watchListEntries : [(Principal, AssetPair)] = [];
 
-  // Create a HashMap to store the profiles (In-memory state)
+  // Create a HashMap to store the profiles into local Canister Memory.
   private var profiles = HashMap.HashMap<Principal, Types.Profile>(
     10,
     Principal.equal,
     Principal.hash,
   );
 
-  // Create a HashMap to store the profiles (In-memory state)
+  // Create a HashMap to store the profiles into local Canister Memory.
   private var watchListItems = HashMap.HashMap<Principal, AssetPair>(
     10,
     Principal.equal,
@@ -48,13 +48,15 @@ actor Backend {
   // Lifecycle Functions
   //////////////////////////////////////////////////////////////////////
   system func preupgrade() {
-    // Write the profiles to Stable Memory
+    // Write the profiles to Stable Memory before upgrading the canister.
     profileEntries := Iter.toArray(profiles.entries());
+
+    // Write the watchListEntries to Stable Memory before upgrading the canister.
     watchListEntries := Iter.toArray(watchListItems.entries());
   };
 
   system func postupgrade() {
-    // Read the profiles from Stable Memory
+    // Read the profiles from Stable Memory into local Canister Memory.
     profiles := HashMap.fromIter<Principal, Types.Profile>(
       profileEntries.vals(),
       10,
@@ -62,6 +64,7 @@ actor Backend {
       Principal.hash,
     );
 
+    // Read the watchlist from Stable Memory into local Canister Memory.
     watchListItems := HashMap.fromIter<Principal, AssetPair>(
       watchListEntries.vals(),
       10,
@@ -101,8 +104,8 @@ actor Backend {
     watchList.update(caller, assetPair);
   };
 
-  public shared ({ caller }) func deleteWatchListItem() : async Result.Result<(), Text> {
-    watchList.delete(caller);
+  public shared ({ caller }) func deleteWatchListItem(assetPairToDelete : AssetPair) : async Result.Result<(), Text> {
+    watchList.delete(caller, assetPairToDelete);
   };
 
   // TODO: Setup a paginator for this function.
@@ -207,33 +210,14 @@ actor Backend {
   // Exchange Rate Functions
   //////////////////////////////////////////////////////////////////////
 
-  func getSupportedAsset(symbol : Text) : AssetModule.Asset {
+  func getSupportedAsset(Symbol : Text) : AssetModule.AssetType {
     let foundAsset = Array.find<AssetModule.AssetType>(
       AssetModule.Assets,
       func(asset : AssetModule.AssetType) : Bool {
-        asset.symbol == symbol;
+        asset.symbol == Symbol;
       },
     );
-
-    switch (foundAsset) {
-      case (?asset) {
-        {
-          name = asset.symbol; // Using symbol as name since AssetType doesn't have a name field
-          symbol = asset.symbol;
-          slug = asset.symbol.toLowerCase(); // Creating a lowercase slug from the symbol
-          img_url = "/images/" # asset.symbol # ".png" // Assuming a standard image URL format
-        };
-      };
-      case null {
-        // Default asset if not found
-        {
-          name = "Bitcoin";
-          symbol = "BTC";
-          slug = "btc";
-          img_url = "/images/BTC.png";
-        };
-      };
-    };
+    return Option.get(foundAsset, { symbol = "BTC"; variant = #Cryptocurrency });
   };
 
   func convertToUSD(symbol : Text) : Text {
