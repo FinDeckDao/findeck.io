@@ -1,9 +1,11 @@
+import Array "mo:base/Array";
+import AssetModule "./Asset/main";
 import HashMap "mo:base/HashMap";
+import Iter "mo:base/Iter";
+import Order "mo:base/Order";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
-import Iter "mo:base/Iter";
-import AssetModule "./Asset/main";
-import Array "mo:base/Array";
+import Text "mo:base/Text";
 
 module WatchListManager {
   public type WatchListItems = HashMap.HashMap<Principal, [AssetModule.AssetPair]>;
@@ -71,6 +73,45 @@ module WatchListManager {
       case null {
         #err("No watch list found for this user");
       };
+    };
+  };
+
+  public func listTopItems(watchListItems : WatchListItems, limit : Nat) : [AssetModule.AssetPair] {
+    let pairCounts = HashMap.HashMap<Text, (AssetModule.AssetPair, Nat)>(10, Text.equal, Text.hash);
+
+    // Helper function to create a unique key for an AssetPair
+    func assetPairToKey(pair : AssetModule.AssetPair) : Text {
+      pair.base.slug # "_" # pair.quote.slug;
+    };
+
+    // Count occurrences of each AssetPair across all records
+    for (userPairs in watchListItems.vals()) {
+      for (pair in userPairs.vals()) {
+        let key = assetPairToKey(pair);
+        let (existingPair, count) = switch (pairCounts.get(key)) {
+          case (null) (pair, 1);
+          case (?existing) (existing.0, existing.1 + 1);
+        };
+        pairCounts.put(key, (existingPair, count));
+      };
+    };
+
+    // Filter pairs that appear more than once
+    let filteredPairs = HashMap.mapFilter<Text, (AssetModule.AssetPair, Nat), AssetModule.AssetPair>(
+      pairCounts,
+      Text.equal,
+      Text.hash,
+      func(_, v) = if (v.1 > 1) ?v.0 else null,
+    );
+
+    // Convert to array
+    let finalPairs = Iter.toArray(filteredPairs.vals());
+
+    // Return all items or up to the limit
+    if (finalPairs.size() <= limit) {
+      finalPairs;
+    } else {
+      Array.subArray(finalPairs, 0, limit);
     };
   };
 

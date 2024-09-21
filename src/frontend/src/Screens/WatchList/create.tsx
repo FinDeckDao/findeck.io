@@ -5,6 +5,7 @@ import { Asset, AssetPair } from '../../lib/asset'
 import { Button } from '@/components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 import { useUpdateCall } from '@ic-reactor/react'
+import { TbFidgetSpinner } from "react-icons/tb"
 
 import {
   Breadcrumb,
@@ -31,7 +32,7 @@ export const CreateWatchList: React.FC = () => {
   }, [selectedBase, selectedQuote])
 
   // Update the backend with this asset.
-  const { call: createWatchListItem } = useUpdateCall({
+  const { call: createWatchListItem, loading } = useUpdateCall({
     functionName: "createWatchListItem"
   })
 
@@ -95,8 +96,16 @@ export const CreateWatchList: React.FC = () => {
         )}
       </div>
 
-      {/* Create Button */}
-      <div className="mt-4 flex justify-end">
+      {/* Create Button and status update */}
+      <div className="mt-4 flex justify-between items-center">
+        <div className="flex-grow">
+          {loading && (
+            <span>
+              Adding {`${selectedBase?.symbol}/${selectedQuote?.symbol}`} To Your Watchlist...{" "}
+              <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
+            </span>
+          )}
+        </div>
         <Button
           onClick={handleCreateWatchListItem}
           disabled={!assetPair}

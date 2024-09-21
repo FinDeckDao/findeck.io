@@ -98,7 +98,7 @@ actor Backend {
     WatchListManager.read(watchListItems, caller);
   };
 
-  public shared ({ caller }) func getlWatchListItemsForUser() : async [AssetModule.AssetPair] {
+  public shared ({ caller }) func getUserWatchList() : async [AssetModule.AssetPair] {
     WatchListManager.getAllForPrincipal(watchListItems, caller);
   };
 
@@ -112,6 +112,11 @@ actor Backend {
 
   // TODO: Setup a paginator for this function.
   public query func listAllWatchListItems() : async [AssetModule.AssetPair] {
+    WatchListManager.list(watchListItems);
+  };
+
+  // TODO: Refactor this to select the most watched assets.
+  public query func getTopWatchedAssets() : async [AssetModule.AssetPair] {
     WatchListManager.list(watchListItems);
   };
 
