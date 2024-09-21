@@ -1,5 +1,5 @@
 import Array "mo:base/Array";
-import Asset "modules/Asset";
+import AssetModule "modules/Asset/main";
 import Cycles "mo:base/ExperimentalCycles";
 import Error "mo:base/Error";
 import Float "mo:base/Float";
@@ -13,17 +13,22 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Types "types";
 import XRC "canister:xrc";
+import WatchListModule "modules/WatchListManager";
 
 actor Backend {
   // Globals
   type Result = Result.Result<Text, Text>;
+  type AssetPair = AssetModule.AssetPair;
+  type Asset = AssetModule.Asset;
+  type AssetType = AssetModule.AssetType;
 
   //////////////////////////////////////////////////////////////////////
-  // Profile Functions
+  // Profile Variables
   //////////////////////////////////////////////////////////////////////
 
   // Create a stable variable to store the data
   private stable var profileEntries : [(Principal, Types.Profile)] = [];
+  private stable var watchListEntries : [(Principal, AssetPair)] = [];
 
   // Create a HashMap to store the profiles (In-memory state)
   private var profiles = HashMap.HashMap<Principal, Types.Profile>(
@@ -32,16 +37,33 @@ actor Backend {
     Principal.hash,
   );
 
-  // LifeCycle hooks to handle upgrades properly.
-  // Initialize the HashMap with existing stable data
-  // Lifecycle hooks
+  // Create a HashMap to store the profiles (In-memory state)
+  private var watchListItems = HashMap.HashMap<Principal, AssetPair>(
+    10,
+    Principal.equal,
+    Principal.hash,
+  );
+
+  //////////////////////////////////////////////////////////////////////
+  // Lifecycle Functions
+  //////////////////////////////////////////////////////////////////////
   system func preupgrade() {
+    // Write the profiles to Stable Memory
     profileEntries := Iter.toArray(profiles.entries());
+    watchListEntries := Iter.toArray(watchListItems.entries());
   };
 
   system func postupgrade() {
+    // Read the profiles from Stable Memory
     profiles := HashMap.fromIter<Principal, Types.Profile>(
       profileEntries.vals(),
+      10,
+      Principal.equal,
+      Principal.hash,
+    );
+
+    watchListItems := HashMap.fromIter<Principal, AssetPair>(
+      watchListEntries.vals(),
       10,
       Principal.equal,
       Principal.hash,
@@ -59,9 +81,38 @@ actor Backend {
     };
 
     profiles := HashMap.HashMap<Principal, Types.Profile>(10, Principal.equal, Principal.hash);
+    watchListItems := HashMap.HashMap<Principal, AssetPair>(10, Principal.equal, Principal.hash);
   };
 
-  // Create: Add a new profile
+  //////////////////////////////////////////////////////////////////////
+  // WatchList Functions
+  //////////////////////////////////////////////////////////////////////
+  let watchList = WatchListModule.WatchList();
+
+  public shared ({ caller }) func createWatchListItem(assetPair : AssetPair) : async Result.Result<(), Text> {
+    watchList.create(caller, assetPair);
+  };
+
+  public shared ({ caller }) func getWatchListItem() : async Result.Result<AssetPair, Text> {
+    watchList.read(caller);
+  };
+
+  public shared ({ caller }) func updateWatchListItem(assetPair : AssetPair) : async Result.Result<(), Text> {
+    watchList.update(caller, assetPair);
+  };
+
+  public shared ({ caller }) func deleteWatchListItem() : async Result.Result<(), Text> {
+    watchList.delete(caller);
+  };
+
+  // TODO: Setup a paginator for this function.
+  public query func listAllWatchListItems() : async [AssetPair] {
+    watchList.list();
+  };
+
+  //////////////////////////////////////////////////////////////////////
+  // Profile Functions
+  //////////////////////////////////////////////////////////////////////
   public shared ({ caller }) func createProfile(profile : Types.Profile) : async Result {
 
     // Utility function to convert percentage to float (handles both Int and Float)
@@ -123,8 +174,7 @@ actor Backend {
   };
 
   // Update: Update an existing profile
-  public shared (msg) func updateProfile(updatedProfile : Types.Profile) : async Bool {
-    let caller = msg.caller;
+  public shared ({ caller }) func updateProfile(updatedProfile : Types.Profile) : async Bool {
     switch (profiles.get(caller)) {
       case (null) {
         false // Profile doesn't exist
@@ -157,14 +207,33 @@ actor Backend {
   // Exchange Rate Functions
   //////////////////////////////////////////////////////////////////////
 
-  func getSupportedAsset(Symbol : Text) : Asset.AssetType {
-    let foundAsset = Array.find<Asset.AssetType>(
-      Asset.Assets,
-      func(asset : Asset.AssetType) : Bool {
-        asset.symbol == Symbol;
+  func getSupportedAsset(symbol : Text) : AssetModule.Asset {
+    let foundAsset = Array.find<AssetModule.AssetType>(
+      AssetModule.Assets,
+      func(asset : AssetModule.AssetType) : Bool {
+        asset.symbol == symbol;
       },
     );
-    return Option.get(foundAsset, { symbol = "BTC"; variant = #Cryptocurrency });
+
+    switch (foundAsset) {
+      case (?asset) {
+        {
+          name = asset.symbol; // Using symbol as name since AssetType doesn't have a name field
+          symbol = asset.symbol;
+          slug = asset.symbol.toLowerCase(); // Creating a lowercase slug from the symbol
+          img_url = "/images/" # asset.symbol # ".png" // Assuming a standard image URL format
+        };
+      };
+      case null {
+        // Default asset if not found
+        {
+          name = "Bitcoin";
+          symbol = "BTC";
+          slug = "btc";
+          img_url = "/images/BTC.png";
+        };
+      };
+    };
   };
 
   func convertToUSD(symbol : Text) : Text {

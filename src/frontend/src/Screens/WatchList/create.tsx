@@ -7,19 +7,12 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline"
 
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 export const CreateWatchList: React.FC = () => {
   const [activeTab, setActiveTab] = useState('base')
@@ -51,6 +44,8 @@ export const CreateWatchList: React.FC = () => {
       quoteListRef.current?.clearState()
       setSelectedBase(null)
       setSelectedQuote(null)
+
+      // Update the backend with this asset.
     }
   }, [assetPair])
 
