@@ -1,15 +1,34 @@
+import { FC, useEffect, useState } from 'react'
 import { Button } from '@/Components/ui/button'
-import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Asset, AssetPair } from '../../lib/asset'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"  // Updated import
+import { useQueryCall } from '@ic-reactor/react'
+import { hasKey } from '@/lib/utils'
 
 export const WatchList: FC = () => {
   const navigate = useNavigate()
+  const [userWatchList, setUserWatchList] = useState<AssetPair[]>([])
 
   const navigateTo = (path: string) => {
     navigate(path)
   }
+
+  const { call: getWatchList } = useQueryCall({
+    functionName: "getlWatchListItemsForUser",
+    onSuccess: (data) => {
+      console.log(data)
+      if (hasKey(data, 'ok')) {
+        const watchList = data.ok as AssetPair[]
+        setUserWatchList(watchList)
+      }
+    }
+  })
+
+  // Run this once to fetch the user's watch list.
+  useEffect(() => {
+    getWatchList()
+  }, [])
 
   const sampleAssets: Asset[] = [
     { name: "Bitcoin", symbol: "BTC", slug: "bitcoin", img_url: "/currency-icons/bitcoin.png" },
@@ -17,11 +36,6 @@ export const WatchList: FC = () => {
     { name: "Tether", symbol: "USDT", slug: "tether", img_url: "/currency-icons/tether.png" },
     { name: "Binance Coin", symbol: "BNB", slug: "binance-coin", img_url: "/currency-icons/binance-coin.png" },
     { name: "Cardano", symbol: "ADA", slug: "cardano", img_url: "/currency-icons/cardano.png" },
-  ]
-
-  const userWatchList: AssetPair[] = [
-    { base: sampleAssets[0], quote: sampleAssets[1] },
-    { base: sampleAssets[2], quote: sampleAssets[3] },
   ]
 
   const globalWatchListItems: AssetPair[] = [

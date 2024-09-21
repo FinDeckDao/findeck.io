@@ -13,13 +13,13 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Types "types";
 import XRC "canister:xrc";
-import WatchListModule "modules/WatchListManager";
+import WatchListManager "modules/WatchListManager";
 
 actor Backend {
   // Globals
   type Result = Result.Result<Text, Text>;
-  type AssetPair = AssetModule.AssetPair;
-  type Asset = AssetModule.Asset;
+
+  // Globals for XRC
   type AssetType = AssetModule.AssetType;
 
   //////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ actor Backend {
 
   // Create a stable variable to store the data
   private stable var profileEntries : [(Principal, Types.Profile)] = [];
-  private stable var watchListEntries : [(Principal, AssetPair)] = [];
+  private stable var watchListEntries : [(Principal, AssetModule.AssetPair)] = [];
 
   // Create a HashMap to store the profiles into local Canister Memory.
   private var profiles = HashMap.HashMap<Principal, Types.Profile>(
@@ -38,7 +38,7 @@ actor Backend {
   );
 
   // Create a HashMap to store the profiles into local Canister Memory.
-  private var watchListItems = HashMap.HashMap<Principal, AssetPair>(
+  private var watchListItems = HashMap.HashMap<Principal, AssetModule.AssetPair>(
     10,
     Principal.equal,
     Principal.hash,
@@ -65,7 +65,7 @@ actor Backend {
     );
 
     // Read the watchlist from Stable Memory into local Canister Memory.
-    watchListItems := HashMap.fromIter<Principal, AssetPair>(
+    watchListItems := HashMap.fromIter<Principal, AssetModule.AssetPair>(
       watchListEntries.vals(),
       10,
       Principal.equal,
@@ -84,33 +84,35 @@ actor Backend {
     };
 
     profiles := HashMap.HashMap<Principal, Types.Profile>(10, Principal.equal, Principal.hash);
-    watchListItems := HashMap.HashMap<Principal, AssetPair>(10, Principal.equal, Principal.hash);
+    watchListItems := HashMap.HashMap<Principal, AssetModule.AssetPair>(10, Principal.equal, Principal.hash);
   };
 
   //////////////////////////////////////////////////////////////////////
   // WatchList Functions
   //////////////////////////////////////////////////////////////////////
-  let watchList = WatchListModule.WatchList();
-
-  public shared ({ caller }) func createWatchListItem(assetPair : AssetPair) : async Result.Result<(), Text> {
-    watchList.create(caller, assetPair);
+  public shared ({ caller }) func createWatchListItem(assetPair : AssetModule.AssetPair) : async Result.Result<(), Text> {
+    WatchListManager.create(watchListItems, caller, assetPair);
   };
 
-  public shared ({ caller }) func getWatchListItem() : async Result.Result<AssetPair, Text> {
-    watchList.read(caller);
+  public shared ({ caller }) func getWatchListItem() : async Result.Result<AssetModule.AssetPair, Text> {
+    WatchListManager.read(watchListItems, caller);
   };
 
-  public shared ({ caller }) func updateWatchListItem(assetPair : AssetPair) : async Result.Result<(), Text> {
-    watchList.update(caller, assetPair);
+  public shared ({ caller }) func getlWatchListItemsForUser() : async [AssetModule.AssetPair] {
+    WatchListManager.getAllForPrincipal(watchListItems, caller);
   };
 
-  public shared ({ caller }) func deleteWatchListItem(assetPairToDelete : AssetPair) : async Result.Result<(), Text> {
-    watchList.delete(caller, assetPairToDelete);
+  public shared ({ caller }) func updateWatchListItem(assetPair : AssetModule.AssetPair) : async Result.Result<(), Text> {
+    WatchListManager.update(watchListItems, caller, assetPair);
+  };
+
+  public shared ({ caller }) func deleteWatchListItem(assetPairToDelete : AssetModule.AssetPair) : async Result.Result<(), Text> {
+    WatchListManager.delete(watchListItems, caller, assetPairToDelete);
   };
 
   // TODO: Setup a paginator for this function.
-  public query func listAllWatchListItems() : async [AssetPair] {
-    watchList.list();
+  public query func listAllWatchListItems() : async [AssetModule.AssetPair] {
+    WatchListManager.list(watchListItems);
   };
 
   //////////////////////////////////////////////////////////////////////

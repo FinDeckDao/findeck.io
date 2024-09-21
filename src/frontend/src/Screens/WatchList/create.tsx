@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Asset, AssetPair } from '../../lib/asset'
 import { Button } from '@/components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
+import { useUpdateCall } from '@ic-reactor/react'
 
 import {
   Breadcrumb,
@@ -29,6 +30,11 @@ export const CreateWatchList: React.FC = () => {
     return null
   }, [selectedBase, selectedQuote])
 
+  // Update the backend with this asset.
+  const { call: createWatchListItem } = useUpdateCall({
+    functionName: "createWatchListItem"
+  })
+
   const handleBaseSelect = useCallback((asset: Asset | null) => {
     setSelectedBase(asset)
   }, [])
@@ -45,9 +51,15 @@ export const CreateWatchList: React.FC = () => {
       setSelectedBase(null)
       setSelectedQuote(null)
 
-      // Update the backend with this asset.
+      // Construct an asset pair.
+      const newAssetPair = {
+        base: assetPair.base,
+        quote: assetPair.quote
+      }
+
+      createWatchListItem([newAssetPair])
     }
-  }, [assetPair])
+  }, [assetPair, createWatchListItem])
 
   return (
     <div className="container mx-auto min-h-96 px-4">
