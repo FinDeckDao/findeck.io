@@ -1,4 +1,12 @@
-import React, { useState, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react'
+import {
+  useState,
+  useCallback,
+  useMemo,
+  forwardRef,
+  useImperativeHandle,
+  CSSProperties,
+  memo
+} from 'react'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { FixedSizeList as List } from 'react-window'
@@ -18,12 +26,12 @@ const ITEM_HEIGHT = 108
 interface ItemRendererProps {
   data: CurrencyItem[]
   index: number
-  style: React.CSSProperties
+  style: CSSProperties
   onItemSelect: (item: CurrencyItem) => void
   selectedItem: CurrencyItem | null
 }
 
-const ItemRenderer: React.FC<ItemRendererProps> = React.memo(({ data, index, style, onItemSelect, selectedItem }) => {
+const ItemRenderer: React.FC<ItemRendererProps> = memo(({ data, index, style, onItemSelect, selectedItem }) => {
   const item = data[index]
   const isSelected = selectedItem && selectedItem.symbol === item.symbol
 

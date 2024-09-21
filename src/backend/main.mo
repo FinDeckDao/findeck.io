@@ -28,7 +28,7 @@ actor Backend {
 
   // Create a stable variable to store the data
   private stable var profileEntries : [(Principal, Types.Profile)] = [];
-  private stable var watchListEntries : [(Principal, AssetModule.AssetPair)] = [];
+  private stable var watchListEntries : [(Principal, [AssetModule.AssetPair])] = [];
 
   // Create a HashMap to store the profiles into local Canister Memory.
   private var profiles = HashMap.HashMap<Principal, Types.Profile>(
@@ -38,7 +38,7 @@ actor Backend {
   );
 
   // Create a HashMap to store the profiles into local Canister Memory.
-  private var watchListItems = HashMap.HashMap<Principal, AssetModule.AssetPair>(
+  private var watchListItems = HashMap.HashMap<Principal, [AssetModule.AssetPair]>(
     10,
     Principal.equal,
     Principal.hash,
@@ -65,7 +65,7 @@ actor Backend {
     );
 
     // Read the watchlist from Stable Memory into local Canister Memory.
-    watchListItems := HashMap.fromIter<Principal, AssetModule.AssetPair>(
+    watchListItems := HashMap.fromIter<Principal, [AssetModule.AssetPair]>(
       watchListEntries.vals(),
       10,
       Principal.equal,
@@ -84,7 +84,7 @@ actor Backend {
     };
 
     profiles := HashMap.HashMap<Principal, Types.Profile>(10, Principal.equal, Principal.hash);
-    watchListItems := HashMap.HashMap<Principal, AssetModule.AssetPair>(10, Principal.equal, Principal.hash);
+    watchListItems := HashMap.HashMap<Principal, [AssetModule.AssetPair]>(10, Principal.equal, Principal.hash);
   };
 
   //////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ actor Backend {
     WatchListManager.create(watchListItems, caller, assetPair);
   };
 
-  public shared ({ caller }) func getWatchListItem() : async Result.Result<AssetModule.AssetPair, Text> {
+  public shared ({ caller }) func getWatchListItem() : async Result.Result<[AssetModule.AssetPair], Text> {
     WatchListManager.read(watchListItems, caller);
   };
 
@@ -107,7 +107,7 @@ actor Backend {
   };
 
   public shared ({ caller }) func deleteWatchListItem(assetPairToDelete : AssetModule.AssetPair) : async Result.Result<(), Text> {
-    WatchListManager.delete(watchListItems, caller, assetPairToDelete);
+    WatchListManager.removeFromWatchList(watchListItems, caller, assetPairToDelete);
   };
 
   // TODO: Setup a paginator for this function.

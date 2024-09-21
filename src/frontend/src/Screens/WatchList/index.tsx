@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { Asset, AssetPair } from '../../lib/asset'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"  // Updated import
 import { useQueryCall } from '@ic-reactor/react'
-import { hasKey } from '@/lib/utils'
 
 export const WatchList: FC = () => {
   const navigate = useNavigate()
@@ -18,10 +17,8 @@ export const WatchList: FC = () => {
     functionName: "getlWatchListItemsForUser",
     onSuccess: (data) => {
       console.log(data)
-      if (hasKey(data, 'ok')) {
-        const watchList = data.ok as AssetPair[]
-        setUserWatchList(watchList)
-      }
+      const watchList = data as AssetPair[]
+      setUserWatchList(watchList)
     }
   })
 
@@ -45,7 +42,7 @@ export const WatchList: FC = () => {
   ]
 
   const renderAssetPair = (pair: AssetPair) => (
-    <div key={`${pair.base.symbol}-${pair.quote.symbol}`} className="flex items-center space-x-2 mb-2 p-2 bg-gray-800 rounded text-white">
+    <div key={`${pair.base.symbol}-${pair.quote.symbol}`} className="flex items-center space-x-2 mb-2 p-2 bg-gray-800 rounded-2xl text-white">
       <img src={pair.base.img_url} alt={pair.base.name} className="w-10 h-10" />
       <img src={pair.quote.img_url} alt={pair.quote.name} className="w-10 h-10" />
       <span>{pair.base.symbol}</span>
@@ -69,7 +66,7 @@ export const WatchList: FC = () => {
 
       <div className="flex flex-col lg:flex-row lg:space-x-4">
         <div className="mb-8 lg:mb-0 lg:w-1/2">
-          <h2 className="text-2xl font-semibold mb-4">Your Watch List</h2>
+          <h2 className="text-2xl font-semibold mb-4">{userWatchList.length > 1 ? `Watching ${userWatchList.length} Asset Pairs` : `Watching ${userWatchList.length} Asset Pair`}</h2>
           {userWatchList.length > 0 ? (
             userWatchList.map(renderAssetPair)
           ) : (

@@ -3,30 +3,41 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
 import AssetModule "./Asset/main";
+import Array "mo:base/Array";
 
 module WatchListManager {
-  public type WatchListItems = HashMap.HashMap<Principal, AssetModule.AssetPair>;
+  public type WatchListItems = HashMap.HashMap<Principal, [AssetModule.AssetPair]>;
 
   public func create(watchListItems : WatchListItems, owner : Principal, assetPair : AssetModule.AssetPair) : Result.Result<(), Text> {
     switch (watchListItems.get(owner)) {
-      case (?_) { #err("Watch list item already exists for this user") };
+      case (?existingItems) {
+        let updatedItems = Array.append(existingItems, [assetPair]);
+        watchListItems.put(owner, updatedItems);
+        #ok();
+      };
       case null {
-        watchListItems.put(owner, assetPair);
+        watchListItems.put(owner, [assetPair]);
         #ok();
       };
     };
   };
 
-  public func read(watchListItems : WatchListItems, owner : Principal) : Result.Result<AssetModule.AssetPair, Text> {
+  public func read(watchListItems : WatchListItems, owner : Principal) : Result.Result<[AssetModule.AssetPair], Text> {
     switch (watchListItems.get(owner)) {
-      case (?assetPair) { #ok(assetPair) };
-      case null { #err("Watch list item not found") };
+      case (?assetPairs) {
+        if (assetPairs.size() > 0) {
+          #ok(assetPairs);
+        } else {
+          #err("Watch list is empty for this user");
+        };
+      };
+      case null { #err("Watch list not found for this user") };
     };
   };
 
   public func getAllForPrincipal(watchListItems : WatchListItems, owner : Principal) : [AssetModule.AssetPair] {
     switch (watchListItems.get(owner)) {
-      case (?assetPair) { [assetPair] };
+      case (?items) { items };
       case null { [] };
     };
   };
@@ -34,24 +45,32 @@ module WatchListManager {
   public func update(watchListItems : WatchListItems, owner : Principal, assetPair : AssetModule.AssetPair) : Result.Result<(), Text> {
     switch (watchListItems.get(owner)) {
       case (?_) {
-        watchListItems.put(owner, assetPair);
+        watchListItems.put(owner, [assetPair]);
         #ok();
       };
       case null { #err("Watch list item not found") };
     };
   };
 
-  public func delete(watchListItems : WatchListItems, owner : Principal, assetPairToDelete : AssetModule.AssetPair) : Result.Result<(), Text> {
+  public func removeFromWatchList(watchListItems : WatchListItems, owner : Principal, assetPairToRemove : AssetModule.AssetPair) : Result.Result<(), Text> {
     switch (watchListItems.get(owner)) {
-      case (?storedAssetPair) {
-        if (areAssetPairsEqual(storedAssetPair, assetPairToDelete)) {
-          ignore watchListItems.remove(owner);
-          #ok();
+      case (?existingItems) {
+        let updatedItems = Array.filter(
+          existingItems,
+          func(item : AssetModule.AssetPair) : Bool {
+            not areAssetPairsEqual(item, assetPairToRemove);
+          },
+        );
+        if (updatedItems.size() == existingItems.size()) {
+          #err("Asset pair not found in the watch list");
         } else {
-          #err("Asset pair does not match the stored watch list item");
+          watchListItems.put(owner, updatedItems);
+          #ok();
         };
       };
-      case null { #err("Watch list item not found") };
+      case null {
+        #err("No watch list found for this user");
+      };
     };
   };
 
@@ -61,6 +80,7 @@ module WatchListManager {
   };
 
   public func list(watchListItems : WatchListItems) : [AssetModule.AssetPair] {
-    Iter.toArray(watchListItems.vals());
+    let allPairs = Iter.toArray(watchListItems.vals());
+    Array.flatten(allPairs);
   };
 };
