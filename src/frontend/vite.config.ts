@@ -39,9 +39,6 @@ const viteConfig = {
         changeOrigin: true,
       },
     },
-    watch: {
-      ignored: ["/public/currency-icons/**"],
-    },
   },
   plugins: [
     react(),
@@ -54,8 +51,6 @@ const viteConfig = {
       declarations: fileURLToPath(new URL("../declarations", import.meta.url)),
     },
   },
-  cacheDir: ".vite_cache",
-  publicDir: path.resolve(__dirname, "static"),
 };
 
 const vitestConfig = {
