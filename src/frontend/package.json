@@ -15,7 +15,7 @@
     "presetup": "npm run generate",
     "prestart": "npm run generate-index",
     "preview": "vite preview",
-    "setup": "npm i && dfx canister create backend && dfx generate backend && dfx deploy --no-wallet",
+    "setup": "npm i && dfx canister create backend && dfx generate backend && dfx deploy",
     "start": "vite --port 3000",
     "test": "vitest run"
   },
