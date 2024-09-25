@@ -1,5 +1,5 @@
 import Array "mo:base/Array";
-import Asset "modules/Asset";
+import AssetModule "modules/Asset/main";
 import Cycles "mo:base/ExperimentalCycles";
 import Error "mo:base/Error";
 import Float "mo:base/Float";
@@ -13,35 +13,60 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Types "types";
 import XRC "canister:xrc";
+import WatchListManager "modules/WatchListManager";
 
 actor Backend {
   // Globals
   type Result = Result.Result<Text, Text>;
 
+  // Globals for XRC
+  type AssetType = AssetModule.AssetType;
+
   //////////////////////////////////////////////////////////////////////
-  // Profile Functions
+  // Profile Variables
   //////////////////////////////////////////////////////////////////////
 
   // Create a stable variable to store the data
   private stable var profileEntries : [(Principal, Types.Profile)] = [];
+  private stable var watchListEntries : [(Principal, [AssetModule.AssetPair])] = [];
 
-  // Create a HashMap to store the profiles (In-memory state)
+  // Create a HashMap to store the profiles into local Canister Memory.
   private var profiles = HashMap.HashMap<Principal, Types.Profile>(
     10,
     Principal.equal,
     Principal.hash,
   );
 
-  // LifeCycle hooks to handle upgrades properly.
-  // Initialize the HashMap with existing stable data
-  // Lifecycle hooks
+  // Create a HashMap to store the profiles into local Canister Memory.
+  private var watchListItems = HashMap.HashMap<Principal, [AssetModule.AssetPair]>(
+    10,
+    Principal.equal,
+    Principal.hash,
+  );
+
+  //////////////////////////////////////////////////////////////////////
+  // Lifecycle Functions
+  //////////////////////////////////////////////////////////////////////
   system func preupgrade() {
+    // Write the profiles to Stable Memory before upgrading the canister.
     profileEntries := Iter.toArray(profiles.entries());
+
+    // Write the watchListEntries to Stable Memory before upgrading the canister.
+    watchListEntries := Iter.toArray(watchListItems.entries());
   };
 
   system func postupgrade() {
+    // Read the profiles from Stable Memory into local Canister Memory.
     profiles := HashMap.fromIter<Principal, Types.Profile>(
       profileEntries.vals(),
+      10,
+      Principal.equal,
+      Principal.hash,
+    );
+
+    // Read the watchlist from Stable Memory into local Canister Memory.
+    watchListItems := HashMap.fromIter<Principal, [AssetModule.AssetPair]>(
+      watchListEntries.vals(),
       10,
       Principal.equal,
       Principal.hash,
@@ -59,9 +84,45 @@ actor Backend {
     };
 
     profiles := HashMap.HashMap<Principal, Types.Profile>(10, Principal.equal, Principal.hash);
+    watchListItems := HashMap.HashMap<Principal, [AssetModule.AssetPair]>(10, Principal.equal, Principal.hash);
   };
 
-  // Create: Add a new profile
+  //////////////////////////////////////////////////////////////////////
+  // WatchList Functions
+  //////////////////////////////////////////////////////////////////////
+  public shared ({ caller }) func createWatchListItem(assetPair : AssetModule.AssetPair) : async Result.Result<(), Text> {
+    WatchListManager.create(watchListItems, caller, assetPair);
+  };
+
+  public shared ({ caller }) func getWatchListItem() : async Result.Result<[AssetModule.AssetPair], Text> {
+    WatchListManager.read(watchListItems, caller);
+  };
+
+  public shared ({ caller }) func getUserWatchList() : async [AssetModule.AssetPair] {
+    WatchListManager.getAllForPrincipal(watchListItems, caller);
+  };
+
+  public shared ({ caller }) func updateWatchListItem(assetPair : AssetModule.AssetPair) : async Result.Result<(), Text> {
+    WatchListManager.update(watchListItems, caller, assetPair);
+  };
+
+  public shared ({ caller }) func deleteWatchListItem(assetPairToDelete : AssetModule.AssetPair) : async Result.Result<(), Text> {
+    WatchListManager.removeFromWatchList(watchListItems, caller, assetPairToDelete);
+  };
+
+  // TODO: Setup a paginator for this function.
+  public query func listAllWatchListItems() : async [AssetModule.AssetPair] {
+    WatchListManager.list(watchListItems);
+  };
+
+  // TODO: Refactor this to select the most watched assets.
+  public query func getTopWatchedAssets() : async [AssetModule.AssetPair] {
+    WatchListManager.list(watchListItems);
+  };
+
+  //////////////////////////////////////////////////////////////////////
+  // Profile Functions
+  //////////////////////////////////////////////////////////////////////
   public shared ({ caller }) func createProfile(profile : Types.Profile) : async Result {
 
     // Utility function to convert percentage to float (handles both Int and Float)
@@ -123,8 +184,7 @@ actor Backend {
   };
 
   // Update: Update an existing profile
-  public shared (msg) func updateProfile(updatedProfile : Types.Profile) : async Bool {
-    let caller = msg.caller;
+  public shared ({ caller }) func updateProfile(updatedProfile : Types.Profile) : async Bool {
     switch (profiles.get(caller)) {
       case (null) {
         false // Profile doesn't exist
@@ -157,10 +217,10 @@ actor Backend {
   // Exchange Rate Functions
   //////////////////////////////////////////////////////////////////////
 
-  func getSupportedAsset(Symbol : Text) : Asset.AssetType {
-    let foundAsset = Array.find<Asset.AssetType>(
-      Asset.Assets,
-      func(asset : Asset.AssetType) : Bool {
+  func getSupportedAsset(Symbol : Text) : AssetModule.AssetType {
+    let foundAsset = Array.find<AssetModule.AssetType>(
+      AssetModule.Assets,
+      func(asset : AssetModule.AssetType) : Bool {
         asset.symbol == Symbol;
       },
     );

@@ -13,10 +13,13 @@ import {
   MapPinIcon,
   HomeIcon,
   ArrowsRightLeftIcon,
+  QueueListIcon
 } from "@heroicons/react/24/outline"
 import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "../Components/Authenticate/index.tsx"
 import { ProfileScreen } from "@/Screens/Profile/index.tsx"
+import { WatchList } from "@/Screens/WatchList/index.tsx"
+import { CreateWatchList } from "@/Screens/WatchList/Create.tsx"
 
 interface NavigationItem {
   name: string
@@ -31,11 +34,12 @@ export const navigation: NavigationItem[] = [
   //   href: '/dashboard',
   //   icon: <RectangleGroupIcon className="h-6 w-6 inline" />
   // },
+  { name: 'Watchlist', href: '/watchlist', icon: <QueueListIcon className="h-6 w-6 inline" /> },
+  { name: 'Trades', href: '/trades', icon: <ArrowsRightLeftIcon className="h-6 w-6 inline" /> },
   { name: 'Positions', href: '/positions', icon: <MapPinIcon className="h-6 w-6 inline" /> },
   // {
   //   name: 'Resources', href: '/resources'
   // },
-  { name: 'Trades', href: '/trades', icon: <ArrowsRightLeftIcon className="h-6 w-6 inline" /> },
 ]
 
 export const router = createBrowserRouter([
@@ -96,5 +100,26 @@ export const router = createBrowserRouter([
         </Authenticate>
       </DefaultLayout>
     )
+  },
+  {
+    path: "/watchlist",
+    element: (
+      <DefaultLayout>
+        <Authenticate>
+          <WatchList />
+        </Authenticate>
+      </DefaultLayout>
+    )
+  },
+  {
+    path: "/watchlist/create",
+    element: (
+      <DefaultLayout>
+        <Authenticate>
+          <CreateWatchList />
+        </Authenticate>
+      </DefaultLayout>
+    )
   }
+
 ])

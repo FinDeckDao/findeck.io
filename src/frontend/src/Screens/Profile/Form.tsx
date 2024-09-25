@@ -48,8 +48,6 @@ export const ProfileForm: FC<ProfileFormProps> = (props) => {
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Construct a profile object.
-    console.log("values: ", values)
-
     const profile: Profile = {
       name: values.userName,
       capitalGainsTaxRate: {
