@@ -15,6 +15,8 @@ import {
   UserCircleIcon
 } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
+import { useQueryCall } from '@ic-reactor/react'
+import { hasKey } from '@/lib/utils'
 
 interface LoginButtonProps {
   dark?: boolean
@@ -25,6 +27,10 @@ export const LoginButton: FC<LoginButtonProps> = (props) => {
   const { dark, setMobileMenuOpen } = props
   const { authenticated, identity, login, logout } = useAuth()
   const navigate = useNavigate()
+
+  const { data: profileData } = useQueryCall({
+    functionName: 'getProfile'
+  })
 
   const navigateTo = (path: string) => {
     navigate(path)
@@ -59,7 +65,11 @@ export const LoginButton: FC<LoginButtonProps> = (props) => {
     <DropdownMenu>
       <DropdownMenuTrigger className='px-3 py-2 rounded-lg hover:bg-slate-700 bg-dark text-white uppercase w-auto'>
         <img src={iclogo} className="h-8 w-8 inline p-0 mb-1 mr-2 align-middle" />
-        ({identity?.getPrincipal().toString().slice(0, 12)}...{identity?.getPrincipal().toString().slice(-10)})
+        ({
+          hasKey(profileData, 'ok')
+            ? (profileData.ok as { name: string }).name
+            : `${identity?.getPrincipal().toString().slice(0, 12)}...${identity?.getPrincipal().toString().slice(-10)}`
+        })
       </DropdownMenuTrigger>
       <DropdownMenuContent className='bg-black text-white rounded-lg'>
         <DropdownMenuItem
