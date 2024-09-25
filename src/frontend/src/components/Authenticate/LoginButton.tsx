@@ -30,7 +30,7 @@ export const LoginButton: FC<LoginButtonProps> = (props) => {
 
   const { data: profileData } = useQueryCall({
     functionName: 'getProfile'
-  })
+  }) as { data: { ok: { name: string } } }
 
   const navigateTo = (path: string) => {
     navigate(path)
@@ -67,7 +67,7 @@ export const LoginButton: FC<LoginButtonProps> = (props) => {
         <img src={iclogo} className="h-8 w-8 inline p-0 mb-1 mr-2 align-middle" />
         ({
           hasKey(profileData, 'ok')
-            ? (profileData.ok as { name: string }).name
+            ? profileData.ok.name
             : `${identity?.getPrincipal().toString().slice(0, 12)}...${identity?.getPrincipal().toString().slice(-10)}`
         })
       </DropdownMenuTrigger>
