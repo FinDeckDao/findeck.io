@@ -95,7 +95,7 @@ export const CreateWatchList: React.FC = () => {
         <h2 className="text-2xl font-semibold mb-4">Selected Asset Pair</h2>
         {assetPair ? (
           <>
-            <div className="flex items-center space-x-2 mb-4 p-2 bg-gray-800 rounded text-white">
+            <div className="flex items-center space-x-2 mb-4 p-2 bg-gray-800 rounded-2xl text-white">
               <img src={assetPair.base.img_url} alt={assetPair.base.name} className="w-10 h-10" />
               <span>{assetPair.base.symbol}</span>
               <span>/</span>

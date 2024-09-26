@@ -1,8 +1,10 @@
 import { useState, useEffect, FC } from 'react'
 import { useQueryCall } from '@ic-reactor/react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+//import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { InfoIcon } from 'lucide-react'
+import { AnswerSwitch } from './AnswerSwitch'
+import { InformationCircleIcon } from '@heroicons/react/20/solid'
 
 type Answer = { Yes: null } | { No: null }
 
@@ -31,7 +33,8 @@ export const DueDiligenceQuestionnaire: FC<DueDiligenceQuestionnaireProps> = ({ 
 
   useEffect(() => {
     if (questions && questions.length > 0) {
-      const defaultAnswers = questions.map(() => ({ No: null }))
+      const sortedQuestions = questions?.sort((a, b) => a.question.length - b.question.length) || []
+      const defaultAnswers = sortedQuestions.map(() => ({ No: null }))
       setAnswers(defaultAnswers)
     }
   }, [questions])
@@ -48,13 +51,27 @@ export const DueDiligenceQuestionnaire: FC<DueDiligenceQuestionnaireProps> = ({ 
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 p-4">
+      <div className="rounded-md bg-blue-950 p-4">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <InformationCircleIcon aria-hidden="true" className="h-5 w-5 text-blue-400" />
+          </div>
+          <div className="ml-3 md:justify-between">
+            <p className="text-sm text-blue-400">
+              <span>Answering these questions is optional:</span>
+              <br /><br />
+              Hold your mouse over the info icon on the left of the question for more details.
+              If you have opinions regarding the answers to these questions answering helps everyone who uses this dApp.
+            </p>
+          </div>
+        </div>
+      </div>
       {
         questions
           ? questions.map((q, index) => (
             <div key={index} className="space-y-2">
               <div className="flex items-center space-x-2">
-                <span>{q.question}</span>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -64,16 +81,9 @@ export const DueDiligenceQuestionnaire: FC<DueDiligenceQuestionnaireProps> = ({ 
                       <p>{q.hint}</p>
                     </TooltipContent>
                   </Tooltip>
-                  <ToggleGroup
-                    type="single"
-                    value={answers[index] ? (Object.keys(answers[index])[0].toLowerCase()) : undefined}
-                    onValueChange={(value) => handleAnswerChange(index, value)}
-                    className="flex space-x-4"
-                  >
-                    <ToggleGroupItem value="yes" className="w-16">Yes</ToggleGroupItem>
-                    <ToggleGroupItem value="no" className="w-16">No</ToggleGroupItem>
-                  </ToggleGroup>
                 </TooltipProvider>
+                <span>{q.question}</span>
+                <AnswerSwitch index={index} handleAnswerChange={handleAnswerChange} />
               </div>
             </div>
           ))

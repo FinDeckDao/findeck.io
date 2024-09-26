@@ -1,11 +1,11 @@
 import { FC, useEffect, useState } from 'react'
 import { Button } from '@/Components/ui/button'
 import { useNavigate } from 'react-router-dom'
-import { AssetPair } from '../../lib/asset'
+import { AssetPair } from '../../../../declarations/backend/backend.did'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"  // Updated import
 import { TbFidgetSpinner } from "react-icons/tb"
 import { useQueryCall } from '@ic-reactor/react'
-import { WatchedAssetPair } from './AsssetPair'
+import { WatchedAssetPair } from './AssetPair'
 
 export const WatchList: FC = () => {
   const navigate = useNavigate()
