@@ -31,6 +31,21 @@ module AssetModule {
     { symbol = "XRP"; variant = #Cryptocurrency },
   ];
 
+  public let DUE_DILIGENCE_QUESTIONS : [Text] = [
+    "Is the asset decentralized?",
+    "Is the asset listed on major exchanges?",
+    "Does the asset have a clear use case?",
+    // Add more yes/no questions as needed
+  ];
+
+  public type Answer = {
+    #Yes;
+    #No;
+    #Unknown;
+  };
+
+  type DueDiligenceAnswers = [Answer];
+
   public type Asset = {
     name : Text;
     symbol : Text;
@@ -41,5 +56,7 @@ module AssetModule {
   public type AssetPair = {
     base : Asset;
     quote : Asset;
+    DueDiligence : DueDiligenceAnswers;
   };
+
 };
