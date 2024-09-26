@@ -36,11 +36,13 @@ export const WatchList: FC = () => {
   useEffect(() => {
     getUserWatchList()
     getTopWatchedAssets()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleDeletedAsset = (pair: AssetPair) => {
     const updatedWatchList = userWatchList.filter((p) => p !== pair)
     setUserWatchList(updatedWatchList)
+    getUserWatchList()
   }
 
   return (
@@ -70,7 +72,7 @@ export const WatchList: FC = () => {
             loading
               ? (
                 <div className="mb-4">
-                  Checking Your Watchlist...{" "}
+                  Fetching your current watchlist...{" "}
                   <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
                 </div>
               )
@@ -88,7 +90,7 @@ export const WatchList: FC = () => {
               })
             ) : (
               <p className="text-gray-300">
-                Your watch list is empty. Add some asset pairs to get started!
+                {!loading ? "Your watch list is empty. Add some asset pairs to get started!" : null}
               </p>
             )
           }

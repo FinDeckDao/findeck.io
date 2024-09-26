@@ -61,14 +61,10 @@ export const WatchedAssetPair: FC<WatchedAssetPairProps> = (props) => {
             <AlertDialogHeader>
               <AlertDialogTitle className="text-white">Are you sure?</AlertDialogTitle>
               <AlertDialogDescription className="text-gray-300">
-                <p>
-                  This action cannot be undone. This will permanently remove this asset
-                  from your watch list.
-                </p>
-
-                <p>
-                  If you want to watch this asset again, you will need to add it again.
-                </p>
+                This action cannot be undone. This will permanently remove this asset
+                from your watch list.
+                <br /><br />
+                If you want to watch this asset again, you will need to add it again.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

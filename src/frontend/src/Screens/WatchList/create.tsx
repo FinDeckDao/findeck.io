@@ -33,7 +33,11 @@ export const CreateWatchList: React.FC = () => {
 
   // Update the backend with this asset.
   const { call: createWatchListItem, loading } = useUpdateCall({
-    functionName: "createWatchListItem"
+    functionName: "createWatchListItem",
+    onSuccess: () => {
+      setSelectedBase(null)
+      setSelectedQuote(null)
+    }
   })
 
   const handleBaseSelect = useCallback((asset: Asset | null) => {
@@ -49,8 +53,6 @@ export const CreateWatchList: React.FC = () => {
       console.log('Creating watch list item:', assetPair)
       baseListRef.current?.clearState()
       quoteListRef.current?.clearState()
-      setSelectedBase(null)
-      setSelectedQuote(null)
 
       // Construct an asset pair.
       const newAssetPair = {
