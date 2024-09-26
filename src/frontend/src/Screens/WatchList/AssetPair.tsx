@@ -1,6 +1,7 @@
 import { FC } from 'react'
-import { XCircleIcon, TrashIcon } from "@heroicons/react/24/outline"  // Updated import
-import { AssetPair } from '@/lib/asset'
+import { XCircleIcon, TrashIcon } from "@heroicons/react/24/outline"
+import { StarIcon } from "@heroicons/react/24/solid"
+import { AssetPair } from '../../../../declarations/backend/backend.did'
 import { useUpdateCall } from '@ic-reactor/react'
 import {
   AlertDialog,
@@ -14,11 +15,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-
 interface WatchedAssetPairProps {
   pair: AssetPair
   index: number
   onDelete?: (pair: AssetPair) => void
+  simple?: boolean
 }
 
 export const WatchedAssetPair: FC<WatchedAssetPairProps> = (props) => {
@@ -28,15 +29,14 @@ export const WatchedAssetPair: FC<WatchedAssetPairProps> = (props) => {
     functionName: "deleteWatchListItem"
   })
 
-  // This assumes the removal of the asset was successful.
-  // TODO: Handle the case where the asset was not removed if it becomes necessary.
   const handleDeleteConfirmation = (pair: AssetPair) => {
     if (onDelete) {
-      // Removed the asset from the backend.
       removeWatchedAsset([pair])
       onDelete(pair)
     }
   }
+
+  const yesAnswersCount = pair.DueDiligence.filter(answer => 'Yes' in answer).length
 
   return (
     <div
@@ -49,7 +49,19 @@ export const WatchedAssetPair: FC<WatchedAssetPairProps> = (props) => {
         <span>{pair.base.symbol}</span>
         <span>/</span>
         <span>{pair.quote.symbol}</span>
+        <div className="flex items-center">
+          <div className="relative inline-flex h-5">
+            {[...Array(yesAnswersCount)].map((_, i) => (
+              <StarIcon
+                key={i}
+                className="h-5 w-5 text-yellow-400 absolute"
+                style={{ left: `${i * 18}px`, top: '-60%', transform: 'translateY(50%)' }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
+
       {onDelete
         ? <AlertDialog>
           <AlertDialogTrigger>

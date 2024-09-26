@@ -16,10 +16,10 @@ import {
   QueueListIcon
 } from "@heroicons/react/24/outline"
 import { TradesScreen } from '../Screens/Trades'
-import { Authenticate } from "../Components/Authenticate/index.tsx"
-import { ProfileScreen } from "@/Screens/Profile/index.tsx"
-import { WatchList } from "@/Screens/WatchList/index.tsx"
-import { CreateWatchList } from "@/Screens/WatchList/Create.tsx"
+import { Authenticate } from "@/Components/Authenticate"
+import { ProfileScreen } from "@/Screens/Profile"
+import { WatchList } from "@/Screens/WatchList"
+import { CreateWatchList } from "@/Screens/WatchList/Create"
 
 interface NavigationItem {
   name: string
