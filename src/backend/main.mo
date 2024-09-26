@@ -120,6 +120,11 @@ actor Backend {
     WatchListManager.list(watchListItems);
   };
 
+  // Get the questions for due diligence
+  public query func getDueDiligenceQuestions() : async [AssetModule.Question] {
+    AssetModule.DUE_DILIGENCE_QUESTIONS;
+  };
+
   //////////////////////////////////////////////////////////////////////
   // Profile Functions
   //////////////////////////////////////////////////////////////////////

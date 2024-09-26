@@ -2,10 +2,12 @@ import React, { useState, useRef, useCallback, useMemo } from 'react'
 import { SearchableCurrencyList, SearchableCurrencyListRef } from './Search'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Asset, AssetPair } from '../../lib/asset'
+import { AssetPair as AssetPairType } from "../../../../declarations/backend/backend.did"
 import { Button } from '@/components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 import { useUpdateCall } from '@ic-reactor/react'
 import { TbFidgetSpinner } from "react-icons/tb"
+import { DueDiligenceQuestionnaire } from './Questionnaire'
 
 import {
   Breadcrumb,
@@ -16,10 +18,17 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
+type Answer = { Yes: null } | { No: null }
+
 export const CreateWatchList: React.FC = () => {
   const [activeTab, setActiveTab] = useState('base')
   const [selectedBase, setSelectedBase] = useState<Asset | null>(null)
   const [selectedQuote, setSelectedQuote] = useState<Asset | null>(null)
+  const [answers, setAnswers] = useState<Answer[]>([])
+
+  const handleAnswersChange = (newAnswers: Answer[]) => {
+    setAnswers(newAnswers)
+  }
 
   const baseListRef = useRef<SearchableCurrencyListRef>(null)
   const quoteListRef = useRef<SearchableCurrencyListRef>(null)
@@ -55,14 +64,15 @@ export const CreateWatchList: React.FC = () => {
       quoteListRef.current?.clearState()
 
       // Construct an asset pair.
-      const newAssetPair = {
+      const newAssetPair: AssetPairType = {
         base: assetPair.base,
-        quote: assetPair.quote
+        quote: assetPair.quote,
+        DueDiligence: answers
       }
 
       createWatchListItem([newAssetPair])
     }
-  }, [assetPair, createWatchListItem])
+  }, [assetPair, createWatchListItem, answers])
 
   return (
     <div className="container mx-auto min-h-96 px-4">
@@ -84,13 +94,16 @@ export const CreateWatchList: React.FC = () => {
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Selected Asset Pair</h2>
         {assetPair ? (
-          <div className="flex items-center space-x-2 mb-4 p-2 bg-gray-800 rounded text-white">
-            <img src={assetPair.base.img_url} alt={assetPair.base.name} className="w-10 h-10" />
-            <span>{assetPair.base.symbol}</span>
-            <span>/</span>
-            <img src={assetPair.quote.img_url} alt={assetPair.quote.name} className="w-10 h-10" />
-            <span>{assetPair.quote.symbol}</span>
-          </div>
+          <>
+            <div className="flex items-center space-x-2 mb-4 p-2 bg-gray-800 rounded text-white">
+              <img src={assetPair.base.img_url} alt={assetPair.base.name} className="w-10 h-10" />
+              <span>{assetPair.base.symbol}</span>
+              <span>/</span>
+              <img src={assetPair.quote.img_url} alt={assetPair.quote.name} className="w-10 h-10" />
+              <span>{assetPair.quote.symbol}</span>
+            </div>
+            <DueDiligenceQuestionnaire onAnswersChange={handleAnswersChange} />
+          </>
         ) : (
           <p className="text-gray-400">
             Please search for a base asset and quote asset. Click on the item you want to select it.
