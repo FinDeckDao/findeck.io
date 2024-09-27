@@ -79,8 +79,8 @@ export const WatchList: FC = () => {
               : null
           }
 
-          {
-            userWatchList.length > 0 ? (
+          {userWatchList.length > 0
+            ? (
               userWatchList.map((pair, index) => {
                 return <WatchedAssetPair
                   key={`${pair.base.symbol}/${pair.quote.symbol}-${index}`}
@@ -89,7 +89,8 @@ export const WatchList: FC = () => {
                   onUpdate={getUserWatchList}
                 />
               })
-            ) : (
+            )
+            : (
               <p className="text-gray-300">
                 {!loading ? "Your watch list is empty. Add some asset pairs to get started!" : null}
               </p>
@@ -100,15 +101,14 @@ export const WatchList: FC = () => {
         <div className="lg:w-1/2">
           <h2 className="text-2xl font-semibold mb-4">Top Watch List Items</h2>
 
-          {
-            topLoading
-              ? (
-                <div className="mb-4">
-                  Checking Top Watched Asset Pairs...{" "}
-                  <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
-                </div>
-              )
-              : null
+          {topLoading
+            ? (
+              <div className="mb-4">
+                Checking Top Watched Asset Pairs...{" "}
+                <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
+              </div>
+            )
+            : null
           }
 
           {topWatchList.map((pair, index) => {

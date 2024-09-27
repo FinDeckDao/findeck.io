@@ -20,7 +20,7 @@ import {
 
 type Answer = { Yes: null } | { No: null }
 
-export const CreateWatchList: React.FC = () => {
+export const CreateWatchListItem: React.FC = () => {
   const [activeTab, setActiveTab] = useState('base')
   const [selectedBase, setSelectedBase] = useState<Asset | null>(null)
   const [selectedQuote, setSelectedQuote] = useState<Asset | null>(null)

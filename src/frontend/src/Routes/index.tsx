@@ -19,7 +19,7 @@ import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "@/Components/Authenticate"
 import { ProfileScreen } from "@/Screens/Profile"
 import { WatchList } from "@/Screens/WatchList"
-import { CreateWatchList } from "@/Screens/WatchList/Create"
+import { CreateWatchListItem } from "@/Screens/WatchList/CreateWatchListItem"
 
 interface NavigationItem {
   name: string
@@ -116,7 +116,7 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <Authenticate>
-          <CreateWatchList />
+          <CreateWatchListItem />
         </Authenticate>
       </DefaultLayout>
     )
