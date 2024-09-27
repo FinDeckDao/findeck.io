@@ -91,7 +91,7 @@ actor Backend {
   // WatchList Functions
   //////////////////////////////////////////////////////////////////////
   public shared ({ caller }) func createWatchListItem(assetPair : AssetModule.AssetPair) : async Result.Result<(), Text> {
-    WatchListManager.create(watchListItems, caller, assetPair);
+    WatchListManager.createOrUpdate(watchListItems, caller, assetPair);
   };
 
   public shared ({ caller }) func getWatchListItem() : async Result.Result<[AssetModule.AssetPair], Text> {

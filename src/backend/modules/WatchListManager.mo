@@ -2,7 +2,6 @@ import Array "mo:base/Array";
 import AssetModule "./Asset/main";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
-import Order "mo:base/Order";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
@@ -10,15 +9,24 @@ import Text "mo:base/Text";
 module WatchListManager {
   public type WatchListItems = HashMap.HashMap<Principal, [AssetModule.AssetPair]>;
 
-  public func create(watchListItems : WatchListItems, owner : Principal, assetPair : AssetModule.AssetPair) : Result.Result<(), Text> {
+  public func createOrUpdate(watchListItems : WatchListItems, owner : Principal, newAssetPair : AssetModule.AssetPair) : Result.Result<(), Text> {
     switch (watchListItems.get(owner)) {
       case (?existingItems) {
-        let updatedItems = Array.append(existingItems, [assetPair]);
+        // Filter out the matching AssetPair if it exists
+        let nonMatchingPairs = Array.filter<AssetModule.AssetPair>(
+          existingItems,
+          func(item) {
+            not (item.base.symbol == newAssetPair.base.symbol and item.quote.symbol == newAssetPair.quote.symbol);
+          },
+        );
+
+        // Add the new AssetPair (this will either update the existing one or add a new one)
+        let updatedItems = Array.append(nonMatchingPairs, [newAssetPair]);
         watchListItems.put(owner, updatedItems);
         #ok();
       };
       case null {
-        watchListItems.put(owner, [assetPair]);
+        watchListItems.put(owner, [newAssetPair]);
         #ok();
       };
     };

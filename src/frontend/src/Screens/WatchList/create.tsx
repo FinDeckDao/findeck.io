@@ -95,14 +95,14 @@ export const CreateWatchList: React.FC = () => {
         <h2 className="text-2xl font-semibold mb-4">Selected Asset Pair</h2>
         {assetPair ? (
           <>
-            <div className="flex items-center space-x-2 mb-4 p-2 bg-gray-800 rounded-2xl text-white">
+            <div className="flex items-center space-x-2 mb-4 p-2 bg-gray-800 border-2 border-gray-700 rounded-2xl text-white">
               <img src={assetPair.base.img_url} alt={assetPair.base.name} className="w-10 h-10" />
               <span>{assetPair.base.symbol}</span>
               <span>/</span>
               <img src={assetPair.quote.img_url} alt={assetPair.quote.name} className="w-10 h-10" />
               <span>{assetPair.quote.symbol}</span>
             </div>
-            <DueDiligenceQuestionnaire onAnswersChange={handleAnswersChange} />
+            <DueDiligenceQuestionnaire onAnswersChange={handleAnswersChange} isModalOpen={false} />
           </>
         ) : (
           <p className="text-gray-400">
@@ -123,11 +123,12 @@ export const CreateWatchList: React.FC = () => {
         </div>
         <Button
           onClick={handleCreateWatchListItem}
-          disabled={!assetPair}
+          disabled={loading ? true : !assetPair}
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
         >
-          <PlusCircleIcon className="mr-2 h-5 w-5" />
-          Add Pair To Watch List
+          {loading ? null : <PlusCircleIcon className="mr-2 h-5 w-5" />}
+          {loading ? "Adding item..." : "Add Pair To Watch List"}
+          {loading ? <TbFidgetSpinner className="h-5 w-5 animate-spin inline-block" /> : null}
         </Button>
       </div>
 
