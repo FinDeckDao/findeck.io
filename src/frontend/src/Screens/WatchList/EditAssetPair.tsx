@@ -2,6 +2,7 @@ import { FC } from 'react'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger
@@ -40,13 +41,14 @@ export const EditAssetPair: FC<EditAssetPairProps> = (props) => {
                                           cursor-pointer"
         />
       </DialogTrigger>
-      <DialogContent className="bg-gray-800 border-gray-700 text-white max-h-[90vh] 
-                                      overflow-y-auto"
-      >
+      <DialogContent className="bg-gray-800 border-gray-700 text-white max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className='m-0'>
             Update Due Diligence for {pair.base.symbol}/{pair.quote.symbol}
           </DialogTitle>
+          <DialogDescription>
+            Edit the due diligence information for this asset pair.
+          </DialogDescription>
         </DialogHeader>
         <DueDiligenceQuestionnaire
           onAnswersChange={handleAnswersUpdate}

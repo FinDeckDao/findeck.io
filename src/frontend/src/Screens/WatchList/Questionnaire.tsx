@@ -1,36 +1,9 @@
 import { useState, useEffect, FC } from 'react'
 import { useQueryCall } from '@ic-reactor/react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { InfoIcon } from 'lucide-react'
 import { AnswerSwitch } from './AnswerSwitch'
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
-import { Question } from '../../../../declarations/backend/backend.did'
-
-interface ResponsiveTooltipProps {
-  content: string
-  isOpen: boolean
-}
-
-const ResponsiveTooltip: FC<ResponsiveTooltipProps> = ({ content, isOpen }) => {
-  return (
-    <TooltipProvider>
-      <Tooltip open={isOpen}>
-        <TooltipTrigger asChild>
-          <InfoIcon className="h-4 w-4 text-gray-500 mt-1 cursor-pointer" />
-        </TooltipTrigger>
-        <TooltipContent
-          side="right"
-          align="start"
-          className="max-w-xs w-full border-2 border-gray-700 bg-gray-800 text-white z-50"
-        >
-          <p className="break-words">{content}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  )
-}
-
-type Answer = { Yes: null } | { No: null }
+import { Question, Answer } from '../../../../declarations/backend/backend.did'
+import { QuestionTooltip } from './QuestionToolTip'
 
 interface DueDiligenceQuestionnaireProps {
   onAnswersChange: (answers: Answer[]) => void
@@ -109,7 +82,7 @@ export const DueDiligenceQuestionnaire: FC<DueDiligenceQuestionnaireProps> = (pr
                 onMouseEnter={() => setOpenTooltipIndex(index)}
                 onMouseLeave={() => setOpenTooltipIndex(null)}
               >
-                <ResponsiveTooltip
+                <QuestionTooltip
                   content={q.hint}
                   isOpen={openTooltipIndex === index}
                 />
