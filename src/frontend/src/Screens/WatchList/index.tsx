@@ -86,6 +86,7 @@ export const WatchList: FC = () => {
                   key={`${pair.base.symbol}/${pair.quote.symbol}-${index}`}
                   pair={pair} index={index}
                   onDelete={handleDeletedAsset}
+                  onUpdate={getUserWatchList}
                 />
               })
             ) : (
