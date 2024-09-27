@@ -185,7 +185,10 @@ export const ProfileForm: FC<ProfileFormProps> = (props) => {
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => onSubmit(form.getValues())}
           >
-            {loading ? <span>Loading... <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" /></span> : <span>Save Changes <FaRegSave className="h-6 w-6 inline-block" /></span>}
+            {loading
+              ? <span>Saving Changes... <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" /></span>
+              : <span><FaRegSave className="h-6 w-6 inline-block" /> Save Changes</span>
+            }
           </Button>
         </form>
       </Form>
