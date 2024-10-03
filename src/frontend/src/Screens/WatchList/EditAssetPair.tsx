@@ -38,10 +38,12 @@ export const EditAssetPair: FC<EditAssetPairProps> = (props) => {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <PencilSquareIcon className="h-5 w-5 text-gray-400 hover:text-gray-200 
-                                          cursor-pointer"
+                                     cursor-pointer"
         />
       </DialogTrigger>
-      <DialogContent className="bg-gray-800 border-gray-700 text-white max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-gray-800 border-gray-700 text-white max-h-[90vh] 
+                                overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle className='m-0'>
             Update Due Diligence for {pair.base.symbol}/{pair.quote.symbol}

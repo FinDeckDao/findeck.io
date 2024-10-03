@@ -1,46 +1,30 @@
-import { FC, useContext } from 'react'
-import { AssetSelector } from '../../Components/AssetSelector'
-import { AssetPairContext } from '../../Contexts/AssetPair'
-import { SupportedAssets } from '../../../../fixtures/assets'
-import { TradesTable } from '../../Components/Trade'
+import { FC, useState } from 'react'
+import { Button } from '@/Components/ui/button'
+import { PlusCircleIcon } from "@heroicons/react/24/outline"
+import { CreateTradeModal } from './CreateTradeModal'
 
-// This component displays the trades screen.
 export const TradesScreen: FC = () => {
-  const { assetPair, setAssetPair } = useContext(AssetPairContext)
+  const [openClosed, toggleOpenClosed] = useState(false)
 
-  const handleSelectedBase = (value: string) => {
-    // Find the selected asset pair from the list of supported asset pairs.
-    const selectedAssetPair = SupportedAssets.find((asset) => {
-      return asset.symbol === value
-    })
-
-    if (selectedAssetPair && setAssetPair) {
-      setAssetPair({ ...assetPair, base: selectedAssetPair })
-    }
-  }
-
-  const handleSelectedQuote = (value: string) => {
-    // Find the selected asset pair from the list of supported asset pairs.
-    const selectedAssetPair = SupportedAssets.find((asset) => {
-      return asset.symbol === value
-    })
-
-    if (selectedAssetPair && setAssetPair) {
-      setAssetPair({ ...assetPair, quote: selectedAssetPair })
-    }
+  const handleOpenModal = () => {
+    toggleOpenClosed(true)
   }
 
   return (
-    <div className="text-center">
-      <h1 className="text-2xl font-semibold">{assetPair.base.symbol}/{assetPair.quote.symbol} Trades</h1>
-      <label className="label block text-left">Base (asset you bought)
-        <AssetSelector value={assetPair.base.symbol} setValue={handleSelectedBase} defaultMessage='Select the asset you purchased.' />
-      </label>
-      {/* TODO: Provide a selected base filter to reduce the number of available quote assets listed from the available positions */}
-      <label className="label block text-left">Quote (asset you paid with)
-        <AssetSelector value={assetPair.quote.symbol} setValue={handleSelectedQuote} defaultMessage='Select the asset you paid with.' />
-      </label>
-      <TradesTable assetPair={assetPair} />
+    <div className="container mx-auto min-h-96 p-4">
+      <h1 className="text-4xl font-bold text-center mb-6">Trades</h1>
+
+      <div className="flex justify-end mb-6">
+        <Button
+          onClick={handleOpenModal}
+          className="bg-blue-400 hover:bg-blue-500 text-white w-full sm:w-auto"
+        >
+          <PlusCircleIcon className="mr-2 h-5 w-5" />
+          Trade
+        </Button>
+      </div>
+
+      <CreateTradeModal openClose={openClosed} toggleOpenClose={toggleOpenClosed} />
     </div>
   )
 }
