@@ -1,5 +1,5 @@
 import Array "mo:base/Array";
-import AssetModule "modules/Asset/main";
+import AssetModule "../modules/Asset/main";
 import Cycles "mo:base/ExperimentalCycles";
 import Error "mo:base/Error";
 import Float "mo:base/Float";
@@ -12,8 +12,8 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Types "types";
-import XRC "canister:xrc";
 import WatchListManager "modules/WatchListManager";
+import XRC "canister:xrc";
 
 actor Backend {
   // Globals

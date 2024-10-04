@@ -3,7 +3,7 @@ import Debug "mo:base/Debug";
 import Cycles "mo:base/ExperimentalCycles";
 import Float "mo:base/Float";
 import Array "mo:base/Array";
-import Asset "modules/Asset";
+import Asset "../../src/modules/Asset/main";
 import Option "mo:base/Option";
 import Text "mo:base/Text";
 import Nat32 "mo:base/Nat32";

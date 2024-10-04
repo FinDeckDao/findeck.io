@@ -1,5 +1,5 @@
 import Array "mo:base/Array";
-import AssetModule "./Asset/main";
+import AssetModule "../../modules/Asset/main";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
