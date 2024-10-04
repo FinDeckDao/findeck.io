@@ -1,21 +1,21 @@
 import { FC, useState } from 'react'
-import { AssetPair, Answer } from '../../../../declarations/backend/backend.did'
+import { WishlistItem, Answer } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 import { useUpdateCall } from '@ic-reactor/react'
 import { DeleteGuard } from './DeleteGuard'
-import { ResponsiveAssetPair } from './ResponsiveAssetPair'
-import { EditAssetPair } from './EditAssetPair'
+import { ResponsiveWishlistItem } from './ResponsiveWishlistItem'
+import { EditWishlistItem } from './EditWishlistItem'
 
-interface WatchedAssetPairProps {
-  pair: AssetPair
+interface WatchedWishlistItemProps {
+  item: WishlistItem
   index: number
-  onDelete?: (pair: AssetPair) => void
+  onDelete?: (item: WishlistItem) => void
   onUpdate?: () => void
 }
 
-export const WatchedAssetPair: FC<WatchedAssetPairProps> = (props) => {
-  const { pair, index, onDelete, onUpdate } = props
+export const WatchedWishlistItem: FC<WatchedWishlistItemProps> = (props) => {
+  const { item, index, onDelete, onUpdate } = props
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [updatedAnswers, setUpdatedAnswers] = useState(pair.DueDiligence)
+  const [updatedAnswers, setUpdatedAnswers] = useState(item.DueDiligence)
 
   const { call: removeWatchedAsset } = useUpdateCall({
     functionName: "deleteWatchListItem"
@@ -31,15 +31,15 @@ export const WatchedAssetPair: FC<WatchedAssetPairProps> = (props) => {
     }
   })
 
-  const handleDeleteConfirmation = (pair: AssetPair) => {
+  const handleDeleteConfirmation = (item: WishlistItem) => {
     if (onDelete) {
-      removeWatchedAsset([pair])
-      onDelete(pair)
+      removeWatchedAsset([item])
+      onDelete(item)
     }
   }
 
   const handleUpdateConfirmation = () => {
-    const updatedPair = { ...pair, DueDiligence: updatedAnswers }
+    const updatedPair = { ...item, DueDiligence: updatedAnswers }
     updateWatchListItem([updatedPair])
   }
 
@@ -47,20 +47,20 @@ export const WatchedAssetPair: FC<WatchedAssetPairProps> = (props) => {
     setUpdatedAnswers(answers)
   }
 
-  const yesAnswersCount = pair.DueDiligence.filter(answer => 'Yes' in answer).length
+  const yesAnswersCount = item.DueDiligence.filter(answer => 'Yes' in answer).length
 
   return (
     <div
-      key={`${index}-${pair.base.symbol}-${pair.quote.symbol}`}
+      key={`${index}-${item.base.symbol}`}
       className="flex items-center justify-between p-2 mb-2 bg-gray-800 rounded-2xl text-white 
                 border border-gray-700"
     >
-      <ResponsiveAssetPair pair={pair} yesAnswersCount={yesAnswersCount} />
+      <ResponsiveWishlistItem item={item} yesAnswersCount={yesAnswersCount} />
 
       {onDelete && (
         <div className="flex items-center space-x-2">
-          <EditAssetPair
-            pair={pair}
+          <EditWishlistItem
+            item={item}
             isDialogOpen={isDialogOpen}
             setIsDialogOpen={setIsDialogOpen}
             handleAnswersUpdate={handleAnswersUpdate}
@@ -69,7 +69,7 @@ export const WatchedAssetPair: FC<WatchedAssetPairProps> = (props) => {
           />
 
           <DeleteGuard
-            pair={pair}
+            item={item}
             handleDeleteConfirmation={handleDeleteConfirmation}
           />
         </div>

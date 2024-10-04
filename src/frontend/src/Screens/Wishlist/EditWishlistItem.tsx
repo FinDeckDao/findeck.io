@@ -9,14 +9,14 @@ import {
 } from "@/components/ui/dialog"
 import { DueDiligenceQuestionnaire } from './Questionnaire'
 import { PencilSquareIcon } from "@heroicons/react/24/outline"
-import { AssetPair, Answer } from '../../../../declarations/backend/backend.did'
+import { WishlistItem, Answer } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 import { Button } from "@/components/ui/button"
 import { TbFidgetSpinner } from "react-icons/tb"
 import { XMarkIcon } from "@heroicons/react/24/solid"
 import { Save } from 'lucide-react'
 
-interface EditAssetPairProps {
-  pair: AssetPair
+interface EditWishlistItemProps {
+  item: WishlistItem
   isDialogOpen: boolean
   setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>
   handleAnswersUpdate: (answers: Answer[]) => void
@@ -24,9 +24,9 @@ interface EditAssetPairProps {
   updateLoading: boolean
 }
 
-export const EditAssetPair: FC<EditAssetPairProps> = (props) => {
+export const EditWishlistItem: FC<EditWishlistItemProps> = (props) => {
   const {
-    pair,
+    item,
     isDialogOpen,
     setIsDialogOpen,
     handleAnswersUpdate,
@@ -46,7 +46,7 @@ export const EditAssetPair: FC<EditAssetPairProps> = (props) => {
       >
         <DialogHeader>
           <DialogTitle className='m-0'>
-            Update Due Diligence for {pair.base.symbol}/{pair.quote.symbol}
+            Update Due Diligence for {item.base.symbol}
           </DialogTitle>
           <DialogDescription>
             Edit the due diligence information for this asset pair.
@@ -54,7 +54,7 @@ export const EditAssetPair: FC<EditAssetPairProps> = (props) => {
         </DialogHeader>
         <DueDiligenceQuestionnaire
           onAnswersChange={handleAnswersUpdate}
-          previousAnswers={pair.DueDiligence}
+          previousAnswers={item.DueDiligence}
           isModalOpen={isDialogOpen}
         />
         <div className="bg-gray-800 pt-4 pb-2 flex justify-end space-x-2 mt-4">

@@ -4,20 +4,14 @@ import {
   memo
 } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-
-type CurrencyItem = {
-  name: string
-  symbol: string
-  slug: string
-  img_url: string
-}
+import { Asset } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 
 interface ItemRendererProps {
-  data: CurrencyItem[]
+  data: Asset[]
   index: number
   style: CSSProperties
-  onItemSelect: (item: CurrencyItem) => void
-  selectedItem: CurrencyItem | null
+  onItemSelect: (item: Asset) => void
+  selectedItem: Asset | null
 }
 
 export const ItemRenderer: FC<ItemRendererProps> = memo(({ data, index, style, onItemSelect, selectedItem }) => {

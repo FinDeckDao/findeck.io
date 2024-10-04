@@ -2,7 +2,7 @@ import { useState, useEffect, FC } from 'react'
 import { useQueryCall } from '@ic-reactor/react'
 import { AnswerSwitch } from './AnswerSwitch'
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
-import { Question, Answer } from '../../../../declarations/backend/backend.did'
+import { Question, Answer } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 import { QuestionTooltip } from './QuestionToolTip'
 
 interface DueDiligenceQuestionnaireProps {

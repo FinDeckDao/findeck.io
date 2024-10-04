@@ -18,8 +18,8 @@ import {
 import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "@/Components/Authenticate"
 import { ProfileScreen } from "@/Screens/Profile"
-import { WatchList } from "@/Screens/WatchList"
-import { CreateWatchListItem } from "@/Screens/WatchList/CreateWatchListItem"
+import { Wishlist } from "@/Screens/Wishlist"
+import { CreateWishlistItem } from "@/Screens/Wishlist/CreateWishlistItem"
 
 interface NavigationItem {
   name: string
@@ -102,21 +102,21 @@ export const router = createBrowserRouter([
     )
   },
   {
-    path: "/watchlist",
+    path: "/wishlist",
     element: (
       <DefaultLayout>
         <Authenticate>
-          <WatchList />
+          <Wishlist />
         </Authenticate>
       </DefaultLayout>
     )
   },
   {
-    path: "/watchlist/create",
+    path: "/wishlist/create",
     element: (
       <DefaultLayout>
         <Authenticate>
-          <CreateWatchListItem />
+          <CreateWishlistItem />
         </Authenticate>
       </DefaultLayout>
     )

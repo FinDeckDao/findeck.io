@@ -10,16 +10,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { AssetPair } from '../../../../declarations/backend/backend.did'
+import { WishlistItem } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 import { XCircleIcon, TrashIcon } from "@heroicons/react/24/outline"
 
 export interface DeleteGuardProps {
-  pair: AssetPair
-  handleDeleteConfirmation: (pair: AssetPair) => void
+  item: WishlistItem
+  handleDeleteConfirmation: (item: WishlistItem) => void
 }
 
 export const DeleteGuard: FC<DeleteGuardProps> = (props) => {
-  const { pair, handleDeleteConfirmation } = props
+  const { item, handleDeleteConfirmation } = props
   return (
     <AlertDialog>
       <AlertDialogTrigger>
@@ -44,7 +44,7 @@ export const DeleteGuard: FC<DeleteGuardProps> = (props) => {
           </AlertDialogCancel>
           <AlertDialogAction
             className="bg-blue-600 text-white hover:bg-blue-500"
-            onClick={() => handleDeleteConfirmation(pair)}>
+            onClick={() => handleDeleteConfirmation(item)}>
             <TrashIcon className="h-5 w-5 mr-1" />
             Delete
           </AlertDialogAction>

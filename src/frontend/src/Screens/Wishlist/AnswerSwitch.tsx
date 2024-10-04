@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { Switch } from '@headlessui/react'
-import { Answer } from '../../../../declarations/backend/backend.did'
+import { Answer } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 
 interface AnswerSwitchProps {
   index: number

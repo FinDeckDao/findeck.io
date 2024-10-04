@@ -9,6 +9,14 @@ import {
   idlFactory as backendIdlFactory,
   canisterId as backendCanisterId
 } from '../../declarations/backend'
+import {
+  idlFactory as tradeManagerIdlFactory,
+  canisterId as tradeManagerCanisterId
+} from '../../declarations/trade_manager'
+import {
+  idlFactory as wishlistManagerIdlFactory,
+  canisterId as wishlistManagerCanisterId
+} from '../../declarations/wishlist_manager'
 import { ErrorPage } from './Components/Error'
 import { EnvironmentWrapper } from './Components/Environment/Wrapper'
 
@@ -26,7 +34,23 @@ ReactDOM.createRoot(root!).render(
             errorMessage=""
           />
         )}>
-        <App />
+        <ActorProvider idlFactory={tradeManagerIdlFactory}
+          canisterId={tradeManagerCanisterId}
+          errorComponent={() => (
+            <ErrorPage
+              errorMessage=""
+            />
+          )}>
+          <ActorProvider idlFactory={wishlistManagerIdlFactory}
+            canisterId={wishlistManagerCanisterId}
+            errorComponent={() => (
+              <ErrorPage
+                errorMessage=""
+              />
+            )}>
+            <App />
+          </ActorProvider>
+        </ActorProvider>
       </ActorProvider>
     </EnvironmentWrapper>
   </StrictMode>

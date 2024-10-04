@@ -9,22 +9,15 @@ import { Input } from '@/components/ui/input'
 import { FixedSizeList as List } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import searchIndex from '../../../../fixtures/icons/searchIndex.json'
-import { Asset } from '@/lib/asset'
 import { ItemRenderer } from './SearchItemRenderer'
-
-type CurrencyItem = {
-  name: string
-  symbol: string
-  slug: string
-  img_url: string
-}
+import { Asset } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 
 const ITEM_HEIGHT = 108
 
 ItemRenderer.displayName = 'ItemRenderer'
 
 interface SearchableCurrencyListProps {
-  onSelect: (selectedAsset: Asset | null) => void
+  onSelect: (selectedWishlistItem: Asset | null) => void
 }
 
 export interface SearchableCurrencyListRef {
@@ -33,14 +26,14 @@ export interface SearchableCurrencyListRef {
 
 export const SearchableCurrencyList = forwardRef<SearchableCurrencyListRef, SearchableCurrencyListProps>(({ onSelect }, ref) => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedItem, setSelectedItem] = useState<CurrencyItem | null>(null)
+  const [selectedItem, setSelectedItem] = useState<Asset | null>(null)
 
   const filteredList = useMemo(() => {
     if (!searchTerm) return searchIndex.items
     const lowerSearchTerm = searchTerm.toLowerCase()
 
-    const exactMatches: CurrencyItem[] = []
-    const partialMatches: CurrencyItem[] = []
+    const exactMatches: Asset[] = []
+    const partialMatches: Asset[] = []
 
     searchIndex.items.forEach(item => {
       if (
@@ -70,7 +63,7 @@ export const SearchableCurrencyList = forwardRef<SearchableCurrencyListRef, Sear
     clearState
   }))
 
-  const handleItemSelect = useCallback((item: CurrencyItem) => {
+  const handleItemSelect = useCallback((item: Asset) => {
     if (selectedItem && selectedItem.symbol === item.symbol) {
       setSelectedItem(null)
       onSelect(null)

@@ -23,6 +23,11 @@
       "main": "src/trade_manager/main.mo",
       "type": "motoko"
     },
+    "wishlist_manager": {
+      "dependencies": ["internet_identity"],
+      "main": "src/wishlist_manager/main.mo",
+      "type": "motoko"
+    },
     "xrc": {
       "candid": "src/xrc_demo/xrc/xrc.did",
       "remote": { "id": { "ic": "uf6dk-hyaaa-aaaaq-qaaaq-cai" } },

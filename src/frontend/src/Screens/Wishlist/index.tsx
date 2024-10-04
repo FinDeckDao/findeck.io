@@ -1,16 +1,16 @@
 import { FC, useEffect, useState } from 'react'
 import { Button } from '@/Components/ui/button'
 import { useNavigate } from 'react-router-dom'
-import { AssetPair } from '../../../../declarations/backend/backend.did'
+import { WishlistItem } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"  // Updated import
 import { TbFidgetSpinner } from "react-icons/tb"
 import { useQueryCall } from '@ic-reactor/react'
-import { WatchedAssetPair } from './AssetPair'
+import { WatchedWishlistItem } from './WatchedWishlistItem'
 
-export const WatchList: FC = () => {
+export const Wishlist: FC = () => {
   const navigate = useNavigate()
-  const [userWatchList, setUserWatchList] = useState<AssetPair[]>([])
-  const [topWatchList, setTopWatchList] = useState<AssetPair[]>([])
+  const [userWatchList, setUserWatchList] = useState<WishlistItem[]>([])
+  const [topWatchList, setTopWatchList] = useState<WishlistItem[]>([])
 
   const navigateTo = (path: string) => {
     navigate(path)
@@ -19,7 +19,7 @@ export const WatchList: FC = () => {
   const { call: getUserWatchList, loading } = useQueryCall({
     functionName: "getUserWatchList",
     onSuccess: (data) => {
-      const userWatchList = data as AssetPair[]
+      const userWatchList = data as WishlistItem[]
       setUserWatchList(userWatchList)
     }
   })
@@ -27,7 +27,7 @@ export const WatchList: FC = () => {
   const { call: getTopWatchedAssets, loading: topLoading } = useQueryCall({
     functionName: "getTopWatchedAssets",
     onSuccess: (data) => {
-      const topWatchList = data as AssetPair[]
+      const topWatchList = data as WishlistItem[]
       setTopWatchList(topWatchList)
     }
   })
@@ -39,7 +39,7 @@ export const WatchList: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleDeletedAsset = (pair: AssetPair) => {
+  const handleDeletedAsset = (pair: WishlistItem) => {
     const updatedWatchList = userWatchList.filter((p) => p !== pair)
     setUserWatchList(updatedWatchList)
     getUserWatchList()
@@ -81,10 +81,10 @@ export const WatchList: FC = () => {
 
           {userWatchList.length > 0
             ? (
-              userWatchList.map((pair, index) => {
-                return <WatchedAssetPair
-                  key={`${pair.base.symbol}/${pair.quote.symbol}-${index}`}
-                  pair={pair} index={index}
+              userWatchList.map((item, index) => {
+                return <WatchedWishlistItem
+                  key={`${item.base.symbol}-${index}`}
+                  item={item} index={index}
                   onDelete={handleDeletedAsset}
                   onUpdate={getUserWatchList}
                 />
@@ -111,11 +111,11 @@ export const WatchList: FC = () => {
             : null
           }
 
-          {topWatchList.map((pair, index) => {
+          {topWatchList.map((item, index) => {
             return (
-              <WatchedAssetPair
-                key={`${pair.base.symbol}/${pair.quote.symbol}-${index}`}
-                pair={pair} index={index}
+              <WatchedWishlistItem
+                key={`${item.base.symbol}-${index}`}
+                item={item} index={index}
               />
             )
           })}

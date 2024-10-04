@@ -12,7 +12,6 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Types "types";
-import WatchListManager "modules/WatchListManager";
 import XRC "canister:xrc";
 
 actor Backend {
@@ -28,17 +27,9 @@ actor Backend {
 
   // Create a stable variable to store the data
   private stable var profileEntries : [(Principal, Types.Profile)] = [];
-  private stable var watchListEntries : [(Principal, [AssetModule.AssetPair])] = [];
 
   // Create a HashMap to store the profiles into local Canister Memory.
   private var profiles = HashMap.HashMap<Principal, Types.Profile>(
-    10,
-    Principal.equal,
-    Principal.hash,
-  );
-
-  // Create a HashMap to store the profiles into local Canister Memory.
-  private var watchListItems = HashMap.HashMap<Principal, [AssetModule.AssetPair]>(
     10,
     Principal.equal,
     Principal.hash,
@@ -50,23 +41,12 @@ actor Backend {
   system func preupgrade() {
     // Write the profiles to Stable Memory before upgrading the canister.
     profileEntries := Iter.toArray(profiles.entries());
-
-    // Write the watchListEntries to Stable Memory before upgrading the canister.
-    watchListEntries := Iter.toArray(watchListItems.entries());
   };
 
   system func postupgrade() {
     // Read the profiles from Stable Memory into local Canister Memory.
     profiles := HashMap.fromIter<Principal, Types.Profile>(
       profileEntries.vals(),
-      10,
-      Principal.equal,
-      Principal.hash,
-    );
-
-    // Read the watchlist from Stable Memory into local Canister Memory.
-    watchListItems := HashMap.fromIter<Principal, [AssetModule.AssetPair]>(
-      watchListEntries.vals(),
       10,
       Principal.equal,
       Principal.hash,
@@ -84,45 +64,6 @@ actor Backend {
     };
 
     profiles := HashMap.HashMap<Principal, Types.Profile>(10, Principal.equal, Principal.hash);
-    watchListItems := HashMap.HashMap<Principal, [AssetModule.AssetPair]>(10, Principal.equal, Principal.hash);
-  };
-
-  //////////////////////////////////////////////////////////////////////
-  // WatchList Functions
-  //////////////////////////////////////////////////////////////////////
-  public shared ({ caller }) func createWatchListItem(assetPair : AssetModule.AssetPair) : async Result.Result<(), Text> {
-    WatchListManager.createOrUpdate(watchListItems, caller, assetPair);
-  };
-
-  public shared ({ caller }) func getWatchListItem() : async Result.Result<[AssetModule.AssetPair], Text> {
-    WatchListManager.read(watchListItems, caller);
-  };
-
-  public shared ({ caller }) func getUserWatchList() : async [AssetModule.AssetPair] {
-    WatchListManager.getAllForPrincipal(watchListItems, caller);
-  };
-
-  public shared ({ caller }) func updateWatchListItem(assetPair : AssetModule.AssetPair) : async Result.Result<(), Text> {
-    WatchListManager.update(watchListItems, caller, assetPair);
-  };
-
-  public shared ({ caller }) func deleteWatchListItem(assetPairToDelete : AssetModule.AssetPair) : async Result.Result<(), Text> {
-    WatchListManager.removeFromWatchList(watchListItems, caller, assetPairToDelete);
-  };
-
-  // TODO: Setup a paginator for this function.
-  public query func listAllWatchListItems() : async [AssetModule.AssetPair] {
-    WatchListManager.list(watchListItems);
-  };
-
-  // TODO: Refactor this to select the most watched assets.
-  public query func getTopWatchedAssets() : async [AssetModule.AssetPair] {
-    WatchListManager.list(watchListItems);
-  };
-
-  // Get the questions for due diligence
-  public query func getDueDiligenceQuestions() : async [AssetModule.Question] {
-    AssetModule.DUE_DILIGENCE_QUESTIONS;
   };
 
   //////////////////////////////////////////////////////////////////////
