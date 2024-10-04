@@ -4,57 +4,57 @@ import { useNavigate } from 'react-router-dom'
 import { WishlistItem } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"  // Updated import
 import { TbFidgetSpinner } from "react-icons/tb"
-import { useQueryCall } from '@ic-reactor/react'
 import { WatchedWishlistItem } from './WatchedWishlistItem'
+import { useWishlistManagerQueryCall } from '@/Providers/WishlistManager'
 
 export const Wishlist: FC = () => {
   const navigate = useNavigate()
-  const [userWatchList, setUserWatchList] = useState<WishlistItem[]>([])
-  const [topWatchList, setTopWatchList] = useState<WishlistItem[]>([])
+  const [userWishlist, setUserWishlist] = useState<WishlistItem[]>([])
+  const [topWishlist, setTopWishlist] = useState<WishlistItem[]>([])
 
   const navigateTo = (path: string) => {
     navigate(path)
   }
 
-  const { call: getUserWatchList, loading } = useQueryCall({
-    functionName: "getUserWatchList",
+  const { call: getUserWishlist, loading } = useWishlistManagerQueryCall({
+    functionName: "getUserWishlist",
     onSuccess: (data) => {
-      const userWatchList = data as WishlistItem[]
-      setUserWatchList(userWatchList)
+      const userWishlist = data as WishlistItem[]
+      setUserWishlist(userWishlist)
     }
   })
 
-  const { call: getTopWatchedAssets, loading: topLoading } = useQueryCall({
+  const { call: getTopWatchedAssets, loading: topLoading } = useWishlistManagerQueryCall({
     functionName: "getTopWatchedAssets",
     onSuccess: (data) => {
-      const topWatchList = data as WishlistItem[]
-      setTopWatchList(topWatchList)
+      const topWishlist = data as WishlistItem[]
+      setTopWishlist(topWishlist)
     }
   })
 
-  // Run this once to fetch the user's watch list.
+  // Run this once to fetch the user's wishlist.
   useEffect(() => {
-    getUserWatchList()
+    getUserWishlist()
     getTopWatchedAssets()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleDeletedAsset = (pair: WishlistItem) => {
-    const updatedWatchList = userWatchList.filter((p) => p !== pair)
-    setUserWatchList(updatedWatchList)
-    getUserWatchList()
+    const updatedWishlist = userWishlist.filter((p) => p !== pair)
+    setUserWishlist(updatedWishlist)
+    getUserWishlist()
   }
 
   return (
     <div className="container mx-auto min-h-96 p-4">
-      <h1 className="text-4xl font-bold text-center mb-6">Watch List</h1>
+      <h1 className="text-4xl font-bold text-center mb-6">wishlist</h1>
 
       <div className="flex justify-end mb-6">
         <Button
-          onClick={() => navigateTo('/watchlist/create')}
+          onClick={() => navigateTo('/wishlist/create')}
           className="bg-blue-400 hover:bg-blue-500 text-white w-full sm:w-auto"
         >
-          <PlusCircleIcon className="mr-2 h-5 w-5" /> Watch List Item
+          <PlusCircleIcon className="mr-2 h-5 w-5" /> wishlist Item
         </Button>
       </div>
 
@@ -62,9 +62,9 @@ export const Wishlist: FC = () => {
         <div className="mb-8 lg:mb-0 lg:w-1/2">
           <h2 className="text-2xl font-semibold mb-4">
             {
-              userWatchList.length > 1
-                ? `Watching ${userWatchList.length} Asset Pairs`
-                : `Watching ${userWatchList.length} Asset Pair`
+              userWishlist.length > 1
+                ? `Watching ${userWishlist.length} Assets`
+                : `Watching ${userWishlist.length} Asset`
             }
           </h2>
 
@@ -72,34 +72,34 @@ export const Wishlist: FC = () => {
             loading
               ? (
                 <div className="mb-4">
-                  Fetching your current watchlist...{" "}
+                  Fetching your current wishlist...{" "}
                   <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
                 </div>
               )
               : null
           }
 
-          {userWatchList.length > 0
+          {userWishlist.length > 0
             ? (
-              userWatchList.map((item, index) => {
+              userWishlist.map((item, index) => {
                 return <WatchedWishlistItem
                   key={`${item.base.symbol}-${index}`}
                   item={item} index={index}
                   onDelete={handleDeletedAsset}
-                  onUpdate={getUserWatchList}
+                  onUpdate={getUserWishlist}
                 />
               })
             )
             : (
               <p className="text-gray-300">
-                {!loading ? "Your watch list is empty. Add some asset pairs to get started!" : null}
+                {!loading ? "Your wishlist is empty. Add some asset pairs to get started!" : null}
               </p>
             )
           }
         </div>
 
         <div className="lg:w-1/2">
-          <h2 className="text-2xl font-semibold mb-4">Top Watch List Items</h2>
+          <h2 className="text-2xl font-semibold mb-4">Top wishlist Items</h2>
 
           {topLoading
             ? (
@@ -111,7 +111,7 @@ export const Wishlist: FC = () => {
             : null
           }
 
-          {topWatchList.map((item, index) => {
+          {topWishlist.map((item, index) => {
             return (
               <WatchedWishlistItem
                 key={`${item.base.symbol}-${index}`}

@@ -34,7 +34,7 @@ export const navigation: NavigationItem[] = [
   //   href: '/dashboard',
   //   icon: <RectangleGroupIcon className="h-6 w-6 inline" />
   // },
-  { name: 'Watchlist', href: '/watchlist', icon: <QueueListIcon className="h-6 w-6 inline" /> },
+  { name: 'Wishlist', href: '/wishlist', icon: <QueueListIcon className="h-6 w-6 inline" /> },
   { name: 'Trades', href: '/trades', icon: <ArrowsRightLeftIcon className="h-6 w-6 inline" /> },
   { name: 'Positions', href: '/positions', icon: <MapPinIcon className="h-6 w-6 inline" /> },
   // {

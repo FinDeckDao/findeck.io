@@ -1,5 +1,5 @@
 import { useState, useEffect, FC } from 'react'
-import { useQueryCall } from '@ic-reactor/react'
+import { useWishlistManagerQueryCall } from '@/Providers/WishlistManager'
 import { AnswerSwitch } from './AnswerSwitch'
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
 import { Question, Answer } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
@@ -13,7 +13,7 @@ interface DueDiligenceQuestionnaireProps {
 
 export const DueDiligenceQuestionnaire: FC<DueDiligenceQuestionnaireProps> = (props) => {
   const { onAnswersChange, previousAnswers, isModalOpen } = props
-  const { data: questions, loading, error } = useQueryCall({
+  const { data: questions, loading, error } = useWishlistManagerQueryCall({
     functionName: 'getDueDiligenceQuestions',
   }) as { data: Question[], loading: boolean, error: Error | null }
 

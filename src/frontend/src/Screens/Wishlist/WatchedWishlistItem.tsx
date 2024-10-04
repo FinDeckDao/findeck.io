@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import { WishlistItem, Answer } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
-import { useUpdateCall } from '@ic-reactor/react'
+import { useWishlistManagerUpdateCall } from '@/Providers/WishlistManager'
 import { DeleteGuard } from './DeleteGuard'
 import { ResponsiveWishlistItem } from './ResponsiveWishlistItem'
 import { EditWishlistItem } from './EditWishlistItem'
@@ -17,12 +17,12 @@ export const WatchedWishlistItem: FC<WatchedWishlistItemProps> = (props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [updatedAnswers, setUpdatedAnswers] = useState(item.DueDiligence)
 
-  const { call: removeWatchedAsset } = useUpdateCall({
-    functionName: "deleteWatchListItem"
+  const { call: removeWatchedAsset } = useWishlistManagerUpdateCall({
+    functionName: "deleteWishlistItem"
   })
 
-  const { call: updateWatchListItem, loading: updateLoading } = useUpdateCall({
-    functionName: "createWatchListItem",
+  const { call: updateWishlistItem, loading: updateLoading } = useWishlistManagerUpdateCall({
+    functionName: "createWishlistItem",
     onSuccess: () => {
       setIsDialogOpen(false)
       if (onUpdate) {
@@ -40,7 +40,7 @@ export const WatchedWishlistItem: FC<WatchedWishlistItemProps> = (props) => {
 
   const handleUpdateConfirmation = () => {
     const updatedPair = { ...item, DueDiligence: updatedAnswers }
-    updateWatchListItem([updatedPair])
+    updateWishlistItem([updatedPair])
   }
 
   const handleAnswersUpdate = (answers: Answer[]) => {

@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 import { Button } from '@/Components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 import { CreateTradeModal } from './CreateTradeModal'
-import { useQueryCall } from '@ic-reactor/react'
+import { useTradeManagerQueryCall } from '@/Providers/tradeManager'
 import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 
 export const TradesScreen: FC = () => {
@@ -12,7 +12,7 @@ export const TradesScreen: FC = () => {
     toggleOpenClosed(true)
   }
 
-  const { data, loading, error } = useQueryCall({
+  const { data, loading, error } = useTradeManagerQueryCall({
     functionName: "getUserTrades",
   }) as { data: Trade[], loading: boolean, error: Error }
 

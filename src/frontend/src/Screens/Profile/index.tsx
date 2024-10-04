@@ -5,7 +5,8 @@ import { getValidTheme, getValidRole } from './utils'
 import { hasKey } from '../../lib/utils'
 import { Profile } from '../../../../declarations/backend/backend.did'
 import { ProfileForm } from './Form'
-import { useAuthState, useQueryCall, useUpdateCall } from '@ic-reactor/react'
+import { useAuthState } from '@ic-reactor/react'
+import { useBackendQueryCall, useBackendUpdateCall } from '@/Providers/backend'
 
 // There are 3 conditions that a user profile can be in:
 // 1. The user has a profile and the data is returned.
@@ -22,7 +23,7 @@ export const ProfileScreen: FC = () => {
 
   // This gets called as soon as use the data variable.
   // No need to explicitly call it.
-  const { call: getProfile, data, loading, error } = useQueryCall({
+  const { call: getProfile, data, loading, error } = useBackendQueryCall({
     functionName: 'getProfile',
     onError: (error) => {
       console.log("Error loading profile data: ", error)
@@ -40,7 +41,7 @@ export const ProfileScreen: FC = () => {
     call: createProfile,
     loading: createLoading,
     error: createError
-  } = useUpdateCall({
+  } = useBackendUpdateCall({
     functionName: 'createProfile',
     onSuccess: () => {
       getProfile()
@@ -58,7 +59,7 @@ export const ProfileScreen: FC = () => {
     call: updateProfile,
     loading: updateLoading,
     error: updateError
-  } = useUpdateCall({
+  } = useBackendUpdateCall({
     functionName: 'updateProfile',
     onSuccess: () => {
       getProfile()

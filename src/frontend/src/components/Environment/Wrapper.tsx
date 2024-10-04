@@ -4,7 +4,7 @@ import {
 } from '@ic-reactor/react'
 
 // This component is responsible for determining the environment that the app is running in.
-export const EnvironmentWrapper: FC<PropsWithChildren> = (props) => {
+export const EnvironmentBasedAgentProvider: FC<PropsWithChildren> = (props) => {
   const { children } = props
   const isLocal = window.location.hostname.includes('localhost')
   if (isLocal) {

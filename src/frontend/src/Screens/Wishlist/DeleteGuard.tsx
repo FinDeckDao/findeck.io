@@ -32,9 +32,9 @@ export const DeleteGuard: FC<DeleteGuardProps> = (props) => {
           <AlertDialogTitle className="text-white">Are you sure?</AlertDialogTitle>
           <AlertDialogDescription className="text-gray-300">
             This action cannot be undone. This will permanently remove this asset
-            from your watch list.
+            from your wishlist.
             <br /><br />
-            If you want to watch this asset again, you will need to add it again.
+            If you want to wish this asset again, you will need to add it again.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

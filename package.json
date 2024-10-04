@@ -10,7 +10,7 @@
     "deploy:frontend:ic": "dfx deploy frontend --ic",
     "postdeploy:ic": "dfx canister call backend init",
     "deploy:ic": "dfx deploy --ic",
-    "deploy": "DFX_LOG_LEVEL=error dfx deploy",
+    "deploy": "dfx deploy",
     "dev:backend": "mo-dev -d -y -g --verbose",
     "dev:frontend": "npm run dev --workspaces --if-present",
     "dfx": "dfx start --clean --host 127.0.0.1:8000",

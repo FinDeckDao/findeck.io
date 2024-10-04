@@ -15,7 +15,7 @@ import {
   UserCircleIcon
 } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
-import { useQueryCall } from '@ic-reactor/react'
+import { useBackendQueryCall } from '@/Providers/backend'
 import { hasKey } from '@/lib/utils'
 
 interface LoginButtonProps {
@@ -28,7 +28,7 @@ export const LoginButton: FC<LoginButtonProps> = (props) => {
   const { authenticated, identity, login, logout } = useAuth()
   const navigate = useNavigate()
 
-  const { data: profileData } = useQueryCall({
+  const { data: profileData } = useBackendQueryCall({
     functionName: 'getProfile'
   }) as { data: { ok: { name: string } } }
 

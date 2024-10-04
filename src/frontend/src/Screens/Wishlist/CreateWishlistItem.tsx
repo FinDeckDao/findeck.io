@@ -3,7 +3,6 @@ import { SearchableCurrencyList, SearchableCurrencyListRef } from './Search'
 import { WishlistItem, Asset } from "../../../../declarations/wishlist_manager/wishlist_manager.did"
 import { Button } from '@/components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
-import { useUpdateCall } from '@ic-reactor/react'
 import { TbFidgetSpinner } from "react-icons/tb"
 import { DueDiligenceQuestionnaire } from './Questionnaire'
 import {
@@ -14,6 +13,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { useWishlistManagerUpdateCall } from '@/Providers/WishlistManager'
 
 type Answer = { Yes: null } | { No: null }
 
@@ -36,8 +36,8 @@ export const CreateWishlistItem: React.FC = () => {
   }, [selectedWishlistItem])
 
   // Update the backend with this asset.
-  const { call: createWatchListItem, loading } = useUpdateCall({
-    functionName: "createWatchListItem",
+  const { call: createWishlistItem, loading } = useWishlistManagerUpdateCall({
+    functionName: "createWishlistItem",
     onSuccess: () => {
       setSelectedWishlistItem(null)
     }
@@ -52,9 +52,9 @@ export const CreateWishlistItem: React.FC = () => {
     setSelectedWishlistItem(newWishlistItem)
   }, [answers])
 
-  const handleCreateWatchListItem = useCallback(() => {
+  const handleCreateWishlistItem = useCallback(() => {
     if (wishlistItem) {
-      console.log('Creating watch list item:', wishlistItem)
+      console.log('Creating wish list item:', wishlistItem)
       baseListRef.current?.clearState()
       quoteListRef.current?.clearState()
 
@@ -64,25 +64,25 @@ export const CreateWishlistItem: React.FC = () => {
         DueDiligence: answers
       }
 
-      createWatchListItem([newAssetPair])
+      createWishlistItem([newAssetPair])
     }
-  }, [wishlistItem, createWatchListItem, answers])
+  }, [wishlistItem, createWishlistItem, answers])
 
   return (
     <div className="container mx-auto min-h-96 px-4">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/watchlist">Watch List</BreadcrumbLink>
+            <BreadcrumbLink href="/wishlist">Wish List</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-white">Create Watch List Item</BreadcrumbPage>
+            <BreadcrumbPage className="text-white">Create Wish List Item</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
-      <h1 className="text-4xl font-bold text-center mt-10 mb-6">Create A Watch List Item</h1>
+      <h1 className="text-4xl font-bold text-center mt-10 mb-6">Create A Wish List Item</h1>
 
       {/* Selected Assets Display */}
       <div className="mt-8">
@@ -107,18 +107,18 @@ export const CreateWishlistItem: React.FC = () => {
         <div className="flex-grow">
           {loading && (
             <span>
-              Adding {`${selectedWishlistItem?.base.symbol}`} To Your Watchlist...{" "}
+              Adding {`${selectedWishlistItem?.base.symbol}`} To Your Wishlist...{" "}
               <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
             </span>
           )}
         </div>
         <Button
-          onClick={handleCreateWatchListItem}
+          onClick={handleCreateWishlistItem}
           disabled={loading ? true : !wishlistItem}
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
         >
           {loading ? null : <PlusCircleIcon className="mr-2 h-5 w-5" />}
-          {loading ? "Adding item..." : "Add Pair To Watch List"}
+          {loading ? "Adding item..." : "Add Pair To Wish List"}
           {loading ? <TbFidgetSpinner className="h-5 w-5 animate-spin inline-block" /> : null}
         </Button>
       </div>
