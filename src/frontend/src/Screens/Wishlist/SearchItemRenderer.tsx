@@ -31,7 +31,7 @@ export const ItemRenderer: FC<ItemRendererProps> = memo(({ data, index, style, o
       >
         <CardContent className="p-4 flex items-center space-x-4">
           <img
-            src={item.img_url}
+            src={`https://4a5t6-wqaaa-aaaan-qzmpq-cai.icp0.io/assets/${item.img_url}`}
             alt={item.name}
             className="w-16 h-16 object-contain mb-4"
             loading="lazy"

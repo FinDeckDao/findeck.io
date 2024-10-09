@@ -12,7 +12,9 @@ export const ResponsiveWishlistItem: FC<ResponsiveWishlistItemProps> = (props) =
   return (
     <div className="flex flex-wrap items-center gap-2" >
       <div className="flex items-center space-x-2 flex-grow min-w-0">
-        <img src={item.base.img_url} alt={item.base.name} className="w-10 h-10" />
+        <img
+          src={`https://4a5t6-wqaaa-aaaan-qzmpq-cai.icp0.io/assets/${item.base.img_url}`}
+          alt={item.base.name} className="w-10 h-10" />
         <span className="truncate">{item.base.symbol}</span>
       </div>
       <div className="flex items-center w-full sm:w-auto">

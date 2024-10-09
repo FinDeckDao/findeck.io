@@ -90,7 +90,7 @@ export const CreateWishlistItem: React.FC = () => {
         {wishlistItem ? (
           <>
             <div className="flex items-center space-x-2 mb-4 p-2 bg-gray-800 border-2 border-gray-700 rounded-2xl text-white">
-              <img src={wishlistItem.base.img_url} alt={wishlistItem.base.name} className="w-10 h-10" />
+              <img src={`https://4a5t6-wqaaa-aaaan-qzmpq-cai.icp0.io/assets/${wishlistItem.base.img_url}`} alt={wishlistItem.base.name} className="w-10 h-10" />
               <span>{wishlistItem.base.symbol}</span>
             </div>
             <DueDiligenceQuestionnaire onAnswersChange={handleAnswersChange} isModalOpen={false} />
