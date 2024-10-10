@@ -1,20 +1,19 @@
 import { FC, useEffect, useState } from 'react'
-import { Button } from '@/Components/ui/button'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import { WishlistItem } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
-import { PlusCircleIcon } from "@heroicons/react/24/outline"  // Updated import
 import { TbFidgetSpinner } from "react-icons/tb"
 import { WatchedWishlistItem } from './WatchedWishlistItem'
 import { useWishlistManagerQueryCall } from '@/Providers/WishlistManager'
+import { CreateWishlistItemDialog } from './CreateWishlistItemDialog'
 
 export const Wishlist: FC = () => {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const [userWishlist, setUserWishlist] = useState<WishlistItem[]>([])
   const [topWishlist, setTopWishlist] = useState<WishlistItem[]>([])
 
-  const navigateTo = (path: string) => {
-    navigate(path)
-  }
+  // const navigateTo = (path: string) => {
+  //   navigate(path)
+  // }
 
   const { call: getUserWishlist, loading } = useWishlistManagerQueryCall({
     functionName: "getUserWishlist",
@@ -50,12 +49,7 @@ export const Wishlist: FC = () => {
       <h1 className="text-4xl font-bold text-center mb-6">wishlist</h1>
 
       <div className="flex justify-end mb-6">
-        <Button
-          onClick={() => navigateTo('/wishlist/create')}
-          className="bg-blue-400 hover:bg-blue-500 text-white w-full sm:w-auto"
-        >
-          <PlusCircleIcon className="mr-2 h-5 w-5" /> wishlist Item
-        </Button>
+        <CreateWishlistItemDialog />
       </div>
 
       <div className="flex flex-col lg:flex-row lg:space-x-4">

@@ -3,7 +3,7 @@ import { WishlistItem, Answer } from '../../../../declarations/wishlist_manager/
 import { useWishlistManagerUpdateCall } from '@/Providers/WishlistManager'
 import { DeleteGuard } from './DeleteGuard'
 import { ResponsiveWishlistItem } from './ResponsiveWishlistItem'
-import { EditWishlistItem } from './EditWishlistItem'
+import { EditWishlistItemDialog } from './EditWishlistItemDialog'
 
 interface WatchedWishlistItemProps {
   item: WishlistItem
@@ -59,7 +59,7 @@ export const WatchedWishlistItem: FC<WatchedWishlistItemProps> = (props) => {
 
       {onDelete && (
         <div className="flex items-center space-x-2">
-          <EditWishlistItem
+          <EditWishlistItemDialog
             item={item}
             isDialogOpen={isDialogOpen}
             setIsDialogOpen={setIsDialogOpen}

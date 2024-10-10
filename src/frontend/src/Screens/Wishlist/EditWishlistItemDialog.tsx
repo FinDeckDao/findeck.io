@@ -24,7 +24,7 @@ interface EditWishlistItemProps {
   updateLoading: boolean
 }
 
-export const EditWishlistItem: FC<EditWishlistItemProps> = (props) => {
+export const EditWishlistItemDialog: FC<EditWishlistItemProps> = (props) => {
   const {
     item,
     isDialogOpen,
@@ -61,7 +61,7 @@ export const EditWishlistItem: FC<EditWishlistItemProps> = (props) => {
           <Button
             variant="outline"
             onClick={() => setIsDialogOpen(false)}
-            className="bg-blue-400 hover:bg-blue-500 text-white w-full sm:w-auto"
+            className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto dark:bg-blue-700 dark:hover:bg-blue-800"
           >
             <XMarkIcon className="h-5 w-5 mr-1" />
             Cancel
@@ -72,8 +72,8 @@ export const EditWishlistItem: FC<EditWishlistItemProps> = (props) => {
             disabled={updateLoading}
             className={
               `flex items-center justify-center space-x-2 ${updateLoading
-                ? 'cursor-not-allowed bg-blue-400 hover:bg-blue-500 text-white'
-                : 'bg-blue-400 hover:bg-blue-500 text-white'}
+                ? 'cursor-not-allowed bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto dark:bg-blue-700 dark:hover:bg-blue-800'
+                : 'bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto dark:bg-blue-700 dark:hover:bg-blue-800'}
                       w-full sm:w-auto`
             }
           >
