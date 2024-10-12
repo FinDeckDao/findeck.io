@@ -5,13 +5,16 @@ import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import TradeManager "./TradeManager";
+import Types "types";
 
 actor TradeManagerActor {
+  private type Trade = Types.Trade;
+
   // Define data persistence for the trades.
-  private stable var tradeEntries : [(Principal, [TradeManager.Trade])] = [];
+  private stable var tradeEntries : [(Principal, [Trade])] = [];
 
   // Create a hash map to store the trades into local Canister Memory.
-  private var trades = HashMap.HashMap<Principal, [TradeManager.Trade]>(
+  private var trades = HashMap.HashMap<Principal, [Trade]>(
     10,
     Principal.equal,
     Principal.hash,
@@ -27,7 +30,7 @@ actor TradeManagerActor {
       throw Error.reject("Unauthorized: only the owner can initialize the canister");
     };
 
-    trades := HashMap.HashMap<Principal, [TradeManager.Trade]>(
+    trades := HashMap.HashMap<Principal, [Trade]>(
       10,
       Principal.equal,
       Principal.hash,
@@ -44,7 +47,7 @@ actor TradeManagerActor {
 
   system func postupgrade() {
     // Read the trades from Stable Memory into local Canister Memory.
-    trades := HashMap.fromIter<Principal, [TradeManager.Trade]>(
+    trades := HashMap.fromIter<Principal, [Trade]>(
       tradeEntries.vals(),
       10,
       Principal.equal,
@@ -65,7 +68,7 @@ actor TradeManagerActor {
 
   public query ({ caller }) func readTrade(
     index : Nat
-  ) : async Result.Result<TradeManager.Trade, Text> {
+  ) : async Result.Result<Trade, Text> {
     TradeManager.readTrade(trades, caller, index);
   };
 
@@ -81,7 +84,7 @@ actor TradeManagerActor {
     TradeManager.deleteTrade(trades, caller, index);
   };
 
-  public query ({ caller }) func getUserTrades() : async [TradeManager.Trade] {
+  public query ({ caller }) func getUserTrades() : async [Trade] {
     TradeManager.listTradesForUser(trades, caller);
   };
 

@@ -7,14 +7,10 @@ import AssetModule "../modules/Asset/main";
 import Int "mo:base/Int";
 import Nat "mo:base/Nat";
 import Float "mo:base/Float";
+import Types "types";
 
 module TradeManager {
-  public type Trade = {
-    assetPair : AssetModule.AssetPair;
-    dateOfTrade : Int; // Represented as a Unix timestamp
-    baseAssetAmount : Nat; // Represented as baseAmount * 10^18
-    quoteAssetAmount : Nat; // Represented as quoteAmount * 10^18
-  };
+  private type Trade = Types.Trade;
 
   // Helper functions for fixed-point arithmetic
   public func floatToFixedPoint(value : Float) : Nat {
