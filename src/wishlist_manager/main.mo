@@ -83,7 +83,7 @@ actor WishlistManagerActor {
 
   // TODO: Refactor this to select the most watched assets.
   public query func getTopWatchedAssets() : async [Types.WishlistItem] {
-    WishlistManager.list(wishlistItems);
+    WishlistManager.listTopItems(wishlistItems, 100);
   };
 
   // Get the questions for due diligence

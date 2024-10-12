@@ -1,6 +1,8 @@
 import Array "mo:base/Array";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
+import Nat "mo:base/Nat";
+import Order "mo:base/Order";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
@@ -87,41 +89,67 @@ module WishlistManager {
   };
 
   public func listTopItems(wishlistItems : Types.WishlistItems, limit : Nat) : [Types.WishlistItem] {
-    let itemCounts = HashMap.HashMap<Text, (Types.WishlistItem, Nat)>(10, Text.equal, Text.hash);
+    let itemScores = HashMap.HashMap<Text, (Types.WishlistItem, Nat)>(10, Text.equal, Text.hash);
 
-    // Helper function to create a unique key for an item
+    // Helper function to create a unique key for an item based on the base asset
     func itemToKey(item : Types.WishlistItem) : Text {
-      item.base.slug;
+      item.base.slug; // Using slug as the unique identifier
     };
 
-    // Count occurrences of each item across all records
+    // Helper function to count "Yes" answers
+    func countYesAnswers(answers : Types.DueDiligenceAnswers) : Nat {
+      Array.foldLeft<Types.Answer, Nat>(
+        answers,
+        0,
+        func(acc, answer) {
+          switch (answer) {
+            case (#Yes) acc + 1;
+            case (#No) acc;
+          };
+        },
+      );
+    };
+
+    // Calculate scores for each unique item
     for (userPairs in wishlistItems.vals()) {
       for (pair in userPairs.vals()) {
         let key = itemToKey(pair);
-        let (existingItem, count) = switch (itemCounts.get(key)) {
-          case (null) (pair, 1);
-          case (?existing) (existing.0, existing.1 + 1);
+        let yesCount = countYesAnswers(pair.DueDiligence);
+
+        switch (itemScores.get(key)) {
+          case (null) {
+            // New item, add it to the map
+            itemScores.put(key, (pair, yesCount));
+          };
+          case (?existing) {
+            // Existing item, update the score and keep the existing WishlistItem
+            let newScore = existing.1 + yesCount;
+            itemScores.put(key, (existing.0, newScore));
+          };
         };
-        itemCounts.put(key, (existingItem, count));
       };
     };
 
-    // Filter pairs that appear more than once
-    let filteredPairs = HashMap.mapFilter<Text, (Types.WishlistItem, Nat), Types.WishlistItem>(
-      itemCounts,
-      Text.equal,
-      Text.hash,
-      func(_, v) = if (v.1 > 1) ?v.0 else null,
+    // Convert to array and sort by score
+    var scoredItems = Iter.toArray(itemScores.vals());
+    scoredItems := Array.sort(
+      scoredItems,
+      func(a : (Types.WishlistItem, Nat), b : (Types.WishlistItem, Nat)) : Order.Order {
+        Nat.compare(b.1, a.1) // Sort in descending order
+      },
     );
 
-    // Convert to array
-    let finalPairs = Iter.toArray(filteredPairs.vals());
+    // Extract just the WishlistItems, discarding the scores
+    let finalItems = Array.map<(Types.WishlistItem, Nat), Types.WishlistItem>(
+      scoredItems,
+      func((item, _)) : Types.WishlistItem { item },
+    );
 
     // Return all items or up to the limit
-    if (finalPairs.size() <= limit) {
-      finalPairs;
+    if (finalItems.size() <= limit) {
+      finalItems;
     } else {
-      Array.subArray(finalPairs, 0, limit);
+      Array.subArray(finalItems, 0, limit);
     };
   };
 

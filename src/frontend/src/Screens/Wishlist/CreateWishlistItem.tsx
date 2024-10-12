@@ -107,15 +107,15 @@ export const CreateWishlistItem: React.FC = () => {
 
 
       {/* Desktop view */}
-      <div className="mt-4 sm:mt-6 md:mt-8 w-full max-w-[95%] mx-auto xs:max-w-[400px] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] lg:w-auto">
-        <h2 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-4">
-          {selectedWishlistItem
-            ? "Select a Different Asset"
-            : "Select an Asset You Want"
-          }
-        </h2>
-        <SearchableCurrencyList ref={baseListRef} onSelect={handleBaseSelect} />
-      </div>
+      {!selectedWishlistItem && (
+        <div className="mt-4 sm:mt-6 md:mt-8 w-full max-w-[95%] mx-auto xs:max-w-[400px] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] lg:w-auto">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-4">
+            Select an Asset You Want
+          </h2>
+
+          <SearchableCurrencyList ref={baseListRef} onSelect={handleBaseSelect} />
+        </div>
+      )}
     </div>
   )
 }
