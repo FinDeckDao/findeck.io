@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo } from 'react'
-import { SearchableCurrencyList, SearchableCurrencyListRef } from './SearchableCurrencyList'
+import { SearchableCurrencyList, SearchableCurrencyListRef } from '../../Components/Currency/SearchableCurrencyList'
 import { WishlistItem, Asset } from "../../../../declarations/wishlist_manager/wishlist_manager.did"
 import { Button } from '@/components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"

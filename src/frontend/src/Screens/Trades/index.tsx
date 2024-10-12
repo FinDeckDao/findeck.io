@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useState, useEffect } from 'react'
 import { Button } from '@/Components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 import { CreateTradeModal } from './CreateTradeModal'
@@ -8,13 +8,21 @@ import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 export const TradesScreen: FC = () => {
   const [openClosed, toggleOpenClosed] = useState(false)
 
+  useEffect(() => {
+    // If toggleOpenClosed is false then update the user's trades.
+    if (!openClosed) {
+      console.log("checkingUserTrades")
+      call()
+    }
+  }, [openClosed])
+
   const handleOpenModal = () => {
     toggleOpenClosed(true)
   }
 
-  const { data, loading, error } = useTradeManagerQueryCall({
+  const { call, data, loading, error } = useTradeManagerQueryCall({
     functionName: "getUserTrades",
-  }) as { data: Trade[], loading: boolean, error: Error }
+  }) as { call: () => void, data: Trade[], loading: boolean, error: Error }
 
   if (error) {
     return <div>Error: {error.message}</div>
