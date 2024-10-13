@@ -46,7 +46,7 @@ export const Wishlist: FC = () => {
 
   return (
     <div className="container mx-auto min-h-96 p-4">
-      <h1 className="text-4xl font-bold text-center mb-6">wishlist</h1>
+      <h1 className="text-4xl font-bold text-center mb-6">Wishlist</h1>
 
       <div className="flex justify-end mb-6">
         <CreateWishlistItemDialog />

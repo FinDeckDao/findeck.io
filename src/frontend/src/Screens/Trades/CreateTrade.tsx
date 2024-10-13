@@ -54,7 +54,7 @@ export const CreateTrade: React.FC<CreateTradeProps> = (props) => {
                 </TabsList>
                 <TabsContent value="wishlist">
                   <Select onValueChange={(value) => handleBaseAssetSelect(JSON.parse(value))}>
-                    <SelectTrigger className="mb-4 bg-dark text-white border-gray-700 focus:ring-gray-700 focus:border-gray-600">
+                    <SelectTrigger className="mb-4 bg-dark text-white">
                       <SelectValue placeholder="Select From Wishlist" className="bg-dark text-white" />
                     </SelectTrigger>
                     <SelectContent className="bg-dark text-white">

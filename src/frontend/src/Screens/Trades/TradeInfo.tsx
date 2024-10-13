@@ -48,9 +48,11 @@ export const TradeInfo: FC<TradeInfoProps> = (props) => {
   }
 
   return (
-    <div className="flex flex-col md:flex-row items-start md:items-center justify-between p-2 mb-2 bg-gray-800 rounded-2xl text-white border border-gray-700">
-      <AssetPairComponent assetPair={trade.assetPair} />
-      <div className="flex flex-col md:flex-row items-start md:items-center md:space-x-4 mt-6 md:mt-0 space-y-4 md:space-y-0 w-full md:w-auto border-t md:border-t-0 border-gray-700 pt-4 md:pt-0">
+    <div className="flex flex-col lg:flex-row items-start justify-between p-2 mb-4 bg-gray-800 rounded-2xl text-white border border-gray-700">
+      <div className="sm:mb-0 md:mb-4 lg:mb-0 xl:mb-0 2xl:mb-0">
+        <AssetPairComponent assetPair={trade.assetPair} />
+      </div>
+      <div className="flex flex-col md:flex-row items-start md:space-x-4 mt-6 md:mt-0 space-y-4 md:space-y-0 w-full md:w-auto border-t md:border-t-0 border-gray-700 pt-4 md:pt-0">
         <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
           {formatDate(trade.dateOfTrade)}
         </span>
