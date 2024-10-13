@@ -4,7 +4,7 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline"
 import { CreateTradeModal } from './CreateTradeModal'
 import { useTradeManagerQueryCall } from '@/Providers/tradeManager'
 import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
-import { AssetPairComponent } from './AssetPair'
+import { TradeInfo } from './TradeInfo'
 
 export const TradesScreen: FC = () => {
   const [openClosed, toggleOpenClosed] = useState(false)
@@ -51,13 +51,7 @@ export const TradesScreen: FC = () => {
         : null
       }
       {data && (data.map((trade, index) => (
-        <div
-          key={`${index}-${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}`}
-          className="flex items-center justify-between p-2 mb-2 bg-gray-800 rounded-2xl text-white 
-                     border border-gray-700"
-        >
-          <AssetPairComponent assetPair={trade.assetPair} />
-        </div>
+        <TradeInfo trade={trade} key={`${index}-${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}`} />
       )))}
     </div>
   )
