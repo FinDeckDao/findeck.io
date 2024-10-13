@@ -27,5 +27,3 @@ export const AssetPairComponent: FC<AssetPairComponentProps> = (props) => {
     </div>
   )
 }
-
-export default AssetPairComponent

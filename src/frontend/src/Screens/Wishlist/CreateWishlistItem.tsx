@@ -1,13 +1,11 @@
 import React, { useState, useRef, useCallback, useMemo } from 'react'
 import { SearchableCurrencyList, SearchableCurrencyListRef } from '../../Components/Currency/SearchableCurrencyList'
-import { WishlistItem, Asset } from "../../../../declarations/wishlist_manager/wishlist_manager.did"
+import { WishlistItem, Asset, Answer } from "../../../../declarations/wishlist_manager/wishlist_manager.did"
 import { Button } from '@/components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 import { TbFidgetSpinner } from "react-icons/tb"
 import { DueDiligenceQuestionnaire } from './Questionnaire'
 import { useWishlistManagerUpdateCall } from '@/Providers/WishlistManager'
-
-type Answer = { Yes: null } | { No: null }
 
 export const CreateWishlistItem: React.FC = () => {
   const [selectedWishlistItem, setSelectedWishlistItem] = useState<WishlistItem | null>(null)
