@@ -1,10 +1,8 @@
-import {
-  FC,
-  CSSProperties,
-  memo
-} from 'react'
+import { FC, CSSProperties, memo, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Asset } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Portal } from '@radix-ui/react-portal'
 
 interface ItemRendererProps {
   data: Asset[]
@@ -17,6 +15,8 @@ interface ItemRendererProps {
 export const ItemRenderer: FC<ItemRendererProps> = memo(({ data, index, style, onItemSelect, selectedItem }) => {
   const item = data[index]
   const isSelected = selectedItem && selectedItem.symbol === item.symbol
+  const shouldTruncate = item.name.length > 24
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 
   return (
     <div
@@ -33,17 +33,43 @@ export const ItemRenderer: FC<ItemRendererProps> = memo(({ data, index, style, o
           <img
             src={`https://4a5t6-wqaaa-aaaan-qzmpq-cai.icp0.io/assets/${item.img_url}`}
             alt={item.name}
-            className="w-16 h-16 object-contain mb-4"
+            className="w-16 h-16 object-contain mb-4 flex-shrink-0"
             loading="lazy"
           />
-          <div>
-            <h3 className="font-bold">{item.name}</h3>
-            <p className="text-sm text-gray-500">{item.symbol}</p>
+          <div className="min-w-0 flex-1">
+            <TooltipProvider>
+              <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
+                <TooltipTrigger asChild>
+                  <h3
+                    className={`font-bold ${shouldTruncate ? 'truncate' : ''}`}
+                    onMouseEnter={() => setIsTooltipOpen(true)}
+                    onMouseLeave={() => setIsTooltipOpen(false)}
+                  >
+                    {item.name}
+                  </h3>
+                </TooltipTrigger>
+                {shouldTruncate && isTooltipOpen && (
+                  <Portal>
+                    <TooltipContent
+                      side="top"
+                      align="start"
+                      sideOffset={5}
+                      className="z-[9999] bg-gray-800 text-white p-2 rounded shadow-lg"
+                    >
+                      <p className="max-w-xs break-words">{item.name}</p>
+                    </TooltipContent>
+                  </Portal>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+            <p className="text-sm text-gray-500 truncate">{item.symbol}</p>
           </div>
         </CardContent>
       </Card>
     </div>
   )
 })
+
+ItemRenderer.displayName = 'ItemRenderer'
 
 export default ItemRenderer
