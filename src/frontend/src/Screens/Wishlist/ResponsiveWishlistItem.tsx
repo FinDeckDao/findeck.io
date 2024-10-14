@@ -6,6 +6,7 @@ export interface ResponsiveWishlistItemProps {
   yesAnswersCount: number
 }
 
+// TODO: Get this dynamically from the WishListManager Service.
 const TOTAL_QUESTIONS = 10 // Total number of due diligence questions
 
 export const ResponsiveWishlistItem: React.FC<ResponsiveWishlistItemProps> = ({ item, yesAnswersCount }) => {

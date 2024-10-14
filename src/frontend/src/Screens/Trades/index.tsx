@@ -54,24 +54,28 @@ export const TradesScreen: FC = () => {
       <h1 className="text-4xl font-bold text-center mb-6">Trades</h1>
 
       <div className="flex justify-between items-center mb-6">
-        <Select onValueChange={handlePairChange} value={selectedPair}>
-          <SelectTrigger className="w-[200px] bg-dark text-white">
-            <SelectValue placeholder="Filter by pair" />
-          </SelectTrigger>
-          <SelectContent className="bg-dark text-white">
-            <SelectItem
-              value="all"
-              className="text-white hover:bg-gray-700 focus:bg-gray-700 hover:text-white focus:text-white">
-              All Pairs
-            </SelectItem>
-            {uniquePairs.map(pair => (
-              <SelectItem key={pair} value={pair}
-                className="text-white hover:bg-gray-700 focus:bg-gray-700 hover:text-white focus:text-white">
-                {pair}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {data && data.length > 0
+          ? (
+            <Select onValueChange={handlePairChange} value={selectedPair}>
+              <SelectTrigger className="w-[200px] bg-dark text-white">
+                <SelectValue placeholder="Filter by pair" />
+              </SelectTrigger>
+              <SelectContent className="bg-dark text-white">
+                <SelectItem
+                  value="all"
+                  className="text-white hover:bg-gray-700 focus:bg-gray-700 hover:text-white focus:text-white">
+                  All Pairs
+                </SelectItem>
+                {uniquePairs.map(pair => (
+                  <SelectItem key={pair} value={pair}
+                    className="text-white hover:bg-gray-700 focus:bg-gray-700 hover:text-white focus:text-white">
+                    {pair}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )
+          : <div>{" "}</div>}
 
         <Button
           variant="outline"

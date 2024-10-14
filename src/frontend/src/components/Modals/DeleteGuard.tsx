@@ -12,14 +12,25 @@ import {
 } from "@/components/ui/alert-dialog"
 import { WishlistItem } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 import { XCircleIcon, TrashIcon } from "@heroicons/react/24/outline"
+import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
+
+export type Deletable = WishlistItem | Trade
 
 export interface DeleteGuardProps {
-  item: WishlistItem
-  handleDeleteConfirmation: (item: WishlistItem) => void
+  item: Deletable
+  message: string
+  onDelete: (item: Deletable) => void
 }
 
 export const DeleteGuard: FC<DeleteGuardProps> = (props) => {
-  const { item, handleDeleteConfirmation } = props
+  const { item, message, onDelete } = props
+
+  const handleDeleteConfirmation = (item: Deletable) => {
+    if (onDelete) {
+      onDelete(item)
+    }
+  }
+
   return (
     <AlertDialog>
       <AlertDialogTrigger>
@@ -31,10 +42,7 @@ export const DeleteGuard: FC<DeleteGuardProps> = (props) => {
         <AlertDialogHeader>
           <AlertDialogTitle className="text-white">Are you sure?</AlertDialogTitle>
           <AlertDialogDescription className="text-gray-300">
-            This action cannot be undone. This will permanently remove this asset
-            from your wishlist.
-            <br /><br />
-            If you want to wish this asset again, you will need to add it again.
+            {message}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

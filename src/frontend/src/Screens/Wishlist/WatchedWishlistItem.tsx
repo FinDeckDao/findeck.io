@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 import { WishlistItem, Answer } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 import { useWishlistManagerUpdateCall } from '@/Providers/WishlistManager'
-import { DeleteGuard } from './DeleteGuard'
+import { DeleteGuard, Deletable } from '../../Components/Modals/DeleteGuard'
 import { ResponsiveWishlistItem } from './ResponsiveWishlistItem'
 import { EditWishlistItemDialog } from './EditWishlistItemDialog'
 
@@ -31,10 +31,11 @@ export const WatchedWishlistItem: FC<WatchedWishlistItemProps> = (props) => {
     }
   })
 
-  const handleDeleteConfirmation = (item: WishlistItem) => {
+  const handleDeleteConfirmation = (item: Deletable) => {
     if (onDelete) {
-      removeWatchedAsset([item])
-      onDelete(item)
+      const deletableItem = item as WishlistItem
+      removeWatchedAsset([deletableItem])
+      onDelete(deletableItem)
     }
   }
 
@@ -70,7 +71,9 @@ export const WatchedWishlistItem: FC<WatchedWishlistItemProps> = (props) => {
 
           <DeleteGuard
             item={item}
-            handleDeleteConfirmation={handleDeleteConfirmation}
+            onDelete={handleDeleteConfirmation}
+            message="This action cannot be undone. This will permanently remove this asset
+            from your wishlist. If you want to wish this asset again, you will need to add it again."
           />
         </div>
       )}
