@@ -74,10 +74,10 @@ export const TradeInfo: FC<TradeInfoProps> = (props) => {
           {formatDate(trade.dateOfTrade)}
         </span>
         <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
-          Purchased: {formatCryptoAmount(trade.baseAssetAmount)} ${trade.assetPair.base.symbol}
+          Purchased: {formatCryptoAmount(BigInt(trade.baseAssetAmount))} ${trade.assetPair.base.symbol}
         </span>
         <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
-          Paid: {formatCryptoAmount(trade.quoteAssetAmount)} ${trade.assetPair.quote.symbol}
+          Paid: {formatCryptoAmount(BigInt(trade.quoteAssetAmount))} ${trade.assetPair.quote.symbol}
         </span>
       </div>
 

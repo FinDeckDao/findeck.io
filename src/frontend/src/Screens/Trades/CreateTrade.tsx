@@ -114,7 +114,7 @@ export const CreateTrade: React.FC<CreateTradeProps> = (props) => {
               onChange={(e) => {
                 setBaseAssetAmount(e.target.value)
                 onTradeDataChange({
-                  baseAssetAmount: e.target.value ? BigInt(e.target.value) : undefined
+                  baseAssetAmount: e.target.value ? Number(e.target.value) : undefined
                 })
               }}
               placeholder={`Enter the total amount of ${selectedBaseAsset.symbol} you received.`}
@@ -132,7 +132,7 @@ export const CreateTrade: React.FC<CreateTradeProps> = (props) => {
               onChange={(e) => {
                 setQuoteAssetAmount(e.target.value)
                 onTradeDataChange({
-                  quoteAssetAmount: e.target.value ? BigInt(e.target.value) : undefined
+                  quoteAssetAmount: e.target.value ? Number(e.target.value) : undefined
                 })
               }}
               placeholder={`Enter the total amount of ${selectedQuoteAsset.symbol} you spent.`}
