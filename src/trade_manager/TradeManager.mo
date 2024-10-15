@@ -7,11 +7,11 @@ import AssetModule "../modules/Asset/main";
 import Int "mo:base/Int";
 import Nat "mo:base/Nat";
 import Float "mo:base/Float";
-import Iter "mo:base/Iter";
+import Debug "mo:base/Debug";
 import Types "types";
 
 module {
-  public type State = HashMap.HashMap<Principal, [Types.Trade]>;
+  public type Trades = HashMap.HashMap<Principal, [Types.Trade]>;
 
   // Helper functions remain unchanged
   public func floatToFixedPoint(value : Float) : Nat {
@@ -25,20 +25,8 @@ module {
     Float.fromInt(value) / scaleFactor;
   };
 
-  // Helper function to create a new state with updated entries
-  private func updateState(state : State, caller : Principal, trades : [Types.Trade]) : State {
-    let newState = HashMap.HashMap<Principal, [Types.Trade]>(state.size(), Principal.equal, Principal.hash);
-    for ((key, value) in state.entries()) {
-      if (Principal.equal(key, caller)) {
-        newState.put(key, trades);
-      } else {
-        newState.put(key, value);
-      };
-    };
-    newState;
-  };
-
-  public func createTrade(state : State, caller : Principal, assetPair : AssetModule.AssetPair, baseAmount : Float, quoteAmount : Float) : (State, Nat) {
+  public func createTrade(trades : Trades, caller : Principal, assetPair : AssetModule.AssetPair, baseAmount : Float, quoteAmount : Float) : Result.Result<(Nat, Nat), Text> {
+    Debug.print("Creating trade for caller: " # debug_show (caller));
     let newTrade : Types.Trade = {
       assetPair = assetPair;
       dateOfTrade = Time.now();
@@ -46,17 +34,26 @@ module {
       quoteAssetAmount = quoteAmount;
     };
 
-    let userTrades = switch (state.get(caller)) {
+    let userTrades = switch (trades.get(caller)) {
       case (null) { [newTrade] };
       case (?existingTrades) { Array.append(existingTrades, [newTrade]) };
     };
 
-    let updatedState = updateState(state, caller, userTrades);
-    (updatedState, userTrades.size() - 1);
+    trades.put(caller, userTrades);
+    let newCount = userTrades.size();
+
+    if (newCount > 0) {
+      let index : Nat = newCount - 1;
+      Debug.print("Trade created. New trade count for caller: " # debug_show (newCount) # ", Index: " # debug_show (index));
+      #ok((newCount, index));
+    } else {
+      Debug.print("Failed to create trade. User trade list is empty.");
+      #err("Failed to create trade");
+    };
   };
 
-  public func readTrade(state : State, caller : Principal, index : Nat) : Result.Result<Types.Trade, Text> {
-    switch (state.get(caller)) {
+  public func readTrade(trades : Trades, caller : Principal, index : Nat) : Result.Result<Types.Trade, Text> {
+    switch (trades.get(caller)) {
       case (null) { #err("No trades found for the user") };
       case (?userTrades) {
         if (index < userTrades.size()) {
@@ -68,12 +65,12 @@ module {
     };
   };
 
-  public func updateTrade(state : State, caller : Principal, index : Nat, baseAmount : ?Float, quoteAmount : ?Float) : (State, Result.Result<(), Text>) {
-    switch (state.get(caller)) {
-      case (null) { (state, #err("No trades found for the user")) };
+  public func updateTrade(trades : Trades, caller : Principal, index : Nat, baseAmount : ?Float, quoteAmount : ?Float) : Result.Result<(), Text> {
+    switch (trades.get(caller)) {
+      case (null) { #err("No trades found for the user") };
       case (?userTrades) {
         if (index >= userTrades.size()) {
-          return (state, #err("Trade index out of bounds"));
+          return #err("Trade index out of bounds");
         };
         let updatedTrade = {
           assetPair = userTrades[index].assetPair;
@@ -91,18 +88,18 @@ module {
           userTrades.size(),
           func(i) { if (i == index) { updatedTrade } else { userTrades[i] } },
         );
-        let updatedState = updateState(state, caller, updatedTrades);
-        (updatedState, #ok(()));
+        trades.put(caller, updatedTrades);
+        #ok(());
       };
     };
   };
 
-  public func deleteTrade(state : State, caller : Principal, index : Nat) : (State, Result.Result<(), Text>) {
-    switch (state.get(caller)) {
-      case (null) { (state, #err("No trades found for the user")) };
+  public func deleteTrade(trades : Trades, caller : Principal, index : Nat) : Result.Result<(), Text> {
+    switch (trades.get(caller)) {
+      case (null) { #err("No trades found for the user") };
       case (?userTrades) {
         if (index >= userTrades.size()) {
-          return (state, #err("Trade index out of bounds"));
+          return #err("Trade index out of bounds");
         };
         let updatedTrades = Array.tabulate<Types.Trade>(
           userTrades.size() - 1,
@@ -110,36 +107,39 @@ module {
             if (i < index) { userTrades[i] } else { userTrades[i + 1] };
           },
         );
-        let updatedState = updateState(state, caller, updatedTrades);
-        (updatedState, #ok(()));
+        trades.put(caller, updatedTrades);
+        #ok(());
       };
     };
   };
 
-  public func listTradesForUser(state : State, user : Principal) : [Types.Trade] {
-    switch (state.get(user)) {
-      case (null) { [] };
-      case (?userTrades) { userTrades };
+  public func listTradesForUser(trades : Trades, user : Principal) : [Types.Trade] {
+    Debug.print("Listing trades for user: " # debug_show (user));
+    switch (trades.get(user)) {
+      case (null) {
+        Debug.print("No trades found for user");
+        [];
+      };
+      case (?userTrades) {
+        Debug.print("Found " # debug_show (userTrades.size()) # " trades for user");
+        userTrades;
+      };
     };
   };
 
-  public func getTotalTrades(state : State) : Nat {
+  public func getTotalTrades(trades : Trades) : Nat {
     var total = 0;
-    for (userTrades in state.vals()) {
+    for (userTrades in trades.vals()) {
       total += userTrades.size();
     };
     total;
   };
 
-  public func emptyState() : State {
-    HashMap.HashMap<Principal, [Types.Trade]>(10, Principal.equal, Principal.hash);
-  };
-
-  public func getEntries(state : State) : [(Principal, [Types.Trade])] {
-    Iter.toArray(state.entries());
-  };
-
-  public func setEntries(entries : [(Principal, [Types.Trade])]) : State {
-    HashMap.fromIter<Principal, [Types.Trade]>(entries.vals(), 10, Principal.equal, Principal.hash);
+  public func debugState(trades : Trades) : Text {
+    var debugText = "Current state:\n";
+    for ((principal, userTrades) in trades.entries()) {
+      debugText #= "Principal: " # debug_show (principal) # ", Trades: " # debug_show (userTrades.size()) # "\n";
+    };
+    debugText;
   };
 };

@@ -42,6 +42,7 @@ export const CreateTradeModal: FC<CreateTradeModalProps> = (props) => {
   } = useTradeManagerUpdateCall({
     functionName: "createTrade",
     onSuccess: () => {
+      console.log("Trade created successfully")
       toggleOpenClose(false)
     }
   })
