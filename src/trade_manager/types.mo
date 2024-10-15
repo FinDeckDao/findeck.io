@@ -7,5 +7,4 @@ module {
     baseAssetAmount : Nat; // Represented as baseAmount * 10^18
     quoteAssetAmount : Nat; // Represented as quoteAmount * 10^18
   };
-
 };

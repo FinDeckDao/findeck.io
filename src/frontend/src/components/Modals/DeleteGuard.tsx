@@ -20,10 +20,11 @@ export interface DeleteGuardProps {
   item: Deletable
   message: string
   onDelete: (item: Deletable) => void
+  className?: string
 }
 
 export const DeleteGuard: FC<DeleteGuardProps> = (props) => {
-  const { item, message, onDelete } = props
+  const { item, message, onDelete, className } = props
 
   const handleDeleteConfirmation = (item: Deletable) => {
     if (onDelete) {
@@ -33,7 +34,7 @@ export const DeleteGuard: FC<DeleteGuardProps> = (props) => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger className={className}>
         <XCircleIcon
           className="h-5 w-5 text-gray-400 hover:text-gray-200 cursor-pointer"
         />
@@ -52,8 +53,8 @@ export const DeleteGuard: FC<DeleteGuardProps> = (props) => {
           </AlertDialogCancel>
           <AlertDialogAction
             className="bg-blue-600 text-white hover:bg-blue-500"
-            onClick={() => handleDeleteConfirmation(item)}>
-            <TrashIcon className="h-5 w-5 mr-1" />
+            onClick={() => handleDeleteConfirmation(item)}
+          ><TrashIcon className="h-5 w-5 mr-1" />
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

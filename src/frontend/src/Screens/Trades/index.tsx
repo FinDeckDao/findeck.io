@@ -6,23 +6,24 @@ import { useTradeManagerQueryCall } from '@/Providers/tradeManager'
 import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 import { TradeInfo } from './TradeInfo'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { TbFidgetSpinner } from "react-icons/tb"
 
 export const TradesScreen: FC = () => {
   const [openClosed, toggleOpenClosed] = useState(false)
   const [selectedPair, setSelectedPair] = useState<string>('all')
+  const [deleting, setDeleting] = useState<boolean>(false)
 
   const handleOpenModal = () => {
     toggleOpenClosed(true)
   }
 
-  const { call, data, loading, error } = useTradeManagerQueryCall({
+  const { call: getUserTrades, data, loading, error } = useTradeManagerQueryCall({
     functionName: "getUserTrades",
   }) as { call: () => void, data: Trade[], loading: boolean, error: Error }
 
   useEffect(() => {
     if (!openClosed) {
-      console.log("checkingUserTrades")
-      call()
+      getUserTrades()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openClosed])
@@ -52,7 +53,6 @@ export const TradesScreen: FC = () => {
   return (
     <div className="container mx-auto min-h-96 p-4">
       <h1 className="text-4xl font-bold text-center mb-6">Trades</h1>
-
       <div className="flex justify-between items-center mb-6">
         {data && data.length > 0
           ? (
@@ -88,9 +88,22 @@ export const TradesScreen: FC = () => {
       </div>
 
       <CreateTradeModal openClose={openClosed} toggleOpenClose={toggleOpenClosed} />
-      {loading ? <div>Loading...</div> : null}
+      {loading ? <div className="inline-flex">Loading... <TbFidgetSpinner className="h-5 w-5 animate-spin" /></div> : null}
+      {deleting ? <div className="inline-flex">Deleting... <TbFidgetSpinner className="h-5 w-5 animate-spin" /></div> : null}
+
       {filteredTrades.map((trade, index) => (
-        <TradeInfo trade={trade} key={`${index}-${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}`} />
+        <TradeInfo
+          index={index}
+          trade={trade}
+          key={`${index}-${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}`}
+          isDeleting={() => {
+            setDeleting(true)
+          }}
+          isDeleted={() => {
+            setDeleting(false)
+            getUserTrades()
+          }}
+        />
       ))}
     </div>
   )
