@@ -18,6 +18,11 @@
       "type": "custom",
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     },
+    "position_manager": {
+      "dependencies": ["internet_identity"],
+      "main": "src/position_manager/main.mo",
+      "type": "motoko"
+    },
     "trade_manager": {
       "dependencies": ["internet_identity"],
       "main": "src/trade_manager/main.mo",

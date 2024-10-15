@@ -1,7 +1,5 @@
 import AssetModule "../modules/Asset/main";
 import Error "mo:base/Error";
-import HashMap "mo:base/HashMap";
-import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import TradeManager "./TradeManager";
@@ -14,11 +12,7 @@ actor TradeManagerActor {
   private stable var tradeEntries : [(Principal, [Trade])] = [];
 
   // Create a hash map to store the trades into local Canister Memory.
-  private var trades = HashMap.HashMap<Principal, [Trade]>(
-    10,
-    Principal.equal,
-    Principal.hash,
-  );
+  private var state : TradeManager.State = TradeManager.emptyState();
 
   // The authorized principal (ensure that only a local dev can call the init function)
   // TODO: Make this only possible from the DAO in the future.
@@ -30,11 +24,7 @@ actor TradeManagerActor {
       throw Error.reject("Unauthorized: only the owner can initialize the canister");
     };
 
-    trades := HashMap.HashMap<Principal, [Trade]>(
-      10,
-      Principal.equal,
-      Principal.hash,
-    );
+    state := TradeManager.emptyState();
   };
 
   //////////////////////////////////////////////////////////////////////
@@ -42,17 +32,12 @@ actor TradeManagerActor {
   //////////////////////////////////////////////////////////////////////
   system func preupgrade() {
     // Write the trades to Stable Memory before upgrading the canister.
-    tradeEntries := Iter.toArray(trades.entries());
+    tradeEntries := TradeManager.getEntries(state);
   };
 
   system func postupgrade() {
     // Read the trades from Stable Memory into local Canister Memory.
-    trades := HashMap.fromIter<Principal, [Trade]>(
-      tradeEntries.vals(),
-      10,
-      Principal.equal,
-      Principal.hash,
-    );
+    state := TradeManager.setEntries(tradeEntries);
   };
 
   //////////////////////////////////////////////////////////////////////
@@ -63,13 +48,15 @@ actor TradeManagerActor {
     baseAmount : Float,
     quoteAmount : Float,
   ) : async Nat {
-    TradeManager.createTrade(trades, caller, assetPair, baseAmount, quoteAmount);
+    let (newState, index) = TradeManager.createTrade(state, caller, assetPair, baseAmount, quoteAmount);
+    state := newState;
+    index;
   };
 
   public query ({ caller }) func readTrade(
     index : Nat
   ) : async Result.Result<Trade, Text> {
-    TradeManager.readTrade(trades, caller, index);
+    TradeManager.readTrade(state, caller, index);
   };
 
   public shared ({ caller }) func updateTrade(
@@ -77,19 +64,22 @@ actor TradeManagerActor {
     baseAmount : ?Float,
     quoteAmount : ?Float,
   ) : async Result.Result<(), Text> {
-    TradeManager.updateTrade(trades, caller, index, baseAmount, quoteAmount);
+    let (newState, result) = TradeManager.updateTrade(state, caller, index, baseAmount, quoteAmount);
+    state := newState;
+    result;
   };
 
   public shared ({ caller }) func deleteTrade(index : Nat) : async Result.Result<(), Text> {
-    TradeManager.deleteTrade(trades, caller, index);
+    let (newState, result) = TradeManager.deleteTrade(state, caller, index);
+    state := newState;
+    result;
   };
 
   public query ({ caller }) func getUserTrades() : async [Trade] {
-    TradeManager.listTradesForUser(trades, caller);
+    TradeManager.listTradesForUser(state, caller);
   };
 
   public query func getTotalTrades() : async Nat {
-    TradeManager.getTotalTrades(trades);
+    TradeManager.getTotalTrades(state);
   };
-
 };

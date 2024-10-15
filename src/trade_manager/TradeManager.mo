@@ -7,12 +7,13 @@ import AssetModule "../modules/Asset/main";
 import Int "mo:base/Int";
 import Nat "mo:base/Nat";
 import Float "mo:base/Float";
+import Iter "mo:base/Iter";
 import Types "types";
 
-module TradeManager {
-  private type Trade = Types.Trade;
+module {
+  public type State = HashMap.HashMap<Principal, [Types.Trade]>;
 
-  // Helper functions for fixed-point arithmetic
+  // Helper functions remain unchanged
   public func floatToFixedPoint(value : Float) : Nat {
     let scaleFactor : Float = 1e18;
     let scaled : Int = Float.toInt(value * scaleFactor);
@@ -24,25 +25,38 @@ module TradeManager {
     Float.fromInt(value) / scaleFactor;
   };
 
-  public func createTrade(trades : HashMap.HashMap<Principal, [Trade]>, caller : Principal, assetPair : AssetModule.AssetPair, baseAmount : Float, quoteAmount : Float) : Nat {
-    let newTrade : Trade = {
+  // Helper function to create a new state with updated entries
+  private func updateState(state : State, caller : Principal, trades : [Types.Trade]) : State {
+    let newState = HashMap.HashMap<Principal, [Types.Trade]>(state.size(), Principal.equal, Principal.hash);
+    for ((key, value) in state.entries()) {
+      if (Principal.equal(key, caller)) {
+        newState.put(key, trades);
+      } else {
+        newState.put(key, value);
+      };
+    };
+    newState;
+  };
+
+  public func createTrade(state : State, caller : Principal, assetPair : AssetModule.AssetPair, baseAmount : Float, quoteAmount : Float) : (State, Nat) {
+    let newTrade : Types.Trade = {
       assetPair = assetPair;
       dateOfTrade = Time.now();
-      baseAssetAmount = floatToFixedPoint(baseAmount);
-      quoteAssetAmount = floatToFixedPoint(quoteAmount);
+      baseAssetAmount = baseAmount;
+      quoteAssetAmount = quoteAmount;
     };
 
-    let userTrades = switch (trades.get(caller)) {
+    let userTrades = switch (state.get(caller)) {
       case (null) { [newTrade] };
       case (?existingTrades) { Array.append(existingTrades, [newTrade]) };
     };
 
-    let _ = trades.put(caller, userTrades);
-    userTrades.size() - 1 // Return the index of the new trade
+    let updatedState = updateState(state, caller, userTrades);
+    (updatedState, userTrades.size() - 1);
   };
 
-  public func readTrade(trades : HashMap.HashMap<Principal, [Trade]>, caller : Principal, index : Nat) : Result.Result<Trade, Text> {
-    switch (trades.get(caller)) {
+  public func readTrade(state : State, caller : Principal, index : Nat) : Result.Result<Types.Trade, Text> {
+    switch (state.get(caller)) {
       case (null) { #err("No trades found for the user") };
       case (?userTrades) {
         if (index < userTrades.size()) {
@@ -54,68 +68,78 @@ module TradeManager {
     };
   };
 
-  public func updateTrade(trades : HashMap.HashMap<Principal, [Trade]>, caller : Principal, index : Nat, baseAmount : ?Float, quoteAmount : ?Float) : Result.Result<(), Text> {
-    switch (trades.get(caller)) {
-      case (null) { #err("No trades found for the user") };
+  public func updateTrade(state : State, caller : Principal, index : Nat, baseAmount : ?Float, quoteAmount : ?Float) : (State, Result.Result<(), Text>) {
+    switch (state.get(caller)) {
+      case (null) { (state, #err("No trades found for the user")) };
       case (?userTrades) {
         if (index >= userTrades.size()) {
-          return #err("Trade index out of bounds");
+          return (state, #err("Trade index out of bounds"));
         };
         let updatedTrade = {
           assetPair = userTrades[index].assetPair;
           dateOfTrade = userTrades[index].dateOfTrade;
           baseAssetAmount = switch (baseAmount) {
             case (null) { userTrades[index].baseAssetAmount };
-            case (?amount) { floatToFixedPoint(amount) };
+            case (?amount) { amount };
           };
           quoteAssetAmount = switch (quoteAmount) {
             case (null) { userTrades[index].quoteAssetAmount };
-            case (?amount) { floatToFixedPoint(amount) };
+            case (?amount) { amount };
           };
         };
-        let updatedTrades = Array.tabulate<Trade>(
+        let updatedTrades = Array.tabulate<Types.Trade>(
           userTrades.size(),
-          func(i) {
-            if (i == index) { updatedTrade } else { userTrades[i] };
-          },
+          func(i) { if (i == index) { updatedTrade } else { userTrades[i] } },
         );
-        let _ = trades.put(caller, updatedTrades);
-        #ok(());
+        let updatedState = updateState(state, caller, updatedTrades);
+        (updatedState, #ok(()));
       };
     };
   };
 
-  public func deleteTrade(trades : HashMap.HashMap<Principal, [Trade]>, caller : Principal, index : Nat) : Result.Result<(), Text> {
-    switch (trades.get(caller)) {
-      case (null) { #err("No trades found for the user") };
+  public func deleteTrade(state : State, caller : Principal, index : Nat) : (State, Result.Result<(), Text>) {
+    switch (state.get(caller)) {
+      case (null) { (state, #err("No trades found for the user")) };
       case (?userTrades) {
         if (index >= userTrades.size()) {
-          return #err("Trade index out of bounds");
+          return (state, #err("Trade index out of bounds"));
         };
-        let updatedTrades = Array.tabulate<Trade>(
+        let updatedTrades = Array.tabulate<Types.Trade>(
           userTrades.size() - 1,
           func(i) {
             if (i < index) { userTrades[i] } else { userTrades[i + 1] };
           },
         );
-        let _ = trades.put(caller, updatedTrades);
-        #ok(());
+        let updatedState = updateState(state, caller, updatedTrades);
+        (updatedState, #ok(()));
       };
     };
   };
 
-  public func listTradesForUser(trades : HashMap.HashMap<Principal, [Trade]>, user : Principal) : [Trade] {
-    switch (trades.get(user)) {
+  public func listTradesForUser(state : State, user : Principal) : [Types.Trade] {
+    switch (state.get(user)) {
       case (null) { [] };
       case (?userTrades) { userTrades };
     };
   };
 
-  public func getTotalTrades(trades : HashMap.HashMap<Principal, [Trade]>) : Nat {
+  public func getTotalTrades(state : State) : Nat {
     var total = 0;
-    for (userTrades in trades.vals()) {
+    for (userTrades in state.vals()) {
       total += userTrades.size();
     };
     total;
+  };
+
+  public func emptyState() : State {
+    HashMap.HashMap<Principal, [Types.Trade]>(10, Principal.equal, Principal.hash);
+  };
+
+  public func getEntries(state : State) : [(Principal, [Types.Trade])] {
+    Iter.toArray(state.entries());
+  };
+
+  public func setEntries(entries : [(Principal, [Types.Trade])]) : State {
+    HashMap.fromIter<Principal, [Types.Trade]>(entries.vals(), 10, Principal.equal, Principal.hash);
   };
 };
