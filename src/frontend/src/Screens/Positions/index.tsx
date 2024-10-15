@@ -2,7 +2,6 @@ import { PropsWithChildren, useRef, useContext } from 'react'
 import { Positions } from '../../Components/Position'
 import { CreatePositionModal } from '../../Components/Position/CreatePositionModal'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
-import { PositionContext } from '../../Contexts/Position'
 import { DisplayContext } from '../../Contexts/Display'
 
 const PositionsScreenWrapper = (props: PropsWithChildren) => {
@@ -61,17 +60,6 @@ const PositionsScreenWrapper = (props: PropsWithChildren) => {
 }
 
 export const PositionsScreen = () => {
-  const { positions } = useContext(PositionContext)
-
-  // Guard for null or undefined positions.
-  if (positions.length === 0) {
-    return (
-      <PositionsScreenWrapper>
-        <div className='text-center'>To create a new position click the "+ position" button.</div>
-      </PositionsScreenWrapper>
-    )
-  }
-
   return (
     <PositionsScreenWrapper>
       <Positions />

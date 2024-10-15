@@ -50,8 +50,6 @@ export const TradesScreen: FC = () => {
     return <div>Error: {error.message}</div>
   }
 
-  console.log(data)
-
   return (
     <div className="container mx-auto min-h-96 p-4">
       <h1 className="text-4xl font-bold text-center mb-6">Trades</h1>

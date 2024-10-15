@@ -1,4 +1,4 @@
-import { useRef, useContext, FC, useEffect, useState } from "react"
+import { useRef, useContext, FC, useState } from "react"
 import { Position } from "../../Contexts/Position"
 import { OptionsModal } from "./OptionsModal"
 import { PositionContext } from '../../Contexts/Position'
@@ -8,11 +8,15 @@ import { AssetPairContext } from "../../Contexts/AssetPair"
 import { DeleteButton } from "../Buttons/Delete"
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal"
 import { deletePosition } from "../../Contexts/Position/helpers"
-import { backend } from "../../../../declarations/backend"
-import { updatePosition } from "../../Contexts/Position/helpers"
+// import { backend } from "../../../../declarations/backend"
+// import { updatePosition } from "../../Contexts/Position/helpers"
 
-export const GetPositionCards: FC = () => {
-  const { positions } = useContext(PositionContext)
+interface GetPositionCardsProps {
+  positions: Partial<Position>[]
+}
+
+export const GetPositionCards: FC<GetPositionCardsProps> = (props) => {
+  const { positions } = props
   const count = positions.length
 
   const cleanPositions = positions.filter((position) => position !== null)
@@ -33,142 +37,71 @@ export const GetPositionCards: FC = () => {
   )
 }
 
-interface PositionCardProps {
-  position: Position
+interface PartialPositionCardProps {
+  position: Partial<Position>
 }
 
-// Individual Position Card
-export const PositionCard = (props: PositionCardProps) => {
-  const { position } = props
+export const PositionCard: React.FC<PartialPositionCardProps> = ({ position }) => {
   const { assetPair } = position
   const { trades, setTrades } = useContext(TradesContext)
   const { setAssetPair } = useContext(AssetPairContext)
   const { positions, setPositions } = useContext(PositionContext)
-  const [price, setPrice] = useState<number>(position.price)
-  const [fetching, setFetching] = useState<boolean>(false)
+  const [price] = useState<number | undefined>(10)
+  const [fetching] = useState<boolean>(false)
 
-  useEffect(() => {
-    // Get the current price of the asset.
-    const updatePrice = async () => {
-      setFetching(true)
-
-      const currentPrice = await backend.get_exchange_rate(
-        assetPair.base.symbol,
-        assetPair.quote.symbol
-      )
-      // Update the price for use in this component.
-      setPrice(currentPrice)
-
-      const updatedPosition = {
-        ...position,
-        price: currentPrice,
-        priceDate: new Date().toISOString()
-      }
-
-      setFetching(false)
-
-      // Update the price in the position context.
-      updatePosition({ positions, position: updatedPosition, setter: setPositions })
-    }
-
-    // Review price and time.
-    // Convert the price data to a date object.
-    const existingTime = new Date(position.priceDate).getTime()
-    const currentTime = new Date().getTime()
-
-    // // if the priceDate is older than 60 minutes (3600000) then update the price.
-    // // 20 seconds in milliseconds is 20000.
-    if ((currentTime - existingTime) > 3600000) {
-      // Get the current price of the asset.
-      updatePrice()
-    }
-  }, [])
-
-  // Guard against null trades.
-  // TODO: Handle this in the Position Context when the trade is added to the position.
-  const cleanTrades = trades.filter((trade) => trade !== null)
-
-  const filteredTrades = cleanTrades.filter((trade) => {
-    return trade.assetPair.base.symbol === assetPair.base.symbol
-      && trade.assetPair.quote.symbol === assetPair.quote.symbol
-  })
+  const filteredTrades = trades.filter((trade) =>
+    trade?.assetPair.base.symbol === assetPair?.base.symbol &&
+    trade?.assetPair.quote.symbol === assetPair?.quote.symbol
+  )
 
   const getTotalInvested = () => {
-    // Get the value of all long trades.
-    const longTrades = filteredTrades.filter((value) => {
-      return value.type === "buy"
-    })
+    const longTotal = filteredTrades
+      .filter(trade => trade?.type === "buy")
+      .reduce((acc, trade) => acc + (trade?.price || 0), 0)
 
-    // Get the totals value of all long trades.
-    const longTotal = longTrades.reduce((accumulator, currentValue) => {
-      return accumulator + currentValue.price
-    }, 0)
+    const shortTotal = filteredTrades
+      .filter(trade => trade?.type === "sell")
+      .reduce((acc, trade) => acc + (trade?.price || 0), 0)
 
-    // Get the value of all short trades.
-    const shortTrades = filteredTrades.filter((value) => {
-      return value.type === "sell"
-    })
-
-    // Get the totals value of all short trades.
-    const shortTotal = shortTrades.reduce((accumulator, currentValue) => {
-      return accumulator + currentValue.price
-    }, 0)
-
-    // Return the total value of the position.
     return longTotal - shortTotal
   }
 
   const getAssetsHeld = () => {
-    // Get the value of all long trades.
-    const longTrades = filteredTrades.filter((value) => {
-      return value.type === "buy"
-    })
+    const longTotal = filteredTrades
+      .filter(trade => trade?.type === "buy")
+      .reduce((acc, trade) => acc + (trade?.amount || 0), 0)
 
-    // Get the totals value of all long trades.
-    const longTotal = longTrades.reduce((accumulator, currentValue) => {
-      return accumulator + currentValue.amount
-    }, 0)
+    const shortTotal = filteredTrades
+      .filter(trade => trade?.type === "sell")
+      .reduce((acc, trade) => acc + (trade?.amount || 0), 0)
 
-    // Get the value of all short trades.
-    const shortTrades = filteredTrades.filter((value) => {
-      return value.type === "sell"
-    })
-
-    // Get the totals value of all short trades.
-    const shortTotal = shortTrades.reduce((accumulator, currentValue) => {
-      return accumulator + currentValue.amount
-    }, 0)
-
-    // Return the total value of the position.
-    return longTotal - shortTotal || 0
+    return longTotal - shortTotal
   }
 
-  // const auth = useContext(AuthContext)
+  const calculateCostBasis = () => {
+    const assetsHeld = getAssetsHeld()
+    return assetsHeld !== 0 ? getTotalInvested() / assetsHeld : 0
+  }
+
+  const calculateRoi = (currentValue: number) => {
+    const costBasis = calculateCostBasis()
+    return costBasis !== 0 ? ((currentValue - costBasis) / costBasis * 100).toFixed(2) : '0.00'
+  }
+
   const optionModalRef = useRef<HTMLDialogElement>(null)
+  const deleteConfirmationModalRef = useRef<HTMLDialogElement>(null)
 
-  const openOptionsModal = () => {
-    optionModalRef.current?.showModal()
-  }
+  const openOptionsModal = () => optionModalRef.current?.showModal()
+  const openDeleteConfirmationModal = () => deleteConfirmationModalRef.current?.showModal()
 
   const setPair = () => {
-    if (setAssetPair) {
+    if (setAssetPair && assetPair) {
       setAssetPair(assetPair)
     }
   }
 
-  const calculateCostBasis = () => {
-    return getTotalInvested() / getAssetsHeld()
-  }
-
-  const calculateRoi = (currentValue: number) => {
-    return ((currentValue - calculateCostBasis()) / calculateCostBasis() * 100 || 0).toFixed(2)
-  }
-
-  // const auth = useContext(AuthContext)
-  const deleteConfirmationModalRef = useRef<HTMLDialogElement>(null)
-
-  const openDeleteConfirmationModal = () => {
-    deleteConfirmationModalRef.current?.showModal()
+  if (!assetPair) {
+    return <div>Loading position data...</div>
   }
 
   return (
@@ -176,67 +109,42 @@ export const PositionCard = (props: PositionCardProps) => {
       <div className="card-body p-4">
         <h2 className="card-title">{assetPair.base.symbol}/{assetPair.quote.symbol}</h2>
         <p className="text-left mb-0">
-          {/* <div className="group relative m-12 flex justify-center">
-            <button className="rounded bg-amber-500 px-4 py-2 text-sm text-white shadow-sm">Hover me!</button>
-            <span className="absolute top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">✨ You hover me!</span>
-          </div> */}
-          <span className="font-bold">Total Assets Held:
-            {" "}{getAssetsHeld().toLocaleString("en-US", { style: "decimal" })}
-            {" "}${assetPair.base.symbol}
-          </span>
+          <span className="font-bold">Total Assets Held: </span>
+          {getAssetsHeld().toLocaleString("en-US", { style: "decimal" })} ${assetPair.base.symbol}
         </p>
         <p className="text-left mb-0">
-          <span className="font-bold">Total At Risk:
-            {" "}{getTotalInvested().toLocaleString("en-US", { style: "decimal" })}
-            {" "}${assetPair.quote.symbol}
-          </span>
+          <span className="font-bold">Total At Risk: </span>
+          {getTotalInvested().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
         </p>
         <p className="text-left mb-0">
           <span className="font-bold">Cost Basis: </span>
-          {calculateCostBasis() < price
-            ?
-            <span className="text-green-500">
-              {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })}{" "}
-              ${assetPair.quote.symbol}
-            </span>
-            :
-            <span className="text-red-500">
-              {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })}{" "}
-              ${assetPair.quote.symbol}
-            </span>
-          }
+          <span className={price && calculateCostBasis() < price ? "text-green-500" : "text-red-500"}>
+            {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
+          </span>
         </p>
         <p className="text-left mb-0">
           <span className="font-bold">Current Value of {assetPair.base.symbol}: </span>
-          {
-            fetching
-              ? "Getting Current Price"
-              : `${Number(price).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`
+          {fetching ? "Getting Current Price" : price ?
+            `${price.toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}` :
+            "Price not available"
           }
         </p>
         <p className="text-left mb-0">
           <span className="font-bold">Current ROI: </span>
-          {
-            fetching
-              ? "Waiting on Current Price"
-              : <span className={`${Number(calculateRoi((price))) > 0 ? "text-green-500" : "text-red-500"}`}>{calculateRoi((price))}%</span>
+          {fetching ? "Waiting on Current Price" : price ?
+            <span className={`${Number(calculateRoi(price)) > 0 ? "text-green-500" : "text-red-500"}`}>
+              {calculateRoi(price)}%
+            </span> :
+            "ROI not available"
           }
         </p>
         <p className="text-left mb-0">
           <span className="font-bold">Current Position Value: </span>
-          {
-            fetching
-              ? "Waiting on Current Price"
-              : getTotalInvested() < getAssetsHeld() * (price)
-                ?
-                <span className="text-green-500">
-                  {`${(getAssetsHeld() * (price)).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`}
-                </span>
-                :
-                <span className="text-red-500">
-                  {`${(getAssetsHeld() * (price)).toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`}
-                </span>
-
+          {fetching ? "Waiting on Current Price" : price ?
+            <span className={getTotalInvested() < getAssetsHeld() * price ? "text-green-500" : "text-red-500"}>
+              {(getAssetsHeld() * price).toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
+            </span> :
+            "Position value not available"
           }
         </p>
         <div className="card-actions justify-end">
@@ -259,12 +167,12 @@ export const PositionCard = (props: PositionCardProps) => {
           </div>
         </div>
         <OptionsModal modalRef={optionModalRef} />
-        <ConfirmDeleteModal
+        {/* <ConfirmDeleteModal
           modalRef={deleteConfirmationModalRef}
           deleteAction={() => deletePosition(
             { positions, position, setter: setPositions, trades, tradeSetter: setTrades }
           )}
-        />
+        /> */}
       </div>
     </div>
   )
