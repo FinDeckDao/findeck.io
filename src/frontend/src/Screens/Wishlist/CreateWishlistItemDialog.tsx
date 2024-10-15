@@ -10,7 +10,12 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline"
 import { FC } from "react"
 import { CreateWishlistItem } from "./CreateWishlistItem"
 
-export const CreateWishlistItemDialog: FC = () => {
+interface CreateWishlistItemDialogProps {
+  onUpdated: () => void
+}
+
+export const CreateWishlistItemDialog: FC<CreateWishlistItemDialogProps> = (props) => {
+  const { onUpdated } = props
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -22,7 +27,7 @@ export const CreateWishlistItemDialog: FC = () => {
       </DialogTrigger>
       <DialogContent className="w-[95%] max-w-[95%] xs:max-w-[400px] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] bg-gray-800 text-white max-h-[90vh] overflow-y-auto">
         <div className="py-4">
-          <CreateWishlistItem />
+          <CreateWishlistItem onUpdated={onUpdated} />
         </div>
         <DialogFooter>
           <DialogClose asChild>

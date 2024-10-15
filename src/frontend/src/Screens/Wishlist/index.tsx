@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from 'react'
-// import { useNavigate } from 'react-router-dom'
 import { WishlistItem } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 import { TbFidgetSpinner } from "react-icons/tb"
 import { WatchedWishlistItem } from './WatchedWishlistItem'
@@ -10,10 +9,6 @@ export const Wishlist: FC = () => {
   // const navigate = useNavigate()
   const [userWishlist, setUserWishlist] = useState<WishlistItem[]>([])
   const [topWishlist, setTopWishlist] = useState<WishlistItem[]>([])
-
-  // const navigateTo = (path: string) => {
-  //   navigate(path)
-  // }
 
   const { call: getUserWishlist, loading } = useWishlistManagerQueryCall({
     functionName: "getUserWishlist",
@@ -49,7 +44,7 @@ export const Wishlist: FC = () => {
       <h1 className="text-4xl font-bold text-center mb-6">Wishlist</h1>
 
       <div className="flex justify-end mb-6">
-        <CreateWishlistItemDialog />
+        <CreateWishlistItemDialog onUpdated={getUserWishlist} />
       </div>
 
       <div className="flex flex-col lg:flex-row lg:space-x-4">

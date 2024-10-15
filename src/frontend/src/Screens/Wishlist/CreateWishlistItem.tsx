@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useMemo } from 'react'
+import { useState, useRef, useCallback, useMemo, FC } from 'react'
 import { SearchableCurrencyList, SearchableCurrencyListRef } from '../../Components/Currency/SearchableCurrencyList'
 import { WishlistItem, Asset, Answer } from "../../../../declarations/wishlist_manager/wishlist_manager.did"
 import { Button } from '@/components/ui/button'
@@ -7,7 +7,12 @@ import { TbFidgetSpinner } from "react-icons/tb"
 import { DueDiligenceQuestionnaire } from './Questionnaire'
 import { useWishlistManagerUpdateCall } from '@/Providers/WishlistManager'
 
-export const CreateWishlistItem: React.FC = () => {
+interface CreateWishlistItemProps {
+  onUpdated: () => void
+}
+
+export const CreateWishlistItem: FC<CreateWishlistItemProps> = (props) => {
+  const { onUpdated } = props
   const [selectedWishlistItem, setSelectedWishlistItem] = useState<WishlistItem | null>(null)
   const [answers, setAnswers] = useState<Answer[]>([])
 
@@ -30,6 +35,7 @@ export const CreateWishlistItem: React.FC = () => {
     functionName: "createWishlistItem",
     onSuccess: () => {
       setSelectedWishlistItem(null)
+      onUpdated()
     }
   })
 
