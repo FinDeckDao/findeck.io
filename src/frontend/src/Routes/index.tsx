@@ -19,7 +19,6 @@ import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "@/Components/Authenticate"
 import { ProfileScreen } from "@/Screens/Profile"
 import { Wishlist } from "@/Screens/Wishlist"
-import { CreateWishlistItem } from "@/Screens/Wishlist/CreateWishlistItem"
 
 interface NavigationItem {
   name: string
@@ -110,16 +109,5 @@ export const router = createBrowserRouter([
         </Authenticate>
       </DefaultLayout>
     )
-  },
-  {
-    path: "/wishlist/create",
-    element: (
-      <DefaultLayout>
-        <Authenticate>
-          <CreateWishlistItem />
-        </Authenticate>
-      </DefaultLayout>
-    )
   }
-
 ])

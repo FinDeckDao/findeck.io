@@ -2,7 +2,7 @@ import React, { useRef, useContext, useState } from "react"
 import { Link } from 'react-router-dom'
 import { TradesContext } from "../../Contexts/Trade"
 import { AssetPairContext } from "../../Contexts/AssetPair"
-import { PositionContext } from '../../Contexts/Position'
+// import { PositionContext } from '../../Contexts/Position'
 import { DeleteButton } from "../Buttons/Delete"
 import { OptionsModal } from "./OptionsModal"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,9 +17,11 @@ interface PartialPositionCardProps {
 
 export const PositionCard: React.FC<PartialPositionCardProps> = ({ position }) => {
   const { assetPair } = position
-  const { trades, setTrades } = useContext(TradesContext)
+  const { trades,
+    //setTrades
+  } = useContext(TradesContext)
   const { setAssetPair } = useContext(AssetPairContext)
-  const { positions, setPositions } = useContext(PositionContext)
+  // const { positions, setPositions } = useContext(PositionContext)
   const [price] = useState<number | undefined>(10)
   const [fetching] = useState<boolean>(false)
 
@@ -70,7 +72,7 @@ export const PositionCard: React.FC<PartialPositionCardProps> = ({ position }) =
 
   const setPair = () => {
     if (setAssetPair && assetPair) {
-      setAssetPair(assetPair)
+      // setAssetPair(assetPair)
     }
   }
 
