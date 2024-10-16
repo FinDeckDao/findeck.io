@@ -2,7 +2,7 @@ import { FC, useState, useEffect, useMemo } from 'react'
 import { Button } from '@/Components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 import { CreateTradeModal } from './CreateTradeModal'
-import { useTradeManagerQueryCall } from '@/Providers/tradeManager'
+import { useTradeManagerQueryCall } from '@/Providers/TradeManager'
 import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 import { TradeInfo } from './TradeInfo'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -19,10 +19,6 @@ export const TradesScreen: FC = () => {
 
   const { call: getUserTrades, data, loading, error } = useTradeManagerQueryCall({
     functionName: "getUserTrades",
-    onSuccess: (data: Trade[]) => {
-      console.log('getUserTrades success')
-      console.log(data)
-    }
   }) as { call: () => void, data: Trade[], loading: boolean, error: Error }
 
   useEffect(() => {

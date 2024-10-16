@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { PositionCards } from "./Cards"
+import { PositionCards } from "./PositionCards"
 import { DisplayContext } from "../../Contexts/Display"
 import { useContext } from "react"
 import { PositionsTable } from "./Table"

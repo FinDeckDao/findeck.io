@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { PositionCard } from "./Card"
+import { PositionCard } from "./PositionCard"
 import { Position } from '../../../../declarations/position_manager/position_manager.did'
 
 interface PositionCardsProps {

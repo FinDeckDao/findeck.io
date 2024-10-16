@@ -1,29 +1,26 @@
-import React, { useRef, useContext, useState } from "react"
+import React, { useRef, useState } from "react"
 import { Link } from 'react-router-dom'
-import { TradesContext } from "../../Contexts/Trade"
-import { AssetPairContext } from "../../Contexts/AssetPair"
 // import { PositionContext } from '../../Contexts/Position'
-import { DeleteButton } from "../Buttons/Delete"
 import { OptionsModal } from "./OptionsModal"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, List } from "lucide-react"
 import { Position } from '../../../../declarations/position_manager/position_manager.did'
 import { ROIBarChart } from './RoiBarChart'
+import { Trade } from "../../../../declarations/trade_manager/trade_manager.did"
 
 interface PartialPositionCardProps {
   position: Partial<Position>
+  trades: Trade[]
 }
 
-export const PositionCard: React.FC<PartialPositionCardProps> = ({ position }) => {
+export const PositionCard: React.FC<PartialPositionCardProps> = (props) => {
+  const { position, trades } = props
   const { assetPair } = position
-  const { trades,
-    //setTrades
-  } = useContext(TradesContext)
-  const { setAssetPair } = useContext(AssetPairContext)
   // const { positions, setPositions } = useContext(PositionContext)
   const [price] = useState<number | undefined>(10)
   const [fetching] = useState<boolean>(false)
+  // const [roi, setRoi] = useState<number>(0)
 
   const filteredTrades = trades.filter((trade) =>
     trade?.assetPair.base.symbol === assetPair?.base.symbol &&
@@ -65,10 +62,8 @@ export const PositionCard: React.FC<PartialPositionCardProps> = ({ position }) =
   }
 
   const optionModalRef = useRef<HTMLDialogElement>(null)
-  const deleteConfirmationModalRef = useRef<HTMLDialogElement>(null)
 
   const openOptionsModal = () => optionModalRef.current?.showModal()
-  const openDeleteConfirmationModal = () => deleteConfirmationModalRef.current?.showModal()
 
   const setPair = () => {
     if (setAssetPair && assetPair) {
@@ -125,7 +120,7 @@ export const PositionCard: React.FC<PartialPositionCardProps> = ({ position }) =
                 <span className="text-gray-300">Waiting on Current Price</span>
               ) : price ? (
                 <span className={`${Number(calculateRoi(price)) > 0 ? "text-green-400" : "text-red-400"}`}>
-                  {calculateRoi(price)}%
+                  {Number(calculateRoi(price))}%
                 </span>
               ) : (
                 <span className="text-gray-300">ROI not available</span>
@@ -153,7 +148,6 @@ export const PositionCard: React.FC<PartialPositionCardProps> = ({ position }) =
         </div>
       </CardContent>
       <CardFooter className="flex justify-between border-t border-gray-700 pt-4">
-        <DeleteButton onClick={openDeleteConfirmationModal} className="bg-red-600 hover:bg-red-700 text-white" />
         <div className="space-x-2">
           <Button variant="outline" size="sm" onClick={openOptionsModal} className="bg-gray-700 text-gray-200 hover:bg-gray-600">
             <MoreHorizontal className="h-4 w-4 mr-2" />
@@ -168,12 +162,6 @@ export const PositionCard: React.FC<PartialPositionCardProps> = ({ position }) =
         </div>
       </CardFooter>
       <OptionsModal modalRef={optionModalRef} />
-      {/* <ConfirmDeleteModal
-        modalRef={deleteConfirmationModalRef}
-        deleteAction={() => deletePosition(
-          { positions, position, setter: setPositions, trades, tradeSetter: setTrades }
-        )}
-      /> */}
     </Card>
   )
 }

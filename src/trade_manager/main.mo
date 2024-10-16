@@ -3,7 +3,6 @@ import Error "mo:base/Error";
 import HashMap "mo:base/HashMap";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
-import Debug "mo:base/Debug";
 import TradeManager "./TradeManager";
 import Types "types";
 import Iter "mo:base/Iter";
@@ -59,14 +58,10 @@ actor TradeManagerActor {
     baseAmount : Float,
     quoteAmount : Float,
   ) : async Result.Result<Nat, Text> {
-    Debug.print("Creating trade for caller: " # debug_show (caller));
-    Debug.print("Asset Pair: " # debug_show (assetPair));
-    Debug.print("Base Amount: " # debug_show (baseAmount));
-    Debug.print("Quote Amount: " # debug_show (quoteAmount));
     let result = TradeManager.createTrade(trades, caller, assetPair, baseAmount, quoteAmount);
     switch (result) {
       case (#ok(newCountAndIndex)) {
-        let (newCount, index) = newCountAndIndex;
+        let (_newCount, index) = newCountAndIndex;
         #ok(index);
       };
       case (#err(errorMsg)) {
@@ -93,7 +88,6 @@ actor TradeManagerActor {
 
   public query ({ caller }) func getUserTrades() : async [Trade] {
     let userTrades = TradeManager.listTradesForUser(trades, caller);
-    Debug.print("User trades: " # debug_show (userTrades));
     userTrades;
   };
 
