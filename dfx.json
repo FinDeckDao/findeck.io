@@ -1,36 +1,43 @@
 {
   "canisters": {
     "backend": {
+      "dependencies": ["internet_identity", "xrc"],
       "main": "src/backend/main.mo",
-      "type": "motoko",
-      "dependencies": ["internet_identity", "xrc"]
+      "type": "motoko"
     },
     "frontend": {
-      "dependencies": ["backend"],
+      "dependencies": ["internet_identity", "backend"],
       "source": ["src/frontend/dist"],
       "type": "assets",
       "workspace": "frontend"
     },
     "internet_identity": {
-      "type": "custom",
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
-      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz",
-      "remote": {
-        "id": {
-          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
-        }
-      },
-      "frontend": {}
+      "frontend": {},
+      "remote": { "id": { "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai" } },
+      "type": "custom",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    },
+    "position_manager": {
+      "dependencies": ["internet_identity"],
+      "main": "src/position_manager/main.mo",
+      "type": "motoko"
+    },
+    "trade_manager": {
+      "dependencies": ["internet_identity"],
+      "main": "src/trade_manager/main.mo",
+      "type": "motoko"
+    },
+    "wishlist_manager": {
+      "dependencies": ["internet_identity"],
+      "main": "src/wishlist_manager/main.mo",
+      "type": "motoko"
     },
     "xrc": {
-      "type": "custom",
       "candid": "src/xrc_demo/xrc/xrc.did",
-      "wasm": "src/xrc_demo/xrc/xrc.wasm.gz",
-      "remote": {
-        "id": {
-          "ic": "uf6dk-hyaaa-aaaaq-qaaaq-cai"
-        }
-      }
+      "remote": { "id": { "ic": "uf6dk-hyaaa-aaaaq-qaaaq-cai" } },
+      "type": "custom",
+      "wasm": "src/xrc_demo/xrc/xrc.wasm.gz"
     }
   },
   "output_env_file": ".env",

@@ -2,15 +2,12 @@ import './Styles/index.css'
 import { StrictMode } from 'react'
 import App from './App'
 import ReactDOM from 'react-dom/client'
-import {
-  ActorProvider,
-} from '@ic-reactor/react'
-import {
-  idlFactory as backendIdlFactory,
-  canisterId as backendCanisterId
-} from '../../declarations/backend'
+
 import { ErrorPage } from './Components/Error'
-import { EnvironmentWrapper } from './Components/Environment/Wrapper'
+import { EnvironmentBasedAgentProvider } from './Components/Environment/Wrapper'
+import { BackendProvider } from './Providers/backend'
+import { TradeManagerProvider } from './Providers/tradeManager'
+import { WishlistManagerProvider } from './Providers/WishlistManager'
 
 // This is the root element that the React app will be mounted to
 const root = document.getElementById('root')
@@ -18,16 +15,18 @@ const root = document.getElementById('root')
 // Render the React app
 ReactDOM.createRoot(root!).render(
   <StrictMode>
-    <EnvironmentWrapper>
-      <ActorProvider idlFactory={backendIdlFactory}
-        canisterId={backendCanisterId}
-        errorComponent={() => (
-          <ErrorPage
-            errorMessage=""
-          />
-        )}>
-        <App />
-      </ActorProvider>
-    </EnvironmentWrapper>
+    {/*
+      NOTE: AgentProvider is inside EnvironmentWrapper because the 
+      environment determines what kind of agent is used. 
+     */}
+    <EnvironmentBasedAgentProvider>
+      <BackendProvider errorComponent={() => (<ErrorPage errorMessage="" />)}>
+        <TradeManagerProvider errorComponent={() => (<ErrorPage errorMessage="" />)}>
+          <WishlistManagerProvider errorComponent={() => (<ErrorPage errorMessage="" />)}>
+            <App />
+          </WishlistManagerProvider>
+        </TradeManagerProvider>
+      </BackendProvider>
+    </EnvironmentBasedAgentProvider>
   </StrictMode>
 )

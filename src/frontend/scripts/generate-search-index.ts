@@ -2,10 +2,8 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Use dynamic import for JSON files
-const currencyListPromise = import("../../fixtures/icons/coins.json", {
-  assert: { type: "json" },
-});
+// Use node-fetch for making HTTP requests
+import fetch from "node-fetch";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -71,9 +69,38 @@ async function ensureDirectoryExists(filePath: string) {
   }
 }
 
+async function fetchCurrencyList(): Promise<CurrencyItem[]> {
+  const response = await fetch(
+    "https://4a5t6-wqaaa-aaaan-qzmpq-cai.icp0.io/coin_map.json"
+  );
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const data = await response.json();
+
+  // Type assertion to ensure the data matches CurrencyItem[] structure
+  if (
+    Array.isArray(data) &&
+    data.every(
+      (item) =>
+        typeof item === "object" &&
+        "name" in item &&
+        "symbol" in item &&
+        "slug" in item &&
+        "img_url" in item
+    )
+  ) {
+    return data as CurrencyItem[];
+  } else {
+    throw new Error(
+      "Fetched data does not match expected CurrencyItem[] structure"
+    );
+  }
+}
+
 async function main() {
   try {
-    const { default: currencyList } = await currencyListPromise;
+    const currencyList = await fetchCurrencyList();
     const searchIndex = createSearchIndex(currencyList);
 
     const outputPath = path.join(
