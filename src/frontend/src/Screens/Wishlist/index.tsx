@@ -18,7 +18,7 @@ export const Wishlist: FC = () => {
     }
   })
 
-  const { call: getTopWatchedAssets, loading: topLoading } = useWishlistManagerQueryCall({
+  const { call: getTopWatchedAssets } = useWishlistManagerQueryCall({
     functionName: "getTopWatchedAssets",
     onSuccess: (data) => {
       const topWishlist = data as WishlistItem[]
