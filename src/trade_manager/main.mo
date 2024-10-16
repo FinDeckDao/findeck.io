@@ -32,7 +32,6 @@ actor TradeManagerActor {
     };
 
     trades := HashMap.HashMap<Principal, [Trade]>(10, Principal.equal, Principal.hash);
-    Debug.print("Canister initialized with empty trades");
   };
 
   //////////////////////////////////////////////////////////////////////
@@ -40,7 +39,6 @@ actor TradeManagerActor {
   //////////////////////////////////////////////////////////////////////
   system func preupgrade() {
     tradeEntries := Iter.toArray(trades.entries());
-    Debug.print("Preupgrade: Stored " # debug_show (tradeEntries.size()) # " entries");
   };
 
   system func postupgrade() {
@@ -50,7 +48,6 @@ actor TradeManagerActor {
       Principal.equal,
       Principal.hash,
     );
-    Debug.print("Postupgrade: Loaded " # debug_show (trades.size()) # " trade entries");
     tradeEntries := []; // Clear the stable variable after loading
   };
 
@@ -63,22 +60,22 @@ actor TradeManagerActor {
     quoteAmount : Float,
   ) : async Result.Result<Nat, Text> {
     Debug.print("Creating trade for caller: " # debug_show (caller));
+    Debug.print("Asset Pair: " # debug_show (assetPair));
+    Debug.print("Base Amount: " # debug_show (baseAmount));
+    Debug.print("Quote Amount: " # debug_show (quoteAmount));
     let result = TradeManager.createTrade(trades, caller, assetPair, baseAmount, quoteAmount);
     switch (result) {
       case (#ok(newCountAndIndex)) {
         let (newCount, index) = newCountAndIndex;
-        Debug.print("Trade created. New count: " # debug_show (newCount) # ", Index: " # debug_show (index));
         #ok(index);
       };
       case (#err(errorMsg)) {
-        Debug.print("Failed to create trade: " # errorMsg);
         #err(errorMsg);
       };
     };
   };
 
   public query ({ caller }) func readTrade(index : Nat) : async Result.Result<Trade, Text> {
-    Debug.print("Reading trade for caller: " # debug_show (caller) # " at index: " # debug_show (index));
     TradeManager.readTrade(trades, caller, index);
   };
 
@@ -87,23 +84,21 @@ actor TradeManagerActor {
     baseAmount : ?Float,
     quoteAmount : ?Float,
   ) : async Result.Result<(), Text> {
-    Debug.print("Updating trade for caller: " # debug_show (caller) # " at index: " # debug_show (index));
     TradeManager.updateTrade(trades, caller, index, baseAmount, quoteAmount);
   };
 
   public shared ({ caller }) func deleteTrade(index : Nat) : async Result.Result<(), Text> {
-    Debug.print("Deleting trade for caller: " # debug_show (caller) # " at index: " # debug_show (index));
     TradeManager.deleteTrade(trades, caller, index);
   };
 
   public query ({ caller }) func getUserTrades() : async [Trade] {
-    Debug.print("Getting trades for caller: " # debug_show (caller));
-    TradeManager.listTradesForUser(trades, caller);
+    let userTrades = TradeManager.listTradesForUser(trades, caller);
+    Debug.print("User trades: " # debug_show (userTrades));
+    userTrades;
   };
 
   public query func getTotalTrades() : async Nat {
     let total = TradeManager.getTotalTrades(trades);
-    Debug.print("Total trades: " # debug_show (total));
     total;
   };
 

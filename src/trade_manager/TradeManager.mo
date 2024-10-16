@@ -7,7 +7,6 @@ import AssetModule "../modules/Asset/main";
 import Int "mo:base/Int";
 import Nat "mo:base/Nat";
 import Float "mo:base/Float";
-import Debug "mo:base/Debug";
 import Types "types";
 
 module {
@@ -26,7 +25,6 @@ module {
   };
 
   public func createTrade(trades : Trades, caller : Principal, assetPair : AssetModule.AssetPair, baseAmount : Float, quoteAmount : Float) : Result.Result<(Nat, Nat), Text> {
-    Debug.print("Creating trade for caller: " # debug_show (caller));
     let newTrade : Types.Trade = {
       assetPair = assetPair;
       dateOfTrade = Time.now();
@@ -44,10 +42,8 @@ module {
 
     if (newCount > 0) {
       let index : Nat = newCount - 1;
-      Debug.print("Trade created. New trade count for caller: " # debug_show (newCount) # ", Index: " # debug_show (index));
       #ok((newCount, index));
     } else {
-      Debug.print("Failed to create trade. User trade list is empty.");
       #err("Failed to create trade");
     };
   };
@@ -114,14 +110,11 @@ module {
   };
 
   public func listTradesForUser(trades : Trades, user : Principal) : [Types.Trade] {
-    Debug.print("Listing trades for user: " # debug_show (user));
     switch (trades.get(user)) {
       case (null) {
-        Debug.print("No trades found for user");
         [];
       };
       case (?userTrades) {
-        Debug.print("Found " # debug_show (userTrades.size()) # " trades for user");
         userTrades;
       };
     };

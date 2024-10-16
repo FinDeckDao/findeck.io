@@ -19,6 +19,10 @@ export const TradesScreen: FC = () => {
 
   const { call: getUserTrades, data, loading, error } = useTradeManagerQueryCall({
     functionName: "getUserTrades",
+    onSuccess: (data: Trade[]) => {
+      console.log('getUserTrades success')
+      console.log(data)
+    }
   }) as { call: () => void, data: Trade[], loading: boolean, error: Error }
 
   useEffect(() => {

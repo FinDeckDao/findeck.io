@@ -45,18 +45,16 @@ export const TradeInfo: FC<TradeInfoProps> = (props) => {
     }
   }
 
-  const formatCryptoAmount = (amount: bigint, decimalPlaces: number = 2) => {
+  const formatCryptoAmount = (amount: number, decimalPlaces: number = 2) => {
+    console.log('amount', amount)
     try {
-      // Convert BigInt to a number, dividing by 1e18
-      const value = Number(amount) / 1e18
-
       // Use Intl.NumberFormat for formatting
       const formatter = new Intl.NumberFormat('en-US', {
         minimumFractionDigits: decimalPlaces,
         maximumFractionDigits: decimalPlaces,
       })
 
-      return formatter.format(value)
+      return formatter.format(amount)
     } catch (error) {
       console.error("Error formatting amount:", error)
       return 'Invalid Amount'
@@ -74,10 +72,10 @@ export const TradeInfo: FC<TradeInfoProps> = (props) => {
           {formatDate(trade.dateOfTrade)}
         </span>
         <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
-          Purchased: {formatCryptoAmount(BigInt(trade.baseAssetAmount))} ${trade.assetPair.base.symbol}
+          Purchased: {formatCryptoAmount(trade.baseAssetAmount)} ${trade.assetPair.base.symbol}
         </span>
         <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
-          Paid: {formatCryptoAmount(BigInt(trade.quoteAssetAmount))} ${trade.assetPair.quote.symbol}
+          Paid: {formatCryptoAmount(trade.quoteAssetAmount)} ${trade.assetPair.quote.symbol}
         </span>
       </div>
 
