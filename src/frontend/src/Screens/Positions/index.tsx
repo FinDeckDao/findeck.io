@@ -15,7 +15,7 @@ const PositionsScreenWrapper = (props: PropsWithChildren) => {
 
   return (
     <div className="text-center">
-      <h1 className='text-2xl mb-4'>Positions</h1>
+      <h1 className="text-4xl font-bold text-center mb-6">Positions</h1>
       <div className="relative h-14 mb-4">
         {
           Positions.length < 1

@@ -1,41 +1,15 @@
-import { useRef, useContext, FC, useState } from "react"
-import { Position } from "../../Contexts/Position"
-import { OptionsModal } from "./OptionsModal"
-import { PositionContext } from '../../Contexts/Position'
+import React, { useRef, useContext, useState } from "react"
 import { Link } from 'react-router-dom'
 import { TradesContext } from "../../Contexts/Trade"
 import { AssetPairContext } from "../../Contexts/AssetPair"
+import { PositionContext } from '../../Contexts/Position'
 import { DeleteButton } from "../Buttons/Delete"
-import { ConfirmDeleteModal } from "./ConfirmDeleteModal"
-import { deletePosition } from "../../Contexts/Position/helpers"
-// import { backend } from "../../../../declarations/backend"
-// import { updatePosition } from "../../Contexts/Position/helpers"
-
-interface GetPositionCardsProps {
-  positions: Partial<Position>[]
-}
-
-export const GetPositionCards: FC<GetPositionCardsProps> = (props) => {
-  const { positions } = props
-  const count = positions.length
-
-  const cleanPositions = positions.filter((position) => position !== null)
-
-  return (
-    <div className={
-      `grid grid-cols-1 gap-4
-      ${count >= 3 ? 'lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1' : null} 
-      ${count === 2 ? 'lg:grid-cols-2' : null} 
-      ${count === 1 ? 'lg:grid-cols-1' : null}`}
-    >
-      {
-        cleanPositions.map((position, index) => (
-          <PositionCard key={index} position={position} />
-        ))
-      }
-    </div >
-  )
-}
+import { OptionsModal } from "./OptionsModal"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { MoreHorizontal, List } from "lucide-react"
+import { Position } from '../../../../declarations/position_manager/position_manager.did'
+import { ROIBarChart } from './RoiBarChart'
 
 interface PartialPositionCardProps {
   position: Partial<Position>
@@ -105,75 +79,99 @@ export const PositionCard: React.FC<PartialPositionCardProps> = ({ position }) =
   }
 
   return (
-    <div className="bg-dark shadow-xl rounded-xl">
-      <div className="card-body p-4">
-        <h2 className="card-title">{assetPair.base.symbol}/{assetPair.quote.symbol}</h2>
-        <p className="text-left mb-0">
-          <span className="font-bold">Total Assets Held: </span>
-          {getAssetsHeld().toLocaleString("en-US", { style: "decimal" })} ${assetPair.base.symbol}
-        </p>
-        <p className="text-left mb-0">
-          <span className="font-bold">Total At Risk: </span>
-          {getTotalInvested().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
-        </p>
-        <p className="text-left mb-0">
-          <span className="font-bold">Cost Basis: </span>
-          <span className={price && calculateCostBasis() < price ? "text-green-500" : "text-red-500"}>
-            {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
-          </span>
-        </p>
-        <p className="text-left mb-0">
-          <span className="font-bold">Current Value of {assetPair.base.symbol}: </span>
-          {fetching ? "Getting Current Price" : price ?
-            `${price.toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}` :
-            "Price not available"
-          }
-        </p>
-        <p className="text-left mb-0">
-          <span className="font-bold">Current ROI: </span>
-          {fetching ? "Waiting on Current Price" : price ?
-            <span className={`${Number(calculateRoi(price)) > 0 ? "text-green-500" : "text-red-500"}`}>
-              {calculateRoi(price)}%
-            </span> :
-            "ROI not available"
-          }
-        </p>
-        <p className="text-left mb-0">
-          <span className="font-bold">Current Position Value: </span>
-          {fetching ? "Waiting on Current Price" : price ?
-            <span className={getTotalInvested() < getAssetsHeld() * price ? "text-green-500" : "text-red-500"}>
-              {(getAssetsHeld() * price).toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
-            </span> :
-            "Position value not available"
-          }
-        </p>
-        <div className="card-actions justify-end">
-          <div className="flex justify-between w-full">
-            <DeleteButton onClick={openDeleteConfirmationModal} />
-            <div>
-              <button className="btn btn-primary btn-outline uppercase mr-1 mb-2" onClick={openOptionsModal}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
-                Options
-              </button>
-              <Link to={'/trades'} className="btn btn-primary btn-outline uppercase" onClick={setPair}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
-                </svg>
-                Trades
-              </Link>
+    <Card className="w-full bg-gray-800 text-gray-100 shadow-lg rounded-2xl">
+      <CardHeader className="border-b border-b-gray-700 pb-0 mb-4">
+        <CardTitle className="text-2xl font-bold text-gray-100 text-center">{assetPair.base.symbol}/{assetPair.quote.symbol}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-row justify-between items-start">
+          <div className="w-1/2 space-y-4 text-left">
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-100">Total Assets Held:</span>
+              <span className="text-gray-300">
+                {getAssetsHeld().toLocaleString("en-US", { style: "decimal" })} ${assetPair.base.symbol}
+              </span>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-100">Total At Risk:</span>
+              <span className="text-gray-300">
+                {getTotalInvested().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
+              </span>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-100">Cost Basis:</span>
+              <span className={price && calculateCostBasis() < price ? "text-green-400" : "text-red-400"}>
+                {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
+              </span>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-100">Current Value of {assetPair.base.symbol}:</span>
+              <span className="text-gray-300">
+                {fetching ? "Getting Current Price" : price ?
+                  `${price.toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}` :
+                  "Price not available"
+                }
+              </span>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-100">Current ROI:</span>
+              {fetching ? (
+                <span className="text-gray-300">Waiting on Current Price</span>
+              ) : price ? (
+                <span className={`${Number(calculateRoi(price)) > 0 ? "text-green-400" : "text-red-400"}`}>
+                  {calculateRoi(price)}%
+                </span>
+              ) : (
+                <span className="text-gray-300">ROI not available</span>
+              )}
+            </div>
+
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-100">Current Position Value:</span>
+              {fetching ? (
+                <span className="text-gray-300">Waiting on Current Price</span>
+              ) : price ? (
+                <span className={getTotalInvested() < getAssetsHeld() * price ? "text-green-400" : "text-red-400"}>
+                  {(getAssetsHeld() * price).toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
+                </span>
+              ) : (
+                <span className="text-gray-300">Position value not available</span>
+              )}
+            </div>
+          </div>
+          <div className="w-5/12 overflow-hidden">
+            <div className="w-full h-full">
+              <ROIBarChart roi={-100} />
             </div>
           </div>
         </div>
-        <OptionsModal modalRef={optionModalRef} />
-        {/* <ConfirmDeleteModal
-          modalRef={deleteConfirmationModalRef}
-          deleteAction={() => deletePosition(
-            { positions, position, setter: setPositions, trades, tradeSetter: setTrades }
-          )}
-        /> */}
-      </div>
-    </div>
+      </CardContent>
+      <CardFooter className="flex justify-between border-t border-gray-700 pt-4">
+        <DeleteButton onClick={openDeleteConfirmationModal} className="bg-red-600 hover:bg-red-700 text-white" />
+        <div className="space-x-2">
+          <Button variant="outline" size="sm" onClick={openOptionsModal} className="bg-gray-700 text-gray-200 hover:bg-gray-600">
+            <MoreHorizontal className="h-4 w-4 mr-2" />
+            Options
+          </Button>
+          <Button variant="outline" size="sm" asChild className="bg-gray-700 text-gray-200 hover:bg-gray-600">
+            <Link to={'/trades'} onClick={setPair}>
+              <List className="h-4 w-4 mr-2" />
+              Trades
+            </Link>
+          </Button>
+        </div>
+      </CardFooter>
+      <OptionsModal modalRef={optionModalRef} />
+      {/* <ConfirmDeleteModal
+        modalRef={deleteConfirmationModalRef}
+        deleteAction={() => deletePosition(
+          { positions, position, setter: setPositions, trades, tradeSetter: setTrades }
+        )}
+      /> */}
+    </Card>
   )
 }

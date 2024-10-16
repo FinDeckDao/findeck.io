@@ -74,7 +74,11 @@ export const CreateTradeModal: FC<CreateTradeModalProps> = (props) => {
     setTradeData(prevData => ({ ...prevData, ...newData }))
   }
 
-  if (wishlistLoading) { return <>Adding wishlist items as options for trading... <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" /></> }
+  if (wishlistLoading) {
+    return <div className="mb-4">
+      Adding wishlist items as options for trading... <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
+    </div>
+  }
   if (!wishList) { return <>Wishlist Data isn't available.</> }
   if (wishlistError) { return <>Error loading Wishlist. Please try again.</> }
   if (createTradeError) { return <>Error creating new trade. Please try again.</> }

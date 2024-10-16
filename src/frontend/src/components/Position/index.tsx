@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { GetPositionCards } from "./Card"
+import { PositionCards } from "./Cards"
 import { DisplayContext } from "../../Contexts/Display"
 import { useContext } from "react"
 import { PositionsTable } from "./Table"
@@ -30,7 +30,7 @@ export const Positions = () => {
       }, {} as Record<string, Trade[]>)
 
       // Create partial positions from grouped trades
-      const partialPositions: PartialPosition[] = Object.entries(tradesByAssetPair).map(([key, trades]) => {
+      const partialPositions: PartialPosition[] = Object.entries(tradesByAssetPair).map(([_key, trades]) => {
         return {
           assetPair: trades[0].assetPair, // Use the asset pair from the first trade
           // price and priceDate are undefined initially
@@ -50,11 +50,11 @@ export const Positions = () => {
 
   switch (display) {
     case "cards":
-      return <GetPositionCards positions={positions} />
+      return <PositionCards positions={positions} />
     case "table":
       return <PositionsTable />
     default:
-      return <GetPositionCards positions={positions} />
+      return <PositionCards positions={positions} />
   }
 }
 
