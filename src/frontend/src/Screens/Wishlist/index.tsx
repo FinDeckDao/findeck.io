@@ -89,15 +89,14 @@ export const Wishlist: FC = () => {
 
         <div className="lg:w-1/2">
           <h2 className="text-2xl font-semibold mb-4">Top wishlist Items</h2>
-
-          {topLoading
-            ? (
-              <div className="mb-4">
-                Checking Top Watched Asset Pairs...{" "}
-                <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
-              </div>
-            )
-            : null
+          {
+            loading
+              ? (
+                <div className="mb-4">
+                  &nbsp;
+                </div>
+              )
+              : null
           }
 
           {topWishlist.map((item, index) => {
