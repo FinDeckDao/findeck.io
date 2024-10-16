@@ -81,7 +81,7 @@ export const Wishlist: FC = () => {
             )
             : (
               <p className="text-gray-300">
-                {!loading ? "Your wishlist is empty. Add some asset pairs to get started!" : null}
+                {!loading ? "Your wishlist is empty. Create a wishlist item to get started!" : null}
               </p>
             )
           }
