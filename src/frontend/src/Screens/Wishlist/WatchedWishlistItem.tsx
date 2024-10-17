@@ -53,7 +53,7 @@ export const WatchedWishlistItem: FC<WatchedWishlistItemProps> = (props) => {
   return (
     <div
       key={`${index}-${item.base.symbol}`}
-      className="flex items-center justify-between p-2 mb-2 bg-gray-800 rounded-2xl text-white 
+      className="flex items-center justify-between p-2 mb-2 bg-dark rounded-2xl text-white 
                 border border-gray-700"
     >
       <ResponsiveWishlistItem item={item} yesAnswersCount={yesAnswersCount} />
