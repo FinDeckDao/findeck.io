@@ -64,7 +64,7 @@ export const TradeInfo: FC<TradeInfoProps> = (props) => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row items-start justify-between p-2 mb-4 bg-[rgb(13,13,13)] rounded-2xl text-white border border-gray-700">
+    <div className="flex flex-col lg:flex-row items-start justify-between p-2 mb-4 bg-dark rounded-2xl text-white border border-gray-700">
       <div className="sm:mb-0 md:mb-4 lg:mb-0 xl:mb-0 2xl:mb-0">
         <AssetPairComponent assetPair={trade.assetPair} />
       </div>
