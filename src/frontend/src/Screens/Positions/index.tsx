@@ -1,48 +1,51 @@
-import { PropsWithChildren, useContext } from 'react'
-import { Positions } from '../../Components/Position'
-import { DisplayContext } from '../../Contexts/Display'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { useState, useEffect, FC } from 'react'
+import { DisplayControl } from './DisplayControl'
+import { PositionTabs } from './PositionTabs'
+import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
+import { useTradeManagerQueryCall } from "../../Providers/TradeManager"
+import { PartialPosition } from './types'
 
-interface PositionsScreenWrapperProps extends PropsWithChildren { }
+export const PositionsScreen: FC = () => {
+  const [partialPositions, setPartialPositions] = useState<PartialPosition[]>([])
 
-const PositionsScreenWrapper: React.FC<PositionsScreenWrapperProps> = (props) => {
-  const { children } = props
-  const { display, setDisplay } = useContext(DisplayContext)
+  // Get the positions from the TradeManager contract.
+  // At this point the positions may be incomplete.
+  // Example: If they don't have a price.
+  const { call: getUserTrades, data: tradeData } = useTradeManagerQueryCall({
+    functionName: "getUserTrades",
+    onSuccess: (data) => {
+      if (!data) return
 
-  const handleTabChange = (value: string) => {
-    if (setDisplay) {
-      setDisplay(value as 'cards' | 'table')
-      localStorage.setItem('display', JSON.stringify(value))
+      // Group trades by asset pair
+      const tradesByAssetPair = data.reduce((acc, trade) => {
+        const key = `${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}`
+        if (!acc[key]) {
+          acc[key] = []
+        }
+        acc[key].push(trade)
+        return acc
+      }, {} as Record<string, Trade[]>)
+
+      // Create partial positions from grouped trades
+      const partialPositions: PartialPosition[] = Object.entries(tradesByAssetPair).map(([_key, trades]) => {
+        return {
+          assetPair: trades[0].assetPair, // Use the asset pair from the first trade
+          // price and priceDate are undefined initially
+        }
+      })
+
+      setPartialPositions(partialPositions)
     }
-  }
+  }) as { call: () => void, data: Trade[], loading: boolean, error: Error }
+
+  useEffect(() => {
+    getUserTrades()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex-grow">
-        <h1 className="text-4xl font-bold text-center mb-6">Positions</h1>
-        {Positions.length < 1 ? (
-          <Tabs value={display} onValueChange={handleTabChange} className="w-full">
-            <TabsList className="justify-center mb-4">
-              <TabsTrigger value="cards">Cards</TabsTrigger>
-              <TabsTrigger value="table">Table</TabsTrigger>
-            </TabsList>
-            <div className="rounded-lg">
-              <TabsContent value="cards">{display === 'cards' && children}</TabsContent>
-              <TabsContent value="table">{display === 'table' && children}</TabsContent>
-            </div>
-          </Tabs>
-        ) : (
-          <div className="p-4">{children}</div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-export const PositionsScreen: React.FC = () => {
-  return (
-    <PositionsScreenWrapper>
-      <Positions />
-    </PositionsScreenWrapper>
+    <PositionTabs partialPositions={partialPositions}>
+      <DisplayControl partialPositions={partialPositions} trades={tradeData} />
+    </PositionTabs>
   )
 }

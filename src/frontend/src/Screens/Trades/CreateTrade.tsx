@@ -155,7 +155,7 @@ export const CreateTrade: React.FC<CreateTradeProps> = (props) => {
                 onSelect={(date) => {
                   setDateOfTrade(date)
                   if (date) {
-                    onTradeDataChange({ dateOfTrade: BigInt(date.getTime()) })
+                    onTradeDataChange({ tradeDateTime: BigInt(date.getTime()) })
                   }
                 }}
                 className="rounded-md border border-gray-700 bg-dark text-white"

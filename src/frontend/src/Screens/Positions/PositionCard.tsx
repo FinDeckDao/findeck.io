@@ -1,114 +1,122 @@
-import React, { useRef, useState } from "react"
+import { useRef, useState, FC, useEffect } from "react"
 import { Link } from 'react-router-dom'
-// import { PositionContext } from '../../Contexts/Position'
-import { OptionsModal } from "./OptionsModal"
+import { OptionsModal } from "../../Components/Position/OptionsModal"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, List } from "lucide-react"
 import { Position } from '../../../../declarations/position_manager/position_manager.did'
-import { ROIBarChart } from './RoiBarChart'
+import { ROIBarChart } from '../../Components/Position/RoiBarChart'
 import { Trade } from "../../../../declarations/trade_manager/trade_manager.did"
+import {
+  validateAndCalculateHoldings,
+  filteredTradesByAssetPair,
+  validateAndCalculateTotalSpent,
+  calculateCostBasis
+} from '../../lib/calcs'
 
 interface PartialPositionCardProps {
   position: Partial<Position>
   trades: Trade[]
 }
 
-export const PositionCard: React.FC<PartialPositionCardProps> = (props) => {
+export const PositionCard: FC<PartialPositionCardProps> = (props) => {
   const { position, trades } = props
   const { assetPair } = position
-  // const { positions, setPositions } = useContext(PositionContext)
-  const [price] = useState<number | undefined>(10)
+  const [price] = useState<number | undefined>(0.001)
   const [fetching] = useState<boolean>(false)
-  // const [roi, setRoi] = useState<number>(0)
+  const optionModalRef = useRef<HTMLDialogElement>(null)
+  const [costBasis, setCostBasis] = useState<number>(0)
+  const [filteredTrades, setFilteredTrades] = useState<Trade[]>([])
+  const [totalHeld, setTotalHeld] = useState<number>(0)
+  const [totalSpent, setTotalSpent] = useState<number>(0)
 
-  const filteredTrades = trades.filter((trade) =>
-    trade?.assetPair.base.symbol === assetPair?.base.symbol &&
-    trade?.assetPair.quote.symbol === assetPair?.quote.symbol
-  )
+  useEffect(() => {
+    // Guard for missing AssetPair
+    if (!assetPair) return
+
+    // Guard for empty trades array
+    if (trades.length < 1) return
+
+    // Filter the trades based on their corresponding AssetPair
+    setFilteredTrades(filteredTradesByAssetPair(trades, assetPair))
+
+    // Guard for missing filtered trades
+    if (filteredTrades.length < 1) return
+
+    setTotalHeld(validateAndCalculateHoldings(filteredTrades).currentHoldings)
+    setTotalSpent(validateAndCalculateTotalSpent(filteredTrades))
+
+    if (!totalHeld || !totalSpent) return
+    setCostBasis(calculateCostBasis(totalHeld, totalSpent))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
 
   const getTotalInvested = () => {
-    const longTotal = filteredTrades
-      .filter(trade => trade?.type === "buy")
-      .reduce((acc, trade) => acc + (trade?.price || 0), 0)
+    const longTotal = trades
+      .filter(trade => 'buy' in trade.tradeType)
+      .reduce((acc, trade) => acc + trade.quoteAssetAmount, 0)
 
     const shortTotal = filteredTrades
-      .filter(trade => trade?.type === "sell")
-      .reduce((acc, trade) => acc + (trade?.price || 0), 0)
+      .filter(trade => 'sell' in trade.tradeType)
+      .reduce((acc, trade) => acc + (trade.baseAssetAmount || 0), 0)
 
     return longTotal - shortTotal
   }
 
   const getAssetsHeld = () => {
     const longTotal = filteredTrades
-      .filter(trade => trade?.type === "buy")
-      .reduce((acc, trade) => acc + (trade?.amount || 0), 0)
+      .filter(trade => 'buy' in trade.tradeType)
+      .reduce((acc, trade) => acc + (trade.quoteAssetAmount || 0), 0)
 
     const shortTotal = filteredTrades
-      .filter(trade => trade?.type === "sell")
-      .reduce((acc, trade) => acc + (trade?.amount || 0), 0)
+      .filter(trade => 'sell' in trade.tradeType)
+      .reduce((acc, trade) => acc + (trade.baseAssetAmount || 0), 0)
 
     return longTotal - shortTotal
   }
 
-  const calculateCostBasis = () => {
-    const assetsHeld = getAssetsHeld()
-    return assetsHeld !== 0 ? getTotalInvested() / assetsHeld : 0
-  }
-
   const calculateRoi = (currentValue: number) => {
-    const costBasis = calculateCostBasis()
     return costBasis !== 0 ? ((currentValue - costBasis) / costBasis * 100).toFixed(2) : '0.00'
   }
 
-  const optionModalRef = useRef<HTMLDialogElement>(null)
-
   const openOptionsModal = () => optionModalRef.current?.showModal()
-
-  const setPair = () => {
-    if (setAssetPair && assetPair) {
-      // setAssetPair(assetPair)
-    }
-  }
-
-  if (!assetPair) {
-    return <div>Loading position data...</div>
-  }
 
   return (
     <Card className="w-full bg-gray-800 text-gray-100 shadow-lg rounded-2xl">
       <CardHeader className="border-b border-b-gray-700 pb-0 mb-4">
-        <CardTitle className="text-2xl font-bold text-gray-100 text-center">{assetPair.base.symbol}/{assetPair.quote.symbol}</CardTitle>
+        <CardTitle className="text-2xl font-bold text-gray-100 text-center">{position.assetPair?.base.symbol}/{position.assetPair?.quote.symbol}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-row justify-between items-start">
           <div className="w-1/2 space-y-4 text-left">
             <div className="flex flex-col">
-              <span className="font-semibold text-gray-100">Total Assets Held:</span>
+              <span className="font-semibold text-gray-100">Total {position.assetPair?.base.symbol} Held:</span>
               <span className="text-gray-300">
-                {getAssetsHeld().toLocaleString("en-US", { style: "decimal" })} ${assetPair.base.symbol}
+                {totalHeld.toLocaleString("en-US", { style: "decimal" })}
+                {" "}${position.assetPair?.base.symbol}
               </span>
             </div>
 
             <div className="flex flex-col">
-              <span className="font-semibold text-gray-100">Total At Risk:</span>
+              <span className="font-semibold text-gray-100">Total {position.assetPair?.quote.symbol} Invested:</span>
               <span className="text-gray-300">
-                {getTotalInvested().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
+                {totalSpent.toLocaleString("en-US", { style: "decimal" })} ${position.assetPair?.quote.symbol}
               </span>
             </div>
 
             <div className="flex flex-col">
-              <span className="font-semibold text-gray-100">Cost Basis:</span>
-              <span className={price && calculateCostBasis() < price ? "text-green-400" : "text-red-400"}>
-                {calculateCostBasis().toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
+              <span className="font-semibold text-gray-100">Total Position Cost Basis:</span>
+              <span className={price && costBasis < price ? "text-green-400" : "text-red-400"}>
+                {costBasis.toLocaleString("en-US", { style: "decimal" })} ${position.assetPair?.quote.symbol}
               </span>
             </div>
 
             <div className="flex flex-col">
-              <span className="font-semibold text-gray-100">Current Value of {assetPair.base.symbol}:</span>
+              <span className="font-semibold text-gray-100">Current Value of {position.assetPair?.base.symbol}:</span>
               <span className="text-gray-300">
                 {fetching ? "Getting Current Price" : price ?
-                  `${price.toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}` :
+                  `${price.toLocaleString("en-US", { style: "decimal" })} $${position.assetPair?.quote.symbol}` :
                   "Price not available"
                 }
               </span>
@@ -133,7 +141,7 @@ export const PositionCard: React.FC<PartialPositionCardProps> = (props) => {
                 <span className="text-gray-300">Waiting on Current Price</span>
               ) : price ? (
                 <span className={getTotalInvested() < getAssetsHeld() * price ? "text-green-400" : "text-red-400"}>
-                  {(getAssetsHeld() * price).toLocaleString("en-US", { style: "decimal" })} ${assetPair.quote.symbol}
+                  {(getAssetsHeld() * price).toLocaleString("en-US", { style: "decimal" })} ${position.assetPair?.quote.symbol}
                 </span>
               ) : (
                 <span className="text-gray-300">Position value not available</span>
@@ -142,7 +150,7 @@ export const PositionCard: React.FC<PartialPositionCardProps> = (props) => {
           </div>
           <div className="w-5/12 overflow-hidden">
             <div className="w-full h-full">
-              <ROIBarChart roi={-100} />
+              <ROIBarChart roi={Number(calculateRoi(price || 0))} />
             </div>
           </div>
         </div>
@@ -154,7 +162,7 @@ export const PositionCard: React.FC<PartialPositionCardProps> = (props) => {
             Options
           </Button>
           <Button variant="outline" size="sm" asChild className="bg-gray-700 text-gray-200 hover:bg-gray-600">
-            <Link to={'/trades'} onClick={setPair}>
+            <Link to={'/trades'}>
               <List className="h-4 w-4 mr-2" />
               Trades
             </Link>

@@ -7,6 +7,11 @@ export interface ROIBarChartProps {
 
 export const ROIBarChart: FC<ROIBarChartProps> = (props) => {
   const { roi } = props
+  const defaultHigh = 150
+  const tickValues = [-100, -50, 0, 50, 100, defaultHigh]
+  const overTickValues = [-100, -50, 0, 50, 100, defaultHigh, roi]
+  const useTickValue = roi > defaultHigh ? overTickValues : tickValues
+  const maxChartHeight = roi > defaultHigh ? roi : defaultHigh
 
   const data = [{
     id: 'Current',
@@ -22,7 +27,7 @@ export const ROIBarChart: FC<ROIBarChartProps> = (props) => {
         indexBy="id"
         margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
         padding={0.3}
-        valueScale={{ type: 'linear', min: -150, max: 150 }}
+        valueScale={{ type: 'linear', min: -100, max: maxChartHeight }}
         indexScale={{ type: 'band', round: true }}
         colors={({ data }) => data.ROIColor}
         borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
@@ -43,7 +48,7 @@ export const ROIBarChart: FC<ROIBarChartProps> = (props) => {
           legend: 'ROI (%)',
           legendPosition: 'middle',
           legendOffset: -40,
-          tickValues: [-150, -100, -50, 0, 50, 100, 150]
+          tickValues: useTickValue
         }}
         labelSkipWidth={12}
         labelSkipHeight={12}

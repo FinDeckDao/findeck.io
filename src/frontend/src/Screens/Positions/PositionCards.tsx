@@ -1,16 +1,16 @@
 import { FC } from "react"
 import { PositionCard } from "./PositionCard"
 import { Position } from '../../../../declarations/position_manager/position_manager.did'
+import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 
 interface PositionCardsProps {
-  positions: Partial<Position>[]
+  partialPositions: Partial<Position>[]
+  trades: Trade[]
 }
 
 export const PositionCards: FC<PositionCardsProps> = (props) => {
-  const { positions } = props
-  const count = positions.length
-
-  const cleanPositions = positions.filter((position) => position !== null)
+  const { partialPositions, trades } = props
+  const count = partialPositions.length
 
   return (
     <div className={
@@ -20,8 +20,12 @@ export const PositionCards: FC<PositionCardsProps> = (props) => {
       ${count === 1 ? 'lg:grid-cols-1' : null}`}
     >
       {
-        cleanPositions.map((position, index) => (
-          <PositionCard key={index} position={position} />
+        partialPositions.map((position, index) => (
+          <PositionCard
+            key={`${index}-${position.assetPair?.base.symbol}-${position.assetPair?.quote.symbol}`}
+            position={position}
+            trades={trades}
+          />
         ))
       }
     </div >

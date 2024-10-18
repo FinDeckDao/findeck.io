@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import { PencilSquareIcon } from "@heroicons/react/24/outline"
 import { DeleteGuard } from '@/Components/Modals/DeleteGuard'
 import { useTradeManagerUpdateCall } from '../../Providers/TradeManager'
+import { calculateCostBasis } from '@/lib/calcs'
 
 export interface TradeInfoProps {
   trade: Trade,
@@ -62,34 +63,41 @@ export const TradeInfo: FC<TradeInfoProps> = (props) => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row items-start justify-between p-2 mb-4 bg-gray-800 rounded-2xl text-white border border-gray-700">
-      <div className="sm:mb-0 md:mb-4 lg:mb-0 xl:mb-0 2xl:mb-0">
-        <AssetPairComponent assetPair={trade.assetPair} />
+    <div className="flex flex-col p-2 mb-4 bg-dark rounded-2xl text-white border border-gray-700">
+      <div className="flex items-center justify-between w-full mb-4">
+        <div className="flex-grow">
+          <AssetPairComponent assetPair={trade.assetPair} />
+        </div>
+        <div className="flex items-center space-x-2">
+          <PencilSquareIcon
+            className="h-5 w-5 text-gray-400 hover:text-gray-200 cursor-pointer"
+          />
+          <DeleteGuard
+            item={trade}
+            onDelete={handleDelete}
+            message="This action cannot be undone. This will permanently remove this asset
+                from your trade records. If you want have this trade record again in the future,
+                you will need to add it again."
+          />
+        </div>
       </div>
 
-      <div className="flex flex-col md:flex-row items-start md:space-x-4 mt-6 md:mt-0 space-y-4 md:space-y-0 w-full md:w-auto border-t md:border-t-0 border-gray-700 pt-4 md:pt-0">
-        <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
-          {formatDate(trade.dateOfTrade)}
-        </span>
-        <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
-          Purchased: {formatCryptoAmount(trade.baseAssetAmount)} ${trade.assetPair.base.symbol}
-        </span>
-        <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
-          Paid: {formatCryptoAmount(trade.quoteAssetAmount)} ${trade.assetPair.quote.symbol}
-        </span>
-      </div>
-
-      <div className="inline-flex items-center space-x-2 mt-2">
-        <PencilSquareIcon
-          className="h-5 w-5 text-gray-400 hover:text-gray-200 cursor-pointer"
-        />
-        <DeleteGuard
-          item={trade}
-          onDelete={() => { handleDelete() }}
-          message="This action cannot be undone. This will permanently remove this asset
-              from your trade records. If you want have this trade record again in the future,
-              you will need to add it again."
-        />
+      <div className="border-t border-gray-700 pt-4">
+        <div className="flex flex-wrap gap-2">
+          <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
+            {formatDate(trade.tradeDateTime)}
+          </span>
+          <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
+            Purchased: {formatCryptoAmount(trade.baseAssetAmount)} ${trade.assetPair.base.symbol}
+          </span>
+          <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
+            Paid: {formatCryptoAmount(trade.quoteAssetAmount)} ${trade.assetPair.quote.symbol}
+          </span>
+          <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
+            Cost Basis: {formatCryptoAmount(calculateCostBasis(trade.quoteAssetAmount, trade.baseAssetAmount), 4)}
+            {" "}${trade.assetPair.quote.symbol}
+          </span>
+        </div>
       </div>
     </div>
   )

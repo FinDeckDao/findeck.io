@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { TbFidgetSpinner } from "react-icons/tb"
 import { CreateTrade } from './CreateTrade'
 import { WishlistItem } from "../../../../declarations/wishlist_manager/wishlist_manager.did"
-import { Trade } from "../../../../declarations/trade_manager/trade_manager.did"
+import { Trade, TradeType } from "../../../../declarations/trade_manager/trade_manager.did"
 import { useWishlistManagerQueryCall } from '@/Providers/WishlistManager'
 import { useTradeManagerUpdateCall } from "@/Providers/tradeManager"
 
@@ -63,8 +63,11 @@ export const CreateTradeModal: FC<CreateTradeModalProps> = (props) => {
       const baseAmount = Number(tradeData.baseAssetAmount)
       const quoteAmount = Number(tradeData.quoteAssetAmount)
 
+      // This modal is about creating a trade.
+      const tradeType: TradeType = { 'buy': null }
+
       // Call the createTrade function with the correct parameters
-      createTrade([tradeData.assetPair, baseAmount, quoteAmount])
+      createTrade([tradeData.assetPair, baseAmount, quoteAmount, tradeType, []])
     } else {
       console.error('Incomplete trade data')
     }

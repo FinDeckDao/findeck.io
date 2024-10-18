@@ -1,11 +1,12 @@
 import AssetModule "../modules/Asset/main";
 import Error "mo:base/Error";
 import HashMap "mo:base/HashMap";
+import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
+import Time "mo:base/Time";
 import TradeManager "./TradeManager";
 import Types "types";
-import Iter "mo:base/Iter";
 
 actor TradeManagerActor {
   private type Trade = Types.Trade;
@@ -57,8 +58,25 @@ actor TradeManagerActor {
     assetPair : AssetModule.AssetPair,
     baseAmount : Float,
     quoteAmount : Float,
+    tradeType : Types.TradeType,
+    tradeDateTime : ?Int,
   ) : async Result.Result<Nat, Text> {
-    let result = TradeManager.createTrade(trades, caller, assetPair, baseAmount, quoteAmount);
+    let currentTime = Time.now();
+    let tradeTime = switch (tradeDateTime) {
+      case (null) { currentTime };
+      case (?time) { time };
+    };
+
+    let result = TradeManager.createTrade(
+      trades,
+      caller,
+      assetPair,
+      baseAmount,
+      quoteAmount,
+      tradeType,
+      tradeTime,
+    );
+
     switch (result) {
       case (#ok(newCountAndIndex)) {
         let (_newCount, index) = newCountAndIndex;
@@ -94,10 +112,5 @@ actor TradeManagerActor {
   public query func getTotalTrades() : async Nat {
     let total = TradeManager.getTotalTrades(trades);
     total;
-  };
-
-  // Debug function to check state
-  public query func debugState() : async Text {
-    TradeManager.debugState(trades);
   };
 };
