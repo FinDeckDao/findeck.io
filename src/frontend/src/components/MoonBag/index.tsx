@@ -156,7 +156,8 @@ const MoonBagCalculator: FC<MoonBagCalculatorProps> = (props) => {
               pointBorderWidth={2}
               pointBorderColor="hsl(var(--chart-1))"
               enablePointLabel={true}
-              pointLabel={d => d.y.toFixed(4)}
+              // pointLabel={d => `Gain: ${(((d.x / initialBaseAmount) - costBasis) * 100).toFixed(0)}%`}
+              pointLabel={''}
               pointLabelYOffset={-12}
               useMesh={true}
               curve="monotoneX"
@@ -167,8 +168,8 @@ const MoonBagCalculator: FC<MoonBagCalculatorProps> = (props) => {
                 return (
                   <div className={`bg-dark text-white p-2 rounded-md shadow-lg border border-border`}>
                     <div>Price: {price.toFixed(2)}</div>
-                    <div>Selling: {(initialBaseAmount - amount).toFixed(2)}</div>
-                    <div>Moon Bag: {amount.toFixed(2)}</div>
+                    <div>Sell: {(initialBaseAmount - amount * initialBaseAmount).toFixed(2)}</div>
+                    <div>Moon Bag: {(amount * initialBaseAmount).toFixed(2)}</div>
                   </div>
                 )
               }}

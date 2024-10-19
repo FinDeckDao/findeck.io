@@ -115,7 +115,7 @@ export const router = createBrowserRouter([
     path: "/moonbag",
     element: (
       <DefaultLayout>
-        <MoonBagCalculator initialBaseAmount={1} initialQuoteAmount={0.5} currentPrice={0.5} />
+        <MoonBagCalculator initialBaseAmount={1000} initialQuoteAmount={500} currentPrice={0.5} />
       </DefaultLayout>
     )
   }
