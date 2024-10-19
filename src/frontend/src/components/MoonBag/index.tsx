@@ -59,30 +59,22 @@ const MoonBagCalculator: FC<MoonBagCalculatorProps> = (props) => {
     <div className="space-y-4">
       <Card className="w-full bg-dark text-white">
         <CardHeader>
-          <CardTitle>Current Position Analysis</CardTitle>
+          <CardTitle>Moon Bag Calculation</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-2">
             <div className="text-muted-foreground">Cost Basis:</div>
             <div>{costBasis.toFixed(2)}</div>
 
-            <div className="text-muted-foreground">Selected Price:</div>
+            <div className="text-muted-foreground">Potential Sell Price:</div>
             <div>{selectedScenario.toFixed(2)}</div>
 
             <div className="text-muted-foreground">Amount to Sell:</div>
-            <div>{currentResult.sellAmount.toFixed(4)} Base</div>
+            <div>{currentResult.sellAmount.toFixed(4)} $BASE</div>
 
             <div className="text-muted-foreground">Risk-free Remainder:</div>
-            <div>{currentResult.remainingAmount.toFixed(4)} Base</div>
+            <div>{currentResult.remainingAmount.toFixed(4)} $BASE</div>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card className="w-full bg-dark text-white">
-        <CardHeader>
-          <CardTitle>Moon Bag Projections</CardTitle>
-        </CardHeader>
-        <CardContent>
           <div className="h-[300px]">
             <ResponsiveLine
               data={chartData}
