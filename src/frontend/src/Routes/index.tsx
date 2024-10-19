@@ -19,6 +19,7 @@ import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "@/Components/Authenticate"
 import { ProfileScreen } from "@/Screens/Profile"
 import { Wishlist } from "@/Screens/Wishlist"
+import MoonBagCalculator from "@/Components/MoonBag/index.tsx"
 
 interface NavigationItem {
   name: string
@@ -107,6 +108,14 @@ export const router = createBrowserRouter([
         <Authenticate>
           <Wishlist />
         </Authenticate>
+      </DefaultLayout>
+    )
+  },
+  {
+    path: "/moonbag",
+    element: (
+      <DefaultLayout>
+        <MoonBagCalculator initialBaseAmount={1} initialQuoteAmount={0.5} currentPrice={0.5} />
       </DefaultLayout>
     )
   }

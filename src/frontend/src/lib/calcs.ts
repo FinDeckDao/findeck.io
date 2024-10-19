@@ -9,7 +9,7 @@ import {
 // 3. Amount Invested
 // 4. Total Amount Sold
 // 5. Total Amount Bought
-// 6. Moon Bag
+// 6. Moon Bag: AKA Risk Free Position (sellAmount = (initialInvestment) / (currentPrice))
 // 7. Cost Basis
 // 8. Total at Risk (this value changes with price changes)
 
