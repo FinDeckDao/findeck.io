@@ -12,12 +12,11 @@ import {
 // 6. Moon Bag: AKA Risk Free Position (sellAmount = (initialInvestment) / (currentPrice))
 // 7. Cost Basis
 // 8. Total at Risk (this value changes with price changes)
+// 9. Total Position Value.
 
 // Cost Basis
 export const calculateCostBasis = (amountHeld: number, amountSpent: number) => {
-  console.log(`Amount Held: ${amountHeld}`);
-  console.log(`Amount Spent: ${amountSpent}`);
-  return amountHeld / amountSpent;
+  return amountSpent / amountHeld;
 };
 
 interface AssetHoldings {
@@ -28,12 +27,12 @@ interface AssetHoldings {
 }
 
 // Calculates the equality of the asset pair based on the base and quote symbols
-function isAssetPairEqual(a: AssetPair, b: AssetPair): boolean {
+export const isAssetPairEqual = (a: AssetPair, b: AssetPair): boolean => {
   return a.base.symbol === b.base.symbol && a.quote.symbol === b.quote.symbol;
-}
+};
 
 // Barfs on a 0 trade array (as if to say how did we receive this?).
-function validateTrades(trades: Trade[]): void {
+export const validateTrades = (trades: Trade[]): void => {
   if (trades.length === 0) {
     throw new Error("The trades array is empty");
   }
@@ -46,10 +45,10 @@ function validateTrades(trades: Trade[]): void {
   if (!allAssetPairsEqual) {
     throw new Error("Not all asset pairs in the trades array are the same");
   }
-}
+};
 
 // Calculate the total holdings.
-function calculateHoldings(trades: Trade[]): AssetHoldings {
+export const calculateHoldings = (trades: Trade[]): AssetHoldings => {
   let totalBought = 0;
   let totalSold = 0;
 
@@ -69,16 +68,18 @@ function calculateHoldings(trades: Trade[]): AssetHoldings {
     totalSold,
     currentHoldings,
   };
-}
+};
 
 // Handle the complete job.
-function validateAndCalculateHoldings(trades: Trade[]): AssetHoldings {
+export const validateAndCalculateHoldings = (
+  trades: Trade[]
+): AssetHoldings => {
   validateTrades(trades);
   return calculateHoldings(trades);
-}
+};
 
 // Calculate the total holdings.
-function calculateTotalSpent(trades: Trade[]): number {
+export const calculateTotalSpent = (trades: Trade[]): number => {
   let totalBought = 0;
   let totalSold = 0;
 
@@ -92,7 +93,7 @@ function calculateTotalSpent(trades: Trade[]): number {
 
   const amountSpent = totalBought - totalSold;
   return amountSpent;
-}
+};
 
 // Handle the complete job.
 export const validateAndCalculateTotalSpent = (trades: Trade[]): number => {
@@ -112,9 +113,28 @@ export const filteredTradesByAssetPair = (
   );
 };
 
-export {
-  isAssetPairEqual,
-  validateTrades,
-  calculateHoldings,
-  validateAndCalculateHoldings,
+export const formatCryptoAmount = (
+  amount: number,
+  decimalPlaces: number = 2
+) => {
+  try {
+    // Use Intl.NumberFormat for formatting
+    const formatter = new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces,
+    });
+
+    return formatter.format(amount);
+  } catch (error) {
+    console.error("Error formatting amount:", error);
+    return "Invalid Amount";
+  }
+};
+
+// Total Position Value
+export const calculateTotalPositionValue = (
+  currentPrice: number,
+  totalHeld: number
+) => {
+  return currentPrice * totalHeld;
 };

@@ -8,10 +8,11 @@ import { Position } from '../../../../declarations/position_manager/position_man
 import { ROIBarChart } from '../../Components/Position/RoiBarChart'
 import { Trade } from "../../../../declarations/trade_manager/trade_manager.did"
 import {
-  validateAndCalculateHoldings,
+  calculateCostBasis,
+  calculateTotalPositionValue,
   filteredTradesByAssetPair,
+  validateAndCalculateHoldings,
   validateAndCalculateTotalSpent,
-  calculateCostBasis
 } from '../../lib/calcs'
 
 interface PartialPositionCardProps {
@@ -22,13 +23,17 @@ interface PartialPositionCardProps {
 export const PositionCard: FC<PartialPositionCardProps> = (props) => {
   const { position, trades } = props
   const { assetPair } = position
-  const [price] = useState<number | undefined>(0.001)
+
+  // This price should be fetch from the XRC or gathered from the user.
+  const [price] = useState<number | undefined>(0.5)
+
   const [fetching] = useState<boolean>(false)
   const optionModalRef = useRef<HTMLDialogElement>(null)
   const [costBasis, setCostBasis] = useState<number>(0)
   const [filteredTrades, setFilteredTrades] = useState<Trade[]>([])
   const [totalHeld, setTotalHeld] = useState<number>(0)
   const [totalSpent, setTotalSpent] = useState<number>(0)
+  const [currentPositionValue, setCurrentPositionValue] = useState<number>(0)
 
   useEffect(() => {
     // Guard for missing AssetPair
@@ -37,32 +42,31 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
     // Guard for empty trades array
     if (trades.length < 1) return
 
+    if (!price) return
+
     // Filter the trades based on their corresponding AssetPair
-    setFilteredTrades(filteredTradesByAssetPair(trades, assetPair))
+    const filteredTrades = filteredTradesByAssetPair(trades, assetPair)
+    setFilteredTrades(filteredTrades) // Set for subsequent renders.
 
     // Guard for missing filtered trades
     if (filteredTrades.length < 1) return
 
-    setTotalHeld(validateAndCalculateHoldings(filteredTrades).currentHoldings)
-    setTotalSpent(validateAndCalculateTotalSpent(filteredTrades))
+    const totalHeld = validateAndCalculateHoldings(filteredTrades).currentHoldings
+    setTotalHeld(totalHeld) // Set for subsequent renders.
+
+    const totalSpent = validateAndCalculateTotalSpent(filteredTrades)
+    setTotalSpent(totalSpent) // Set for subsequent renders.
 
     if (!totalHeld || !totalSpent) return
-    setCostBasis(calculateCostBasis(totalHeld, totalSpent))
+
+    const costBasis = calculateCostBasis(totalHeld, totalSpent)
+    setCostBasis(costBasis) // Set for subsequent renders.
+
+    const currentPositionValue = calculateTotalPositionValue(totalHeld, price)
+    setCurrentPositionValue(currentPositionValue) // Set for subsequent renders.
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-
-  const getTotalInvested = () => {
-    const longTotal = trades
-      .filter(trade => 'buy' in trade.tradeType)
-      .reduce((acc, trade) => acc + trade.quoteAssetAmount, 0)
-
-    const shortTotal = filteredTrades
-      .filter(trade => 'sell' in trade.tradeType)
-      .reduce((acc, trade) => acc + (trade.baseAssetAmount || 0), 0)
-
-    return longTotal - shortTotal
-  }
 
   const getAssetsHeld = () => {
     const longTotal = filteredTrades
@@ -140,8 +144,8 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
               {fetching ? (
                 <span className="text-gray-300">Waiting on Current Price</span>
               ) : price ? (
-                <span className={getTotalInvested() < getAssetsHeld() * price ? "text-green-400" : "text-red-400"}>
-                  {(getAssetsHeld() * price).toLocaleString("en-US", { style: "decimal" })} ${position.assetPair?.quote.symbol}
+                <span className={totalSpent < currentPositionValue ? "text-green-400" : "text-red-400"}>
+                  {currentPositionValue.toLocaleString("en-US", { style: "decimal" })} ${position.assetPair?.quote.symbol}
                 </span>
               ) : (
                 <span className="text-gray-300">Position value not available</span>

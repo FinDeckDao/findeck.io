@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import { Trade, } from '../../../../declarations/trade_manager/trade_manager.did'
 import { AssetPairComponent } from './AssetPair'
-import { format } from 'date-fns'
 import { PencilSquareIcon } from "@heroicons/react/24/outline"
 import { DeleteGuard } from '@/Components/Modals/DeleteGuard'
 import { useTradeManagerUpdateCall } from '../../Providers/TradeManager'
-import { calculateCostBasis } from '@/lib/calcs'
+import { calculateCostBasis, formatCryptoAmount } from '@/lib/calcs'
+import { formatDate } from '@/lib/utils'
 
 export interface TradeInfoProps {
   trade: Trade,
@@ -25,41 +25,6 @@ export const TradeInfo: FC<TradeInfoProps> = (props) => {
   const handleDelete = () => {
     isDeleting()
     deleteTrade([BigInt(index)])
-  }
-
-  const formatDate = (dateValue: bigint) => {
-    try {
-      // Convert nanoseconds to milliseconds
-      const milliseconds = Number(dateValue / BigInt(1000000))
-
-      const date = new Date(milliseconds)
-
-      // Check if the date is valid
-      if (isNaN(date.getTime())) {
-        throw new Error('Invalid date')
-      }
-
-      return format(date, 'PPP')
-    } catch (error) {
-      console.error("Error formatting date:", error)
-      return 'Invalid Date'
-    }
-  }
-
-  const formatCryptoAmount = (amount: number, decimalPlaces: number = 2) => {
-    console.log('amount', amount)
-    try {
-      // Use Intl.NumberFormat for formatting
-      const formatter = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: decimalPlaces,
-        maximumFractionDigits: decimalPlaces,
-      })
-
-      return formatter.format(amount)
-    } catch (error) {
-      console.error("Error formatting amount:", error)
-      return 'Invalid Amount'
-    }
   }
 
   return (
