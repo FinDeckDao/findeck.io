@@ -83,7 +83,7 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
   const openOptionsModal = () => optionModalRef.current?.showModal()
 
   return (
-    <Card className="w-full bg-gray-800 text-gray-100 shadow-lg rounded-2xl">
+    <Card className="w-full bg-dark text-white shadow-lg rounded-2xl">
       <CardHeader className="border-b border-b-gray-700 pb-0 mb-4">
         <CardTitle className="text-2xl font-bold text-gray-100 text-center">{position.assetPair?.base.symbol}/{position.assetPair?.quote.symbol}</CardTitle>
       </CardHeader>

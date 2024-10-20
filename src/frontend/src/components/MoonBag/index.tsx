@@ -144,8 +144,8 @@ const MoonBagCalculator: FC<MoonBagCalculatorProps> = (props) => {
                 legendPosition: 'middle'
               }}
               axisLeft={{
-                tickSize: 5,
-                tickPadding: 5,
+                tickSize: 10,
+                tickPadding: 2,
                 tickRotation: 0,
                 legend: 'Moon Bag Size',
                 legendOffset: -40,

@@ -4,6 +4,7 @@ import { PositionTabs } from './PositionTabs'
 import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 import { useTradeManagerQueryCall } from "../../Providers/TradeManager"
 import { PartialPosition } from './types'
+import { Link } from 'react-router-dom'
 
 export const PositionsScreen: FC = () => {
   const [partialPositions, setPartialPositions] = useState<PartialPosition[]>([])
@@ -42,6 +43,18 @@ export const PositionsScreen: FC = () => {
     getUserTrades()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  if (tradeData.length < 1) {
+    return (
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-center mb-8 mt-4">No Positions Were Found</h1>
+        <p>
+          In order to review your positions please enter a trade on the{" "}
+          <Link to="/trades" className="fdLink">Trade Screen</Link>.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <PositionTabs partialPositions={partialPositions}>

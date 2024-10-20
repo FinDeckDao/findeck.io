@@ -13,7 +13,7 @@
   html,
   body {
     @apply p-0 m-0;
-    font-family: 'Inter', sans-serif; /* Changing the font to Inter */
+    font-family: "Inter", sans-serif; /* Changing the font to Inter */
     color: white; /* Changing the text color to white */
     min-height: 100vh; /* Making the body at least 100% of the viewport height */
   }
@@ -45,7 +45,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
   .dark {
     --background: 222.2 84% 4.9%;
@@ -71,17 +71,21 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%
+    --chart-5: 340 75% 55%;
   }
 }
 
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+  }
+  .fdLink {
+    @apply text-blue-600 dark:text-sky-400 no-underline hover:underline;
   }
 }
