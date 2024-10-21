@@ -30,7 +30,7 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
   const [fetching] = useState<boolean>(false)
   const optionModalRef = useRef<HTMLDialogElement>(null)
   const [costBasis, setCostBasis] = useState<number>(0)
-  const [filteredTrades, setFilteredTrades] = useState<Trade[]>([])
+  const [_filteredTrades, setFilteredTrades] = useState<Trade[]>([])
   const [totalHeld, setTotalHeld] = useState<number>(0)
   const [totalSpent, setTotalSpent] = useState<number>(0)
   const [currentPositionValue, setCurrentPositionValue] = useState<number>(0)
@@ -67,18 +67,6 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const getAssetsHeld = () => {
-    const longTotal = filteredTrades
-      .filter(trade => 'buy' in trade.tradeType)
-      .reduce((acc, trade) => acc + (trade.quoteAssetAmount || 0), 0)
-
-    const shortTotal = filteredTrades
-      .filter(trade => 'sell' in trade.tradeType)
-      .reduce((acc, trade) => acc + (trade.baseAssetAmount || 0), 0)
-
-    return longTotal - shortTotal
-  }
 
   const calculateRoi = (currentValue: number) => {
     return costBasis !== 0 ? ((currentValue - costBasis) / costBasis * 100).toFixed(2) : '0.00'

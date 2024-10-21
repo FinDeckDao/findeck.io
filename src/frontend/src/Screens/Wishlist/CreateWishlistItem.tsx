@@ -54,13 +54,13 @@ export const CreateWishlistItem: FC<CreateWishlistItemProps> = (props) => {
       baseListRef.current?.clearState()
       quoteListRef.current?.clearState()
 
-      // Construct an asset pair.
-      const newAssetPair: WishlistItem = {
+      // Construct an asset.
+      const newAsset: WishlistItem = {
         base: wishlistItem.base,
         DueDiligence: answers
       }
 
-      createWishlistItem([newAssetPair])
+      createWishlistItem([newAsset])
     }
   }, [wishlistItem, createWishlistItem, answers])
 
@@ -103,7 +103,7 @@ export const CreateWishlistItem: FC<CreateWishlistItemProps> = (props) => {
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
           >
             {loading ? null : <PlusCircleIcon className="mr-2 h-5 w-5" />}
-            {loading ? "Adding item..." : "Add Pair To Wish List"}
+            {loading ? "Adding item..." : "Add Asset To Wish List"}
             {loading ? <TbFidgetSpinner className="h-5 w-5 animate-spin inline-block" /> : null}
           </Button>
         </div>
