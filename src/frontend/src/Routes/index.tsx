@@ -19,7 +19,8 @@ import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "@/Components/Authenticate"
 import { ProfileScreen } from "@/Screens/Profile"
 import { Wishlist } from "@/Screens/Wishlist"
-import MoonBagCalculator from "@/Components/MoonBag/index.tsx"
+import { MoonBagCalculator } from "@/Components/MoonBag"
+import { SearchableFiatCurrencySelector } from "@/Components/Currency/SearchableFiatCurrencySelector"
 
 interface NavigationItem {
   name: string
@@ -116,6 +117,14 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <MoonBagCalculator initialBaseAmount={1000} initialQuoteAmount={500} currentPrice={0.5} />
+      </DefaultLayout>
+    )
+  },
+  {
+    path: "/fiat-currency",
+    element: (
+      <DefaultLayout>
+        <SearchableFiatCurrencySelector onSelect={(item) => { console.log(`${JSON.stringify(item)} selected!`) }} />
       </DefaultLayout>
     )
   }

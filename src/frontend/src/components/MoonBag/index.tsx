@@ -44,7 +44,7 @@ const generatePriceScenarios = (costBasis: number, currentPrice: number) => {
   })
 }
 
-const MoonBagCalculator: FC<MoonBagCalculatorProps> = (props) => {
+export const MoonBagCalculator: FC<MoonBagCalculatorProps> = (props) => {
   const { initialBaseAmount, initialQuoteAmount, currentPrice } = props
   const [selectedScenario, _setSelectedScenario] = useState(currentPrice)
   const costBasis = initialQuoteAmount / initialBaseAmount
@@ -180,5 +180,3 @@ const MoonBagCalculator: FC<MoonBagCalculatorProps> = (props) => {
     </div>
   )
 }
-
-export default MoonBagCalculator
