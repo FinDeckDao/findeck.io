@@ -1,5 +1,4 @@
 import AssetModule "../modules/Asset/main";
-import Error "mo:base/Error";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
@@ -15,24 +14,7 @@ actor TradeManagerActor {
   private stable var tradeEntries : [(Principal, [Trade])] = [];
 
   // Create a HashMap in local canister memory to be used for CRUD operations on trades.
-  private var trades = HashMap.HashMap<Principal, [Trade]>(
-    10,
-    Principal.equal,
-    Principal.hash,
-  );
-
-  // The authorized principal (ensure that only a local dev can call the init function)
-  // TODO: Make this only possible from the DAO in the future.
-  private let AUTHORIZED_PRINCIPAL : Principal = Principal.fromText("yhjql-nw3u5-wp5r3-f2hid-ukmmv-7sy2z-on5ts-pl7fd-yrzpz-rjgdr-zqe");
-
-  // Initialize the canister (calling this is destructive but is sometimes needed)
-  public shared ({ caller }) func init() : async () {
-    if (caller != AUTHORIZED_PRINCIPAL) {
-      throw Error.reject("Unauthorized: only the owner can initialize the canister");
-    };
-
-    trades := HashMap.HashMap<Principal, [Trade]>(10, Principal.equal, Principal.hash);
-  };
+  private var trades = HashMap.HashMap<Principal, [Trade]>(10, Principal.equal, Principal.hash);
 
   //////////////////////////////////////////////////////////////////////
   // Lifecycle Functions
@@ -48,7 +30,7 @@ actor TradeManagerActor {
       Principal.equal,
       Principal.hash,
     );
-    tradeEntries := []; // Clear the stable variable after loading
+    tradeEntries := [];
   };
 
   //////////////////////////////////////////////////////////////////////

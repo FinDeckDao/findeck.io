@@ -1,7 +1,7 @@
 {
   "canisters": {
     "backend": {
-      "dependencies": ["internet_identity", "xrc"],
+      "dependencies": ["internet_identity"],
       "main": "src/backend/main.mo",
       "type": "motoko"
     },
@@ -21,6 +21,11 @@
     "position_manager": {
       "dependencies": ["internet_identity"],
       "main": "src/position_manager/main.mo",
+      "type": "motoko"
+    },
+    "price_proxy": {
+      "dependencies": ["xrc"],
+      "main": "src/price_proxy/main.mo",
       "type": "motoko"
     },
     "trade_manager": {

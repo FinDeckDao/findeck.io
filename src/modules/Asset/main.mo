@@ -12,24 +12,12 @@ module AssetModule {
   };
 
   // Defines type for an asset.
-  public type AssetType = {
+  public type XrcAsset = {
     symbol : Text;
     variant : AssetClass;
   };
 
-  public let Assets : [AssetType] = [
-    { symbol = "AVAX"; variant = #Cryptocurrency },
-    { symbol = "BTC"; variant = #Cryptocurrency },
-    { symbol = "ETH"; variant = #Cryptocurrency },
-    { symbol = "ICP"; variant = #Cryptocurrency },
-    { symbol = "SOL"; variant = #Cryptocurrency },
-    { symbol = "USD"; variant = #FiatCurrency },
-    { symbol = "USDC"; variant = #FiatCurrency },
-    { symbol = "USDT"; variant = #FiatCurrency },
-    { symbol = "XDC"; variant = #Cryptocurrency },
-    { symbol = "XLM"; variant = #Cryptocurrency },
-    { symbol = "XRP"; variant = #Cryptocurrency },
-  ];
+  public type XrcAssets = [XrcAsset];
 
   public type Asset = {
     name : Text;

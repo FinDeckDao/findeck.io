@@ -83,17 +83,12 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
         <div className="flex flex-row justify-between items-start">
           <div className="w-1/2 space-y-4 text-left">
             <div className="flex flex-col">
-              <span className="font-semibold text-gray-100">Total {position.assetPair?.base.symbol} Held:</span>
+              <span className="font-semibold text-gray-100">
+                Total {position.assetPair?.base.symbol} Held:
+              </span>
               <span className="text-gray-300">
                 {totalHeld.toLocaleString("en-US", { style: "decimal" })}
                 {" "}${position.assetPair?.base.symbol}
-              </span>
-            </div>
-
-            <div className="flex flex-col">
-              <span className="font-semibold text-gray-100">Total {position.assetPair?.quote.symbol} Invested:</span>
-              <span className="text-gray-300">
-                {totalSpent.toLocaleString("en-US", { style: "decimal" })} ${position.assetPair?.quote.symbol}
               </span>
             </div>
 
@@ -125,6 +120,16 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
               ) : (
                 <span className="text-gray-300">ROI not available</span>
               )}
+            </div>
+
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-100">
+                Total {position.assetPair?.quote.symbol} Invested:
+              </span>
+              <span className="text-gray-300">
+                {totalSpent.toLocaleString("en-US", { style: "decimal" })}{" "}
+                ${position.assetPair?.quote.symbol}
+              </span>
             </div>
 
             <div className="flex flex-col">
