@@ -41,7 +41,6 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
 
   if (error) {
     console.log(error)
-    alert(`There was an error.`)
   }
 
   const optionModalRef = useRef<HTMLDialogElement>(null)
@@ -81,6 +80,7 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
     const currentPositionValue = calculateTotalPositionValue(totalHeld, price)
     setCurrentPositionValue(currentPositionValue) // Set for subsequent renders.
 
+    // TODO: This needs to be refactored to include the asset type.
     if (assetPair.base && assetPair.quote) {
       call([assetPair.base.symbol, assetPair.quote.symbol])
     }

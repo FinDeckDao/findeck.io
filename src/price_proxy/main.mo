@@ -84,6 +84,7 @@ actor PriceProxy {
   };
 
   // Main function to get exchange rate for a pair of assets
+  // TODO: This needs to be refactored to include the asset type.
   public func get_exchange_rate(base : Text, quote : Text) : async ?PairPrice {
     let pair : AssetPair = {
       base = { name = base; symbol = base; slug = base; img_url = "" };

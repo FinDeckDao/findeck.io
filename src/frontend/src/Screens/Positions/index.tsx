@@ -5,6 +5,7 @@ import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 import { useTradeManagerQueryCall } from "../../Providers/TradeManager"
 import { PartialPosition } from './types'
 import { Link } from 'react-router-dom'
+import { TbFidgetSpinner } from "react-icons/tb"
 
 export const PositionsScreen: FC = () => {
   const [partialPositions, setPartialPositions] = useState<PartialPosition[]>([])
@@ -12,7 +13,7 @@ export const PositionsScreen: FC = () => {
   // Get the positions from the TradeManager contract.
   // At this point the positions may be incomplete.
   // Example: If they don't have a price.
-  const { call: getUserTrades, data: tradeData } = useTradeManagerQueryCall({
+  const { call: getUserTrades, data, loading } = useTradeManagerQueryCall({
     functionName: "getUserTrades",
     onSuccess: (data) => {
       if (!data) return
@@ -37,14 +38,26 @@ export const PositionsScreen: FC = () => {
 
       setPartialPositions(partialPositions)
     }
-  }) as { call: () => void, data: Trade[], loading: boolean, error: Error }
+  })
 
   useEffect(() => {
     getUserTrades()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (tradeData.length < 1) {
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-center mb-8 mt-4">Loading your positions</h1>
+        <p>
+          Loading your trade data...{" "}
+          <TbFidgetSpinner className="h-5 w-5 animate-spin" />
+        </p>
+      </div>
+    )
+  }
+
+  if (data && data.length < 1) {
     return (
       <div className="text-center">
         <h1 className="text-4xl font-bold text-center mb-8 mt-4">No Positions Were Found</h1>
@@ -58,7 +71,7 @@ export const PositionsScreen: FC = () => {
 
   return (
     <PositionTabs partialPositions={partialPositions}>
-      <DisplayControl partialPositions={partialPositions} trades={tradeData} />
+      <DisplayControl partialPositions={partialPositions} trades={data as Trade[]} />
     </PositionTabs>
   )
 }
