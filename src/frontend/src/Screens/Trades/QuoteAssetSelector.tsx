@@ -1,4 +1,5 @@
-import { SearchableCurrencyList } from '@/Components/Currency/SearchableCurrencyList'
+import { useState, FC } from 'react'
+import { SearchableCurrencyList, SearchableCurrencyListRef } from '@/Components/Currency/SearchableCurrencyList'
 import { SearchableFiatCurrencySelector } from '@/Components/Currency/SearchableFiatCurrencySelector'
 import { Asset } from '../../../../declarations/trade_manager/trade_manager.did'
 import {
@@ -7,10 +8,11 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { FiatCurrency } from '@/Components/Currency/SearchableFiatCurrencySelector'
 
 interface QuoteAssetSelectorProps {
-  onSelect: (asset: Asset) => void
-  ref: React.RefObject<any>
+  onSelect: (asset: Asset | null) => void
+  ref: React.RefObject<SearchableCurrencyListRef>
 }
 
 export const QuoteAssetSelector: FC<QuoteAssetSelectorProps> = ({ onSelect, ref }) => {
@@ -20,7 +22,7 @@ export const QuoteAssetSelector: FC<QuoteAssetSelectorProps> = ({ onSelect, ref 
     setQuoteAssetSource(value)
   }
 
-  const handleFiatSelect = (currency: Currency) => {
+  const handleFiatSelect = (currency: FiatCurrency) => {
     const fiatAsset: Asset = {
       name: currency.name,
       symbol: currency.code,

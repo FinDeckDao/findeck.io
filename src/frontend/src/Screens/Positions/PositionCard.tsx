@@ -14,6 +14,8 @@ import {
   validateAndCalculateHoldings,
   validateAndCalculateTotalSpent,
 } from '../../lib/calcs'
+import { usePriceProxyQueryCall } from '@/Providers/PriceProxy'
+import { TbFidgetSpinner } from "react-icons/tb"
 
 interface PartialPositionCardProps {
   position: Partial<Position>
@@ -25,9 +27,23 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
   const { assetPair } = position
 
   // This price should be fetch from the XRC or gathered from the user.
-  const [price] = useState<number | undefined>(0.5)
+  const [price, setPrice] = useState<number | undefined>(0)
 
-  const [fetching] = useState<boolean>(false)
+  // Fetch the price of the selected
+  const { call, error, loading } = usePriceProxyQueryCall({
+    functionName: "get_exchange_rate",
+    onSuccess: (data) => {
+      if (data && "price" in data) {
+        setPrice(Number(data.price))
+      }
+    }
+  })
+
+  if (error) {
+    console.log(error)
+    alert(`There was an error.`)
+  }
+
   const optionModalRef = useRef<HTMLDialogElement>(null)
   const [costBasis, setCostBasis] = useState<number>(0)
   const [_filteredTrades, setFilteredTrades] = useState<Trade[]>([])
@@ -64,6 +80,10 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
 
     const currentPositionValue = calculateTotalPositionValue(totalHeld, price)
     setCurrentPositionValue(currentPositionValue) // Set for subsequent renders.
+
+    if (assetPair.base && assetPair.quote) {
+      call([assetPair.base.symbol, assetPair.quote.symbol])
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -102,16 +122,22 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
             <div className="flex flex-col">
               <span className="font-semibold text-gray-100">Current Value of {position.assetPair?.base.symbol}:</span>
               <span className="text-gray-300">
-                {fetching ? "Getting Current Price" : price ?
-                  `${price.toLocaleString("en-US", { style: "decimal" })} $${position.assetPair?.quote.symbol}` :
-                  "Price not available"
+                {loading
+                  ? (
+                    <div>"Getting Current Price"...{" "}
+                      <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" /></div>
+                  ) : (
+                    price
+                      ? `${price.toLocaleString("en-US", { style: "decimal" })} $${position.assetPair?.quote.symbol}`
+                      : "Price not available"
+                  )
                 }
               </span>
             </div>
 
             <div className="flex flex-col">
               <span className="font-semibold text-gray-100">Current ROI:</span>
-              {fetching ? (
+              {loading ? (
                 <span className="text-gray-300">Waiting on Current Price</span>
               ) : price ? (
                 <span className={`${Number(calculateRoi(price)) > 0 ? "text-green-400" : "text-red-400"}`}>
@@ -134,7 +160,7 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
 
             <div className="flex flex-col">
               <span className="font-semibold text-gray-100">Current Position Value:</span>
-              {fetching ? (
+              {loading ? (
                 <span className="text-gray-300">Waiting on Current Price</span>
               ) : price ? (
                 <span className={totalSpent < currentPositionValue ? "text-green-400" : "text-red-400"}>

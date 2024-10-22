@@ -6,7 +6,7 @@ import { PositionProvider } from "./Contexts/Position"
 import { AssetPairProvider } from "./Contexts/AssetPair"
 import { TradesProvider } from "./Contexts/Trade/index.tsx"
 import { DisplayProvider } from "./Contexts/Display/index.tsx"
-import { PricesProvider } from "./Contexts/Price/index.tsx"
+import { PriceProxyProvider } from "./Providers/PriceProxy/index.tsx"
 
 // TODO: Find an elegant way to handle all of these nested context providers.
 const App = () => {
@@ -15,9 +15,9 @@ const App = () => {
       <PositionProvider>
         <TradesProvider>
           <DisplayProvider>
-            <PricesProvider>
+            <PriceProxyProvider>
               <RouterProvider router={router} />
-            </PricesProvider>
+            </PriceProxyProvider>
           </DisplayProvider>
         </TradesProvider>
       </PositionProvider>
