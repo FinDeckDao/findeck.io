@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Trade, } from '../../../../declarations/trade_manager/trade_manager.did'
-import { AssetPairComponent } from './AssetPair'
+import { AssetPairComponent } from '../../Components/Assets/AssetPair'
 import { PencilSquareIcon } from "@heroicons/react/24/outline"
 import { DeleteGuard } from '@/Components/Modals/DeleteGuard'
 import { useTradeManagerUpdateCall } from '../../Providers/TradeManager'

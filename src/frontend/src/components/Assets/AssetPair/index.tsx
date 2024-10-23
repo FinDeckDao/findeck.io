@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { AssetPair } from '../../../../declarations/trade_manager/trade_manager.did'
+import { AssetPair } from '../../../../../declarations/trade_manager/trade_manager.did'
 import { Badge } from "@/components/ui/badge"
 import CurrencyList from 'currency-list'
 import { CurrencyFlag } from '@/Components/Currency/CurrencyFlag'
@@ -26,7 +26,7 @@ export const AssetPairComponent: FC<AssetPairComponentProps> = (props) => {
               alt={assetPair.base.name}
               className="w-10 h-10 rounded-full"
             />
-            : <Badge className="bg-slate-100 text-slate-900 text-lg rounded-full px-3 py-1 hover:bg-slate-100 hover:text-slate-900">
+            : <Badge className="bg-slate-700 text-slate-900 text-lg rounded-full px-2 py-1 hover:bg-slate-100 hover:text-slate-900 h-10">
               <CurrencyFlag countryCode={CurrencyList.get(assetPair.quote.symbol).code} />
             </Badge>
         }

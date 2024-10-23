@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { SupportedAssets, Asset } from "../../../../fixtures/assets"
+import { SupportedAssets, Asset } from "../../../../../fixtures/assets"
 
 interface AssetSelectorProps {
   value: string

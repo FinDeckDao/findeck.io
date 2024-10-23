@@ -16,7 +16,7 @@ interface QuoteAssetSelectorProps {
 
 export const QuoteAssetSelector = forwardRef<SearchableCurrencyListRef, QuoteAssetSelectorProps>((props, ref) => {
   const { onSelect } = props
-  const [quoteAssetSource, setQuoteAssetSource] = useState<string>('crypto')
+  const [quoteAssetSource, setQuoteAssetSource] = useState<string>('fiat')
 
   const handleQuoteAssetSourceChange = (value: string) => {
     setQuoteAssetSource(value)

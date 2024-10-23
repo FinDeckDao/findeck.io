@@ -60,6 +60,30 @@ export const ROIBarChart: FC<ROIBarChartProps> = (props) => {
             lineStyle: { stroke: '#b0b0b0', strokeWidth: 1 }
           }
         ]}
+        legends={[
+          {
+            dataFrom: 'keys',
+            anchor: 'top-right',
+            direction: 'row',
+            justify: false,
+            translateX: 0,
+            translateY: -30,
+            itemsSpacing: 2,
+            itemWidth: 100,
+            itemHeight: 20,
+            itemDirection: 'left-to-right',
+            itemOpacity: 0.85,
+            symbolSize: 20,
+            effects: [
+              {
+                on: 'hover',
+                style: {
+                  itemOpacity: 1
+                }
+              }
+            ]
+          }
+        ]}
         theme={{
           background: "#1a1a1a",
           text: {
@@ -99,12 +123,6 @@ export const ROIBarChart: FC<ROIBarChartProps> = (props) => {
             },
           },
           legends: {
-            title: {
-              text: {
-                fontSize: 11,
-                fill: "#999999",
-              },
-            },
             text: {
               fontSize: 11,
               fill: "#888888",
@@ -114,6 +132,12 @@ export const ROIBarChart: FC<ROIBarChartProps> = (props) => {
               text: {
                 fontSize: 10,
                 fill: "#888888",
+              },
+            },
+            title: {
+              text: {
+                fontSize: 11,
+                fill: "#999999",
               },
             },
           },
