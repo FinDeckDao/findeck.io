@@ -6,8 +6,6 @@
   "name": "findeck.io",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "deploy:backend:ic": "dfx deploy backend --ic",
-    "deploy:frontend:ic": "dfx deploy frontend --ic",
     "postdeploy:ic": "dfx canister call backend init",
     "deploy:ic": "dfx deploy --ic",
     "deploy": "dfx deploy",
