@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from 'react'
 import { WishlistItem } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
-import { TbFidgetSpinner } from "react-icons/tb"
 import { WatchedWishlistItem } from './WatchedWishlistItem'
 import { useWishlistManagerQueryCall } from '@/Providers/WishlistManager'
 import { CreateWishlistItemDialog } from './CreateWishlistItemDialog'
+import { LoaderWithExplanation } from '@/Components/Loaders'
 
 export const Wishlist: FC = () => {
   // const navigate = useNavigate()
@@ -57,16 +57,7 @@ export const Wishlist: FC = () => {
             }
           </h2>
 
-          {
-            loading
-              ? (
-                <div className="mb-4">
-                  Fetching your current wishlist...{" "}
-                  <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
-                </div>
-              )
-              : null
-          }
+          {loading && (<LoaderWithExplanation explanation='Fetching your current wishlist...' />)}
 
           {userWishlist.length > 0
             ? (

@@ -1,7 +1,8 @@
+import { FC } from 'react'
 import { Pricing } from "./Pricing"
 import GrantWinner from "../../assets/Dfinity_processed.png"
 
-export const ComingSoon = () => {
+export const ComingSoon: FC = () => {
   return (
     <>
       {/* Grant Winner logo aligned to the right, no top/bottom margins */}
@@ -71,3 +72,5 @@ export const ComingSoon = () => {
     </>
   )
 }
+
+export default ComingSoon

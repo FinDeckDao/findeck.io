@@ -24,7 +24,7 @@ import { Profile } from '../../../../declarations/backend/backend.did'
 import { getThemeVariant, getRoleVariant } from './utils'
 import { ProfileFormProps, formSchema } from './Schemas'
 import { FaRegSave } from "react-icons/fa"
-import { TbFidgetSpinner } from "react-icons/tb"
+import { LoaderWithExplanation } from '@/Components/Loaders'
 
 // This form could be used under multiple conditions.
 // 1. The user is creating a profile.
@@ -186,7 +186,7 @@ export const ProfileForm: FC<ProfileFormProps> = (props) => {
             onClick={() => onSubmit(form.getValues())}
           >
             {loading
-              ? <span>Saving Changes... <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" /></span>
+              ? <LoaderWithExplanation explanation='Saving Changes...' />
               : <span><FaRegSave className="h-6 w-6 inline-block" /> Save Changes</span>
             }
           </Button>

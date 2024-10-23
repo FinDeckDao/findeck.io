@@ -15,7 +15,7 @@ import {
   validateAndCalculateTotalSpent,
 } from '../../lib/calcs'
 import { usePriceProxyQueryCall } from '@/Providers/PriceProxy'
-import { TbFidgetSpinner } from "react-icons/tb"
+import { LoaderWithExplanation } from "@/Components/Loaders"
 
 interface PartialPositionCardProps {
   position: Partial<Position>
@@ -119,10 +119,8 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
               <span className="font-semibold text-gray-100">Current Value of {position.assetPair?.base.symbol}:</span>
               <span className="text-gray-300">
                 {loading
-                  ? (
-                    <div>Getting Current Price...{" "}
-                      <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" /></div>
-                  ) : (
+                  ? (<LoaderWithExplanation explanation="Getting Current Price..." />)
+                  : (
                     price
                       ? `${price.toLocaleString("en-US", { style: "decimal" })} $${position.assetPair?.quote.symbol}`
                       : "Price not available"

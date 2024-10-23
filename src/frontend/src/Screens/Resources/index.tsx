@@ -6,3 +6,5 @@ export const ResourcesScreen = () => {
     </div>
   )
 }
+
+export default ResourcesScreen

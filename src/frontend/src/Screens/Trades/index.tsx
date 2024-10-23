@@ -6,7 +6,7 @@ import { useTradeManagerQueryCall } from '@/Providers/TradeManager'
 import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 import { TradeInfo } from './TradeInfo'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { TbFidgetSpinner } from "react-icons/tb"
+import { LoaderWithExplanation } from '@/Components/Loaders'
 
 export const TradesScreen: FC = () => {
   const [openClosed, toggleOpenClosed] = useState(false)
@@ -90,8 +90,8 @@ export const TradesScreen: FC = () => {
       </div>
 
       <CreateTradeModal openClose={openClosed} toggleOpenClose={toggleOpenClosed} />
-      {loading ? <div className="inline-flex">Loading... <TbFidgetSpinner className="h-5 w-5 animate-spin" /></div> : null}
-      {deleting ? <div className="inline-flex">Deleting... <TbFidgetSpinner className="h-5 w-5 animate-spin" /></div> : null}
+      {loading ? <LoaderWithExplanation explanation='Loading..' /> : null}
+      {deleting ? <LoaderWithExplanation explanation='Deleting...' /> : null}
 
       {/* filteredIndex isn't used in the TradeInfo component */}
       {filteredTradesWithIndices.map(({ trade, originalIndex }, _filteredIndex) => (

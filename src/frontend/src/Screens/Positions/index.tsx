@@ -5,7 +5,7 @@ import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 import { useTradeManagerQueryCall } from "../../Providers/TradeManager"
 import { PartialPosition } from './types'
 import { Link } from 'react-router-dom'
-import { TbFidgetSpinner } from "react-icons/tb"
+import { LoaderWithExplanation } from '@/Components/Loaders'
 
 export const PositionsScreen: FC = () => {
   const [partialPositions, setPartialPositions] = useState<PartialPosition[]>([])
@@ -50,8 +50,7 @@ export const PositionsScreen: FC = () => {
       <div className="text-center">
         <h1 className="text-4xl font-bold text-center mb-8 mt-4">Loading your positions</h1>
         <span className="flex items-center justify-center gap-2">
-          Loading your trade data...
-          <TbFidgetSpinner className="h-5 w-5 animate-spin" />
+          <LoaderWithExplanation explanation='Loading your trade data...' />
         </span>
       </div>
     )
@@ -75,3 +74,5 @@ export const PositionsScreen: FC = () => {
     </PositionTabs>
   )
 }
+
+export default PositionsScreen

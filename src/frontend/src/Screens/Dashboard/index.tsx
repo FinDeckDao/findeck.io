@@ -28,3 +28,5 @@ export const DashboardScreen: FC = () => {
     </div>
   )
 }
+
+export default DashboardScreen

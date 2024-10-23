@@ -12,7 +12,7 @@ export const Authenticate: FC<PropsWithChildren> = (props) => {
         <h1>Authentication Required</h1>
         <p>Please sign in to view this page.</p>
         <div className="w-32 mx-auto my-4">
-          <LoginButton />
+          <LoginButton dark />
         </div>
       </div >
     )

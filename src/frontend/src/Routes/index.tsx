@@ -1,13 +1,16 @@
+
 import {
   createBrowserRouter,
 } from "react-router-dom"
+
 import { DefaultLayout } from '../Layout/index.tsx'
 import { ErrorPage } from '../Routes/ErrorPage.tsx'
-// import { Home } from '../Screens/Home'
-import { ComingSoon } from '../Screens/Home/ComingSoon'
-import { DashboardScreen } from "../Screens/Dashboard"
-import { PositionsScreen } from "../Screens/Positions"
-import { ResourcesScreen } from "../Screens/Resources"
+import {
+  ComingSoonScreen,
+  DashboardScreen,
+  PositionsScreen,
+  ResourcesScreen
+} from '../Components/LazyLoad'
 import {
   //RectangleGroupIcon,
   MapPinIcon,
@@ -21,6 +24,7 @@ import { ProfileScreen } from "@/Screens/Profile"
 import { Wishlist } from "@/Screens/Wishlist"
 import { MoonBagCalculator } from "@/Components/MoonBag"
 import { SearchableFiatCurrencySelector } from "@/Components/Currency/SearchableFiatCurrencySelector"
+import { LoaderWithExplanation, LoadingWrapper } from '@/Components/Loaders'
 
 interface NavigationItem {
   name: string
@@ -48,7 +52,12 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <DefaultLayout>
-        <ComingSoon />
+        <LoadingWrapper
+          loader={<LoaderWithExplanation
+            explanation='Loading Coming Soon Screen...'
+          />}>
+          <ComingSoonScreen />
+        </LoadingWrapper>
       </DefaultLayout>
     ),
     errorElement: <ErrorPage />
@@ -58,7 +67,12 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <Authenticate>
-          <PositionsScreen />
+          <LoadingWrapper
+            loader={<LoaderWithExplanation
+              explanation='Loading Positions Screen...'
+            />}>
+            <PositionsScreen />
+          </LoadingWrapper>
         </Authenticate>
       </DefaultLayout >
     ),
@@ -69,7 +83,12 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <Authenticate>
-          <DashboardScreen />
+          <LoadingWrapper
+            loader={<LoaderWithExplanation
+              explanation='Loading Dashboard Screen...'
+            />}>
+            <DashboardScreen />
+          </LoadingWrapper>
         </Authenticate>
       </DefaultLayout>
     )
@@ -78,7 +97,12 @@ export const router = createBrowserRouter([
     path: "/resources",
     element: (
       <DefaultLayout>
-        <ResourcesScreen />
+        <LoadingWrapper
+          loader={<LoaderWithExplanation
+            explanation='Loading Resources Screen...'
+          />}>
+          <ResourcesScreen />
+        </LoadingWrapper>
       </DefaultLayout>
     )
   },
@@ -87,7 +111,12 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <Authenticate>
-          <TradesScreen />
+          <LoadingWrapper
+            loader={<LoaderWithExplanation
+              explanation='Loading Trades Screen...'
+            />}>
+            <TradesScreen />
+          </LoadingWrapper>
         </Authenticate>
       </DefaultLayout>
     )
@@ -97,7 +126,13 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <Authenticate>
-          <ProfileScreen />
+          <LoadingWrapper
+            loader={<LoaderWithExplanation
+              explanation='Loading Profile Screen...'
+            />}
+          >
+            <ProfileScreen />
+          </LoadingWrapper>
         </Authenticate>
       </DefaultLayout>
     )
@@ -107,7 +142,9 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <Authenticate>
-          <Wishlist />
+          <LoadingWrapper loader={<LoaderWithExplanation explanation='Loading Wishlist Screen...' />}>
+            <Wishlist />
+          </LoadingWrapper>
         </Authenticate>
       </DefaultLayout>
     )

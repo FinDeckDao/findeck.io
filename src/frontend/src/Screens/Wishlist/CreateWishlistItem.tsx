@@ -3,9 +3,9 @@ import { SearchableCurrencyList, SearchableCurrencyListRef } from '../../Compone
 import { WishlistItem, Asset, Answer } from "../../../../declarations/wishlist_manager/wishlist_manager.did"
 import { Button } from '@/components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
-import { TbFidgetSpinner } from "react-icons/tb"
 import { DueDiligenceQuestionnaire } from './Questionnaire'
 import { useWishlistManagerUpdateCall } from '@/Providers/WishlistManager'
+import { LoaderWithExplanation } from '@/Components/Loaders'
 
 interface CreateWishlistItemProps {
   onUpdated: () => void
@@ -92,19 +92,18 @@ export const CreateWishlistItem: FC<CreateWishlistItemProps> = (props) => {
           <div className="flex-grow">
             {loading && (
               <span>
-                Adding {`${selectedWishlistItem?.base.symbol}`} To Your Wishlist...{" "}
-                <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
+                <LoaderWithExplanation explanation={`Adding ${selectedWishlistItem?.base.symbol} to Your Wishlist...`} />
               </span>
             )}
           </div>
           <Button
             onClick={handleCreateWishlistItem}
             disabled={loading ? true : !wishlistItem}
+            variant="outline"
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
           >
             {loading ? null : <PlusCircleIcon className="mr-2 h-5 w-5" />}
-            {loading ? "Adding item..." : "Add Asset To Wish List"}
-            {loading ? <TbFidgetSpinner className="h-5 w-5 animate-spin inline-block" /> : null}
+            {loading ? <LoaderWithExplanation explanation='Adding item...' /> : "Add Asset To Wish List"}
           </Button>
         </div>
       )}

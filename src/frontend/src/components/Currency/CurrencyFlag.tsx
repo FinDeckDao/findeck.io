@@ -10,12 +10,13 @@ export const CurrencyFlag: FC<CurrencyFlagProps> = (props) => {
   const { countryCode, className = '' } = props
   const code = currencyToCountry[countryCode]
 
-  console.log(`countryCode: ${countryCode}`)
-  console.log(`code: ${code}`)
+  if (!code) return
+
+  const lowerCaseCode = code.toLowerCase()
 
   return (
     <img
-      src={`/flags/${code}.svg`}
+      src={`/flags/${lowerCaseCode}.svg`}
       alt={`${countryCode} flag`}
       className={`w-6 h-4 object-cover ${className}`}
     />
