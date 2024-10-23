@@ -15,8 +15,7 @@ actor PriceProxy {
   type UnsupportedPair = Types.UnsupportedPair;
   type PairPrice = Types.PairPrice;
   type Asset = AssetModule.Asset;
-  type AssetPair = AssetModule.AssetPair;
-  type XrcAsset = AssetModule.XrcAsset;
+  type XrcAsset = Types.XrcAsset;
 
   // Time constant for rechecking unsupported pairs (30 days in nanoseconds)
   let THIRTY_DAYS_NS : Int = 30 * 24 * 60 * 60 * 1_000_000_000;
@@ -48,7 +47,7 @@ actor PriceProxy {
   //////////////////////////////////////////////////////////////////////
 
   // Check if a pair is in the unsupported list and if it's eligible for rechecking
-  private func isUnsupportedPair(pair : AssetPair) : Bool {
+  private func isUnsupportedPair(pair : AssetModule.AssetPair) : Bool {
     let currentTime = Time.now();
 
     for (unsupported in unsupportedPairsBuffer.vals()) {
@@ -64,7 +63,7 @@ actor PriceProxy {
   };
 
   // Add a pair to the unsupported list with the current timestamp
-  private func addUnsupportedPair(pair : AssetPair, reason : Text) {
+  private func addUnsupportedPair(pair : AssetModule.AssetPair, reason : Text) {
     if (not isUnsupportedPair(pair)) {
       unsupportedPairsBuffer.add({
         pair;
@@ -74,39 +73,22 @@ actor PriceProxy {
     };
   };
 
-  // Determine if an asset is cryptocurrency or fiat based on symbol and position
-  private func getSupportedAsset(symbol : Text, isQuote : Bool) : XrcAsset {
-    {
-      symbol = symbol;
-      variant = if (isQuote and (symbol == "USD" or symbol == "USDC" or symbol == "USDT"))
-      #FiatCurrency else #Cryptocurrency;
-    };
-  };
-
   // Main function to get exchange rate for a pair of assets
   // TODO: This needs to be refactored to include the asset type.
-  public func get_exchange_rate(base : Text, quote : Text) : async ?PairPrice {
-    let pair : AssetPair = {
-      base = { name = base; symbol = base; slug = base; img_url = "" };
-      quote = { name = quote; symbol = quote; slug = quote; img_url = "" };
-    };
-
+  public func getExchangeRate(AssetPair : AssetModule.AssetPair) : async ?PairPrice {
     // Skip XRC call if pair is known to be unsupported and was checked recently
-    if (isUnsupportedPair(pair)) {
+    if (isUnsupportedPair(AssetPair)) {
       return null;
     };
 
-    let baseAsset = getSupportedAsset(base, false);
-    let quoteAsset = getSupportedAsset(quote, true);
-
     let request : XRC.GetExchangeRateRequest = {
       base_asset = {
-        symbol = baseAsset.symbol;
-        class_ = baseAsset.variant;
+        symbol = AssetPair.base.symbol;
+        class_ = AssetPair.base.variant;
       };
       quote_asset = {
-        symbol = quoteAsset.symbol;
-        class_ = quoteAsset.variant;
+        symbol = AssetPair.quote.symbol;
+        class_ = AssetPair.quote.variant;
       };
       timestamp = null;
     };
@@ -121,7 +103,7 @@ actor PriceProxy {
         let price = float_rate / float_divisor;
 
         ?{
-          pair;
+          pair = AssetPair;
           price;
           timestamp = Time.now();
         };
@@ -135,7 +117,7 @@ actor PriceProxy {
           case (#StablecoinRateNotFound) "Stablecoin rate not available";
           case (_) "Other error occurred";
         };
-        addUnsupportedPair(pair, reason);
+        addUnsupportedPair(AssetPair, reason);
         null;
       };
     };

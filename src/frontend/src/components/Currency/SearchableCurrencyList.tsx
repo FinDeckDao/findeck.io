@@ -74,6 +74,7 @@ export const SearchableCurrencyList = forwardRef<SearchableCurrencyListRef, Sear
         symbol: item.symbol,
         img_url: item.img_url,
         slug: item.slug,
+        variant: { Cryptocurrency: null },
       })
     }
     setSearchTerm('')

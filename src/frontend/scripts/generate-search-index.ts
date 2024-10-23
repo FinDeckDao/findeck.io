@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import { AssetVariant } from "../../declarations/trade_manager/trade_manager.did";
 
 // Use node-fetch for making HTTP requests
 import fetch from "node-fetch";
@@ -20,6 +21,7 @@ type SearchIndex = {
   nameIndex: Record<string, number[]>;
   symbolIndex: Record<string, number[]>;
   slugIndex: Record<string, number[]>;
+  variant: AssetVariant;
 };
 
 const createSearchIndex = (items: CurrencyItem[]): SearchIndex => {
@@ -55,6 +57,7 @@ const createSearchIndex = (items: CurrencyItem[]): SearchIndex => {
     nameIndex,
     symbolIndex,
     slugIndex,
+    variant: { Cryptocurrency: null },
   };
 };
 
@@ -69,16 +72,22 @@ async function ensureDirectoryExists(filePath: string) {
   }
 }
 
-async function fetchCurrencyList(): Promise<CurrencyItem[]> {
+interface EnhancedCurrencyItem extends CurrencyItem {
+  variant: AssetVariant;
+}
+
+const fetchCurrencyList = async (): Promise<EnhancedCurrencyItem[]> => {
   const response = await fetch(
     "https://4a5t6-wqaaa-aaaan-qzmpq-cai.icp0.io/coin_map.json"
   );
+
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
+
   const data = await response.json();
 
-  // Type assertion to ensure the data matches CurrencyItem[] structure
+  // Type assertion and enhancement of the data
   if (
     Array.isArray(data) &&
     data.every(
@@ -90,15 +99,19 @@ async function fetchCurrencyList(): Promise<CurrencyItem[]> {
         "img_url" in item
     )
   ) {
-    return data as CurrencyItem[];
+    // Transform the data to include the variant - all items are Cryptocurrency
+    return (data as CurrencyItem[]).map((item) => ({
+      ...item,
+      variant: { Cryptocurrency: null },
+    }));
   } else {
     throw new Error(
       "Fetched data does not match expected CurrencyItem[] structure"
     );
   }
-}
+};
 
-async function main() {
+const main = async () => {
   try {
     const currencyList = await fetchCurrencyList();
     const searchIndex = createSearchIndex(currencyList);
@@ -121,7 +134,7 @@ async function main() {
     console.error(error);
     process.exit(1);
   }
-}
+};
 
 main().catch((error) => {
   console.error("An unexpected error occurred:");

@@ -12,4 +12,12 @@ module {
     pair : AssetModule.AssetPair;
     lastAttempt : Int;
   };
+
+  // Defines type for an asset.
+  public type XrcAsset = {
+    symbol : Text;
+    variant : AssetModule.AssetVariant;
+  };
+
+  public type XrcAssets = [XrcAsset];
 };

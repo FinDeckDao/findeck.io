@@ -49,10 +49,10 @@ export const PositionsScreen: FC = () => {
     return (
       <div className="text-center">
         <h1 className="text-4xl font-bold text-center mb-8 mt-4">Loading your positions</h1>
-        <p>
-          Loading your trade data...{" "}
+        <span className="flex items-center justify-center gap-2">
+          Loading your trade data...
           <TbFidgetSpinner className="h-5 w-5 animate-spin" />
-        </p>
+        </span>
       </div>
     )
   }

@@ -59,7 +59,7 @@ export const TradeInfo: FC<TradeInfoProps> = (props) => {
             Paid: {formatCryptoAmount(trade.quoteAssetAmount)} ${trade.assetPair.quote.symbol}
           </span>
           <span className="whitespace-nowrap bg-gray-700 p-2 rounded-lg">
-            Cost Basis: {formatCryptoAmount(calculateCostBasis(trade.quoteAssetAmount, trade.baseAssetAmount), 4)}
+            Cost Basis: {formatCryptoAmount(calculateCostBasis(trade.baseAssetAmount, trade.quoteAssetAmount), 4)}
             {" "}${trade.assetPair.quote.symbol}
           </span>
         </div>

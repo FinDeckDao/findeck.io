@@ -30,18 +30,14 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
   const [price, setPrice] = useState<number | undefined>(0)
 
   // Fetch the price of the selected
-  const { call, error, loading } = usePriceProxyQueryCall({
-    functionName: "get_exchange_rate",
+  const { call, loading } = usePriceProxyQueryCall({
+    functionName: "getExchangeRate",
     onSuccess: (data) => {
       if (data && "price" in data) {
         setPrice(Number(data.price))
       }
     }
   })
-
-  if (error) {
-    console.log(error)
-  }
 
   const optionModalRef = useRef<HTMLDialogElement>(null)
   const [costBasis, setCostBasis] = useState<number>(0)
@@ -53,6 +49,12 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
   useEffect(() => {
     // Guard for missing AssetPair
     if (!assetPair) return
+
+    // TODO: This needs to be refactored to include the asset type.
+    if (assetPair.base.symbol && assetPair.quote.symbol) {
+      console.log(`Asset Pair: ${JSON.stringify(assetPair)}`)
+      call([assetPair])
+    }
 
     // Guard for empty trades array
     if (trades.length < 1) return
@@ -79,12 +81,6 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
 
     const currentPositionValue = calculateTotalPositionValue(totalHeld, price)
     setCurrentPositionValue(currentPositionValue) // Set for subsequent renders.
-
-    // TODO: This needs to be refactored to include the asset type.
-    if (assetPair.base && assetPair.quote) {
-      call([assetPair.base.symbol, assetPair.quote.symbol])
-    }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -124,7 +120,7 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
               <span className="text-gray-300">
                 {loading
                   ? (
-                    <div>"Getting Current Price"...{" "}
+                    <div>Getting Current Price...{" "}
                       <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" /></div>
                   ) : (
                     price

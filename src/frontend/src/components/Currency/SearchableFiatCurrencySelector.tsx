@@ -1,4 +1,5 @@
-import { useState, useEffect, type FC } from 'react'
+import { type FC } from 'react'
+import { useState, useEffect } from 'react'
 import CurrencyList from 'currency-list'
 import {
   Command,
@@ -8,6 +9,7 @@ import {
   CommandItem,
   CommandList
 } from '@/components/ui/command'
+import { CurrencyFlag } from './CurrencyFlag'
 
 export interface FiatCurrency {
   name: string
@@ -24,7 +26,8 @@ interface CurrencySelectorProps {
   locale?: string
 }
 
-export const SearchableFiatCurrencySelector: FC<CurrencySelectorProps> = ({ onSelect, locale = 'en_US' }) => {
+export const SearchableFiatCurrencySelector: FC<CurrencySelectorProps> = (props) => {
+  const { onSelect, locale = 'en_US' } = props
   const [currencies, setCurrencies] = useState<FiatCurrency[]>([])
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -57,6 +60,10 @@ export const SearchableFiatCurrencySelector: FC<CurrencySelectorProps> = ({ onSe
               onSelect={() => onSelect(currency)}
               className="flex items-center gap-2 p-2 cursor-pointer text-white"
             >
+              <CurrencyFlag
+                countryCode={currency.code}
+                className="mr-2"
+              />
               <span className="font-medium">{currency.code}</span>
               <span className="text-lg">{currency.symbol_native}</span>
               <span className="text-sm text-gray-400">{currency.name}</span>
@@ -67,3 +74,5 @@ export const SearchableFiatCurrencySelector: FC<CurrencySelectorProps> = ({ onSe
     </Command>
   )
 }
+
+export default SearchableFiatCurrencySelector

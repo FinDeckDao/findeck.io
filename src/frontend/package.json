@@ -8,6 +8,7 @@
     "dev": "vite --port 3000",
     "format": "prettier --write \"src/**/*.{json,js,jsx,ts,tsx,css,scss}\"",
     "generate-index": "tsx scripts/generate-search-index.ts",
+    "get-flags": "tsx scripts/download-flags.ts",
     "generate": "dfx generate",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prebuild": "npm run generate",

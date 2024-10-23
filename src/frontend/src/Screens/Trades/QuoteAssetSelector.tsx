@@ -1,4 +1,4 @@
-import { useState, FC } from 'react'
+import { useState, forwardRef } from 'react'
 import { SearchableCurrencyList, SearchableCurrencyListRef } from '@/Components/Currency/SearchableCurrencyList'
 import { SearchableFiatCurrencySelector } from '@/Components/Currency/SearchableFiatCurrencySelector'
 import { Asset } from '../../../../declarations/trade_manager/trade_manager.did'
@@ -12,10 +12,10 @@ import { FiatCurrency } from '@/Components/Currency/SearchableFiatCurrencySelect
 
 interface QuoteAssetSelectorProps {
   onSelect: (asset: Asset | null) => void
-  ref: React.RefObject<SearchableCurrencyListRef>
 }
 
-export const QuoteAssetSelector: FC<QuoteAssetSelectorProps> = ({ onSelect, ref }) => {
+export const QuoteAssetSelector = forwardRef<SearchableCurrencyListRef, QuoteAssetSelectorProps>((props, ref) => {
+  const { onSelect } = props
   const [quoteAssetSource, setQuoteAssetSource] = useState<string>('crypto')
 
   const handleQuoteAssetSourceChange = (value: string) => {
@@ -28,6 +28,7 @@ export const QuoteAssetSelector: FC<QuoteAssetSelectorProps> = ({ onSelect, ref 
       symbol: currency.code,
       slug: currency.code.toLowerCase(),
       img_url: '',
+      variant: { FiatCurrency: null },
     }
     onSelect(fiatAsset)
   }
@@ -46,4 +47,6 @@ export const QuoteAssetSelector: FC<QuoteAssetSelectorProps> = ({ onSelect, ref 
       </TabsContent>
     </Tabs>
   )
-}
+})
+
+QuoteAssetSelector.displayName = 'QuoteAssetSelector'
