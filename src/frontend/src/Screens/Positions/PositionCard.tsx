@@ -270,7 +270,7 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
             asChild
             className="bg-gray-700 text-gray-200 hover:bg-gray-600"
           >
-            <Link to={'/trades'}>
+            <Link to={`/trades?pair=${assetPair.base.symbol}/${assetPair.quote.symbol}`}>
               <List className="h-4 w-4 mr-2" />
               Trades
             </Link>

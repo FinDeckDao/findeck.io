@@ -7,10 +7,15 @@ import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 import { TradeInfo } from './TradeInfo'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LoaderWithExplanation } from '@/Components/Loaders'
+import { useSearchParams } from 'react-router-dom'
 
 export const TradesScreen: FC = () => {
+  const [searchParams] = useSearchParams()
   const [openClosed, toggleOpenClosed] = useState(false)
-  const [selectedPair, setSelectedPair] = useState<string>('all')
+  const [selectedPair, setSelectedPair] = useState<string>(() => {
+    const pairParam = searchParams.get('pair')
+    return pairParam || 'all'
+  })
   const [deleting, setDeleting] = useState<boolean>(false)
 
   const handleOpenModal = () => {
@@ -93,7 +98,6 @@ export const TradesScreen: FC = () => {
       {loading ? <LoaderWithExplanation explanation='Loading..' /> : null}
       {deleting ? <LoaderWithExplanation explanation='Deleting...' /> : null}
 
-      {/* filteredIndex isn't used in the TradeInfo component */}
       {filteredTradesWithIndices.map(({ trade, originalIndex }, _filteredIndex) => (
         <TradeInfo
           index={originalIndex}
