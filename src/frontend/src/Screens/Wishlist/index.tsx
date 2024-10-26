@@ -57,7 +57,7 @@ export const Wishlist: FC = () => {
             }
           </h2>
 
-          {loading && (<LoaderWithExplanation explanation='Fetching your current wishlist...' className="mb-4" />)}
+          {loading && (<LoaderWithExplanation explanation='Fetching your current wishlist...' className="mb-4" align='left' />)}
 
           {userWishlist.length > 0
             ? (

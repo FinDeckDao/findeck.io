@@ -28,6 +28,53 @@ const MemoizedROIBarChart = memo(({ roi }: { roi: number }) => (
   <ROIBarChart roi={roi} />
 ))
 
+// Helper function to generate cache key
+const getCacheKey = (assetPair: AssetPair) =>
+  `price_${assetPair.base.symbol}_${assetPair.quote.symbol}`.toLowerCase()
+
+const useCachedPrice = (assetPair: AssetPair | null) => {
+  const [price, setPrice] = useState<number | undefined>(undefined)
+  const CACHE_DURATION_MS = 60 * 60 * 1000 // 1 hour in milliseconds
+
+  // Try to get initial price from cache
+  useEffect(() => {
+    if (!assetPair) return
+
+    try {
+      const cacheKey = getCacheKey(assetPair)
+      const cachedDataString = localStorage.getItem(cacheKey)
+      if (cachedDataString) {
+        const cachedData = JSON.parse(cachedDataString)
+        const now = Date.now()
+
+        if (now - cachedData.lastFetched < CACHE_DURATION_MS) {
+          console.log('Initially using cached price for', assetPair.base.symbol, '/', assetPair.quote.symbol)
+          setPrice(cachedData.price)
+        }
+      }
+    } catch (error) {
+      console.error('Error reading from cache:', error)
+    }
+  }, [assetPair, CACHE_DURATION_MS])
+
+  const updatePrice = (newPrice: number | undefined) => {
+    if (!assetPair || newPrice === undefined) {
+      setPrice(undefined)
+      return
+    }
+
+    const priceData = {
+      price: newPrice,
+      lastFetched: Date.now()
+    }
+    setPrice(newPrice)
+    const cacheKey = getCacheKey(assetPair)
+    localStorage.setItem(cacheKey, JSON.stringify(priceData))
+  }
+
+  return { price, setPrice: updatePrice }
+}
+
 export const PositionCard: FC<PartialPositionCardProps> = (props) => {
   const { position, trades } = props
   const { assetPair } = position
@@ -77,12 +124,15 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
     }
   }, [filteredTrades])
 
+  // Use the new hook for price management
+  const { price, setPrice } = useCachedPrice(formattedAssetPair)
+
   // Price fetching logic
-  const [price, setPrice] = useState<number | undefined>(undefined)
   const { call, loading } = usePriceProxyQueryCall({
     functionName: "getExchangeRate",
     onSuccess: (data) => {
       if (Array.isArray(data) && data[0] && 'price' in data[0]) {
+        console.log('Price fetched:', data[0])
         setPrice(Number(data[0].price))
       }
     },
@@ -92,16 +142,17 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
     }
   })
 
-  // Only fetch price when we have valid data
+  // Only fetch price when we have valid data and no price is set
   useEffect(() => {
-    if (!formattedAssetPair || !filteredTrades.length) return
+    if (!formattedAssetPair || !filteredTrades.length || price !== undefined) return
 
     try {
       call([formattedAssetPair])
     } catch (error) {
       console.error('Error calling price proxy:', error)
     }
-  }, [formattedAssetPair, filteredTrades.length])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formattedAssetPair, filteredTrades.length, price])
 
   // Memoize position value and ROI calculations
   const currentPositionValue = useMemo(() => {
@@ -153,7 +204,7 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
               <span className="text-gray-300">
                 {
                   (loading || !price)
-                    ? <LoaderWithExplanation explanation="Getting Current Price..." />
+                    ? <LoaderWithExplanation explanation="Getting Price..." align="left" />
                     : `${price.toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`
                 }
               </span>

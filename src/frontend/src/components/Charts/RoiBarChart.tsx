@@ -9,13 +9,13 @@ export const ROIBarChart: FC<ROIBarChartProps> = (props) => {
   const { roi } = props
   const defaultHigh = 150
   const tickValues = [-100, -50, 0, 50, 100, defaultHigh]
-  const overTickValues = [-100, -50, 0, 50, 100, defaultHigh, roi]
+  const overTickValues = [-100, -50, 0, 50, 100, defaultHigh, roi.toFixed(0)]
   const useTickValue = roi > defaultHigh ? overTickValues : tickValues
-  const maxChartHeight = roi > defaultHigh ? roi : defaultHigh
+  const maxChartHeight = roi > defaultHigh ? roi.toFixed(4) : defaultHigh
 
   const data = [{
     id: 'Current',
-    ROI: roi,
+    ROI: roi.toFixed(4),
     ROIColor: roi >= 0 ? '#4ecdc4' : '#ff6b6b'
   }]
 
@@ -27,7 +27,7 @@ export const ROIBarChart: FC<ROIBarChartProps> = (props) => {
         indexBy="id"
         margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
         padding={0.3}
-        valueScale={{ type: 'linear', min: -100, max: maxChartHeight }}
+        valueScale={{ type: 'linear', min: -100, max: Number(maxChartHeight) }}
         indexScale={{ type: 'band', round: true }}
         colors={({ data }) => data.ROIColor}
         borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
