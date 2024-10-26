@@ -151,13 +151,10 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
             <div className="flex flex-col">
               <span className="font-semibold text-gray-100">Current Value of {assetPair.base.symbol}:</span>
               <span className="text-gray-300">
-                {loading
-                  ? (<LoaderWithExplanation explanation="Getting Current Price..." />)
-                  : (
-                    price
-                      ? `${price.toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`
-                      : "Price not available"
-                  )
+                {
+                  (loading || !price)
+                    ? <LoaderWithExplanation explanation="Getting Current Price..." />
+                    : `${price.toLocaleString("en-US", { style: "decimal" })} $${assetPair.quote.symbol}`
                 }
               </span>
             </div>
@@ -171,7 +168,7 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
                   {roi.toFixed(2)}%
                 </span>
               ) : (
-                <span className="text-gray-300">ROI not available</span>
+                <span className="text-gray-300">Getting price to calculate ROI</span>
               )}
             </div>
 
