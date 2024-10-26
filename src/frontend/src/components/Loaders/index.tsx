@@ -3,12 +3,13 @@ import { TbFidgetSpinner } from "react-icons/tb"
 
 interface LoaderWithExplanationProps {
   explanation: string
+  className?: string
 }
 
 export const LoaderWithExplanation: FC<LoaderWithExplanationProps> = (props) => {
-  const { explanation } = props
+  const { explanation, className } = props
   return (
-    <div className="flex items-center justify-center min-h-900">
+    <div className={`flex items-center justify-center min-h-900 ${className}`}>
       <div className="flex items-center gap-2">
         <span>{explanation}</span>
         <TbFidgetSpinner className="h-5 w-5 animate-spin" />
