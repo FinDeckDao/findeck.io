@@ -5,6 +5,18 @@
   "frontend": {
     "ic": "xlabj-3iaaa-aaaan-qmoya-cai"
   },
+  "position_manager": {
+    "ic": "wued2-piaaa-aaaan-qznxa-cai"
+  },
+  "price_proxy": {
+    "ic": "wtffo-cqaaa-aaaan-qznxq-cai"
+  },
+  "trade_manager": {
+    "ic": "uoylg-ryaaa-aaaan-qznya-cai"
+  },
+  "wishlist_manager": {
+    "ic": "ujzns-4aaaa-aaaan-qznyq-cai"
+  },
   "xrc": {
     "ic": "uf6dk-hyaaa-aaaaq-qaaaq-cai"
   }
