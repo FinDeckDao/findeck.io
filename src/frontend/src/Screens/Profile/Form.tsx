@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '../../Components/ui/select'
+import { Card, CardContent, CardHeader, CardTitle } from '../../Components/ui/card'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from 'react-hook-form'
@@ -26,14 +27,9 @@ import { ProfileFormProps, formSchema } from './Schemas'
 import { FaRegSave } from "react-icons/fa"
 import { LoaderWithExplanation } from '@/Components/Loaders'
 
-// This form could be used under multiple conditions.
-// 1. The user is creating a profile.
-// 2. The user is editing their profile.
-// Pass in the appropriate function (updater or creator) to handle the form submission.
 export const ProfileForm: FC<ProfileFormProps> = (props) => {
   const { userName, shortTerm, longTerm, theme, role, saveProfile, loading } = props
 
-  // 1. Define the form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,9 +41,7 @@ export const ProfileForm: FC<ProfileFormProps> = (props) => {
     },
   })
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Construct a profile object.
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     const profile: Profile = {
       name: values.userName,
       capitalGainsTaxRate: {
@@ -61,137 +55,170 @@ export const ProfileForm: FC<ProfileFormProps> = (props) => {
   }
 
   return (
-    <div className="p-4">
+    <div className="container mx-auto py-6 max-w-7xl px-4">
+      <div className="flex justify-center items-center">
+        <h1 className="text-4xl font-bold text-white">Profile Settings</h1>
+      </div>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Personal Information Section */}
+            <Card className="bg-dark border">
+              <CardHeader>
+                <CardTitle className="text-white">Personal Info</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="userName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-200">Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your name here"
+                          {...field}
+                          className="bg-slate-800 border-slate-700 text-white"
+                        />
+                      </FormControl>
+                      <FormDescription className="text-slate-400">
+                        This is your public display name.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-          <FormField
-            control={form.control}
-            name="userName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter you name here" {...field} className="w-full rounded-md border-0 p-2 bg-dark text-white shadow-sm ring-1 ring-inset
-                    ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset
-                    focus:ring-indigo-600 text-sm leading-6"/>
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-200">Role</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={"Member"} disabled>
+                        <FormControl>
+                          <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-slate-800 border-slate-700">
+                          <SelectItem value="Member">Member</SelectItem>
+                          <SelectItem value="Administrator">Administrator</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription className="text-slate-400">
+                        Your assigned role.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
 
-          <FormField
-            control={form.control}
-            name="role"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Role</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={"Member"} disabled>
-                  <FormControl>
-                    <SelectTrigger className="w-full rounded-md border-0 p-2 bg-dark text-white shadow-sm ring-1 ring-inset
-            ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset
-            focus:ring-indigo-600 text-sm leading-6">
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className="w-full rounded-md border-0 p-2 bg-dark text-white shadow-sm ring-1 ring-inset
-            ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset
-            focus:ring-indigo-600 text-sm leading-6">
-                    <SelectItem value="Member">Member</SelectItem>
-                    <SelectItem value="Administrator">Administrator</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  Your assigned role.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Tax Settings Section */}
+            <Card className="bg-dark border">
+              <CardHeader>
+                <CardTitle className="text-white">Tax Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="shortTerm"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-200">Short Term Capital Gains Rate</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Example: 30 or 0.3"
+                          {...field}
+                          className="bg-slate-800 border-slate-700 text-white"
+                        />
+                      </FormControl>
+                      <FormDescription className="text-slate-400">
+                        The tax rate applied to gains from assets held for less than one year.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-          <FormField
-            control={form.control}
-            name="theme"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Theme</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full rounded-md border-0 p-2 bg-dark text-white shadow-sm ring-1 ring-inset
-                    ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset
-                    focus:ring-indigo-600 text-sm leading-6">
-                      <SelectValue placeholder="Select a theme" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className="w-full rounded-md border-0 p-2 bg-dark text-white shadow-sm ring-1 ring-inset
-                    ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset
-                    focus:ring-indigo-600 text-sm leading-6">
-                    <SelectItem value="Light">Light</SelectItem>
-                    <SelectItem value="Dark">Dark</SelectItem>
-                    <SelectItem value="System">System</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  Choose your preferred theme.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                <FormField
+                  control={form.control}
+                  name="longTerm"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-200">Long Term Capital Gains Rate</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Example: 20 or 0.2"
+                          {...field}
+                          className="bg-slate-800 border-slate-700 text-white"
+                        />
+                      </FormControl>
+                      <FormDescription className="text-slate-400">
+                        The tax rate applied to gains from assets held for more than one year.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
 
-          <FormField
-            control={form.control}
-            name="shortTerm"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Short Term Capital Gains Percentage</FormLabel>
-                <FormControl>
-                  <Input placeholder="Example: 30 or 0.3" {...field} className="w-full rounded-md border-0 p-2 bg-dark text-white shadow-sm ring-1 ring-inset
-                    ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset
-                    focus:ring-indigo-600 text-sm leading-6" />
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="longTerm"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Long Term Capital Gains Percentage</FormLabel>
-                <FormControl>
-                  <Input placeholder="Example: 20 or 0.2" {...field} className="w-full rounded-md border-0 p-2 bg-dark text-white shadow-sm ring-1 ring-inset
-                    ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset
-                    focus:ring-indigo-600 text-sm leading-6"/>
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => onSubmit(form.getValues())}
-          >
-            {loading
-              ? <LoaderWithExplanation explanation='Saving Changes...' />
-              : <span><FaRegSave className="h-6 w-6 inline-block" /> Save Changes</span>
-            }
-          </Button>
+            {/* Appearance Settings Section */}
+            <Card className="bg-dark border">
+              <CardHeader>
+                <CardTitle className="text-white">Appearance</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="theme"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-200">Theme</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                            <SelectValue placeholder="Select a theme" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-slate-800 border-slate-700">
+                          <SelectItem value="Light">Light</SelectItem>
+                          <SelectItem value="Dark">Dark</SelectItem>
+                          <SelectItem value="System">System</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription className="text-slate-400">
+                        Choose your preferred theme.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </div>
         </form>
       </Form>
+      <div className="flex justify-end items-center mt-4">
+        <Button
+          onClick={() => onSubmit(form.getValues())}
+          className="bg-blue-500 hover:bg-blue-700"
+        >
+          {loading
+            ? <LoaderWithExplanation explanation='Saving Changes...' />
+            : (
+              <div className="flex items-center gap-2">
+                <FaRegSave className="h-4 w-4" />
+                <span>Save All Changes</span>
+              </div>
+            )
+          }
+        </Button>
+      </div>
     </div>
   )
 }
