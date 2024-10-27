@@ -25,6 +25,7 @@ import { Wishlist } from "@/Screens/Wishlist"
 import { MoonBagCalculator } from "@/Components/MoonBag"
 import { SearchableFiatCurrencySelector } from "@/Components/Currency/SearchableFiatCurrencySelector"
 import { LoaderWithExplanation, LoadingWrapper } from '@/Components/Loaders'
+import { PositionOptions } from '@/Screens/Positions/Options.tsx'
 
 interface NavigationItem {
   name: string
@@ -61,6 +62,18 @@ export const router = createBrowserRouter([
       </DefaultLayout>
     ),
     errorElement: <ErrorPage />
+  },
+  {
+    path: "/position/options",
+    element: (
+      <DefaultLayout>
+        <Authenticate>
+          <LoadingWrapper loader={<LoaderWithExplanation explanation='Loading Position Options Screen...' />}>
+            <PositionOptions />
+          </LoadingWrapper>
+        </Authenticate>
+      </DefaultLayout>
+    )
   },
   {
     path: "/positions",

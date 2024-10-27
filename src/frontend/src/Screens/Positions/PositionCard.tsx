@@ -1,6 +1,5 @@
-import { useRef, useState, FC, useEffect, useMemo, memo } from "react"
+import { useState, FC, useEffect, useMemo, memo } from "react"
 import { Link } from 'react-router-dom'
-import { OptionsModal } from "../../Components/Position/OptionsModal"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, List } from "lucide-react"
@@ -18,6 +17,7 @@ import { usePriceProxyQueryCall } from '@/Providers/PriceProxy'
 import { LoaderWithExplanation } from "@/Components/Loaders"
 import { AssetPair } from "../../../../declarations/price_proxy/price_proxy.did"
 import { AssetPairComponent } from "@/Components/Assets/AssetPair"
+import { useNavigate } from "react-router-dom"
 
 interface PartialPositionCardProps {
   position: Partial<Position>
@@ -78,7 +78,7 @@ const useCachedPrice = (assetPair: AssetPair | null) => {
 export const PositionCard: FC<PartialPositionCardProps> = (props) => {
   const { position, trades } = props
   const { assetPair } = position
-  const optionModalRef = useRef<HTMLDialogElement>(null)
+  const navigate = useNavigate()
 
   // Memoize the formatted asset pair
   const formattedAssetPair = useMemo((): AssetPair | null => {
@@ -165,11 +165,23 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
     return ((price - costBasis) / costBasis * 100)
   }, [price, costBasis])
 
-  const openOptionsModal = () => optionModalRef.current?.showModal()
-
   // Early return if we don't have basic required data
   if (!assetPair?.base?.symbol || !filteredTrades.length) {
     return null
+  }
+
+  const handleNavigateToOptions = () => {
+    const navigationState = {
+      assetPair,
+      baseAmount: totalHeld,
+      quoteAmount: totalSpent,
+      currentPrice: price
+    }
+    console.log('Navigating with state:', navigationState)
+
+    navigate('/position/options', {
+      state: navigationState
+    })
   }
 
   return (
@@ -258,7 +270,7 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
           <Button
             variant="outline"
             size="sm"
-            onClick={openOptionsModal}
+            onClick={handleNavigateToOptions}
             className="bg-gray-700 text-gray-200 hover:bg-gray-600"
           >
             <MoreHorizontal className="h-4 w-4 mr-2" />
@@ -277,7 +289,6 @@ export const PositionCard: FC<PartialPositionCardProps> = (props) => {
           </Button>
         </div>
       </CardFooter>
-      <OptionsModal modalRef={optionModalRef} />
     </Card>
   )
 }

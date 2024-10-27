@@ -6,7 +6,6 @@ import { CreateWishlistItemDialog } from './CreateWishlistItemDialog'
 import { LoaderWithExplanation } from '@/Components/Loaders'
 
 export const Wishlist: FC = () => {
-  // const navigate = useNavigate()
   const [userWishlist, setUserWishlist] = useState<WishlistItem[]>([])
   const [topWishlist, setTopWishlist] = useState<WishlistItem[]>([])
 

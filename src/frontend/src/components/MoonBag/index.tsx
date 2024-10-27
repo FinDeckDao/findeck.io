@@ -167,9 +167,9 @@ export const MoonBagCalculator: FC<MoonBagCalculatorProps> = (props) => {
 
                 return (
                   <div className={`bg-dark text-white p-2 rounded-md shadow-lg border border-border`}>
-                    <div>Price: {price.toFixed(2)}</div>
-                    <div>Sell: {(initialBaseAmount - amount * initialBaseAmount).toFixed(2)}</div>
-                    <div>Moon Bag: {(amount * initialBaseAmount).toFixed(2)}</div>
+                    <div>Target Price: {price.toFixed(2)}</div>
+                    <div>Sell Amount: {(initialBaseAmount - amount * initialBaseAmount).toFixed(2)}</div>
+                    <div>Yields Moon Bag: {(amount * initialBaseAmount).toFixed(2)}</div>
                   </div>
                 )
               }}
