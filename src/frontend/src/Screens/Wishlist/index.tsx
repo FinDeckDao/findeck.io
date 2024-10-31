@@ -50,9 +50,9 @@ export const Wishlist: FC = () => {
         <div className="mb-8 lg:mb-0 lg:w-1/2">
           <h2 className="text-2xl font-semibold mb-4">
             {
-              userWishlist.length > 1
-                ? `Watching ${userWishlist.length} Assets`
-                : `Watching ${userWishlist.length} Asset`
+              userWishlist.length === 1
+                ? `Watching ${userWishlist.length} Asset`
+                : `Watching ${userWishlist.length} Assets`
             }
           </h2>
 
