@@ -39,14 +39,14 @@ export const NavBar = () => {
                       to={item.href}
                       onClick={() => setMobileMenuOpen(false)}
                       className="-mx-3 block rounded-lg px-3 py-2 text-base leading-7 text-sky-100
-                               hover:bg-slate-700 uppercase"
+                               hover:bg-medium uppercase"
                     >
                       {item.name}
                     </Link>
                   ))}
                 </div>
                 <div className="py-6">
-                  <LoginButton setMobileMenuOpen={setMobileMenuOpen} />
+                  <LoginButton setMobileMenuOpen={setMobileMenuOpen} dark />
                 </div>
               </div>
             </div>
@@ -60,7 +60,7 @@ export const NavBar = () => {
     <header className="col-span-12 bg-dark text-white">
       <nav className="mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
-          <Link to="/" className="text-sky-100 font-bold hover:bg-slate-700 block rounded-lg px-3 py-2.5">
+          <Link to="/" className="text-sky-100 font-bold hover:bg-medium block rounded-lg px-3 py-2.5">
             {domain}
           </Link>
         </div>
@@ -79,7 +79,7 @@ export const NavBar = () => {
             <Link
               key={item.name}
               to={item.href}
-              className="text-sm font-semibold leading-6 text-sky-100 hover:bg-slate-700 rounded-lg p-3"
+              className="text-sm font-semibold leading-6 text-sky-100 hover:bg-medium rounded-lg p-3"
             >
               {item?.icon} {item.name}
             </Link>

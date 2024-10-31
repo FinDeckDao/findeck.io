@@ -6,9 +6,10 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { AssetPairComponent } from './AssetPair'
+import { AssetPairComponent } from '../../Components/Assets/AssetPair'
 import { Calendar } from "@/components/ui/calendar"
 import { format } from 'date-fns'
+import { QuoteAssetSelector } from './QuoteAssetSelector'
 
 interface CreateTradeProps {
   userWishlist: WishlistItem[]
@@ -36,6 +37,19 @@ export const CreateTrade: React.FC<CreateTradeProps> = (props) => {
   const handleBaseAssetSelect = (asset: Asset | null) => {
     setSelectedBaseAsset(asset)
     setSelectedQuoteAsset(null)
+  }
+
+  const handleQuoteAssetSelect = (asset: Asset | null) => {
+    //Guard for an empty asset.
+    if (!asset || !selectedBaseAsset) { return }
+    setSelectedQuoteAsset(asset)
+    onTradeDataChange({
+      assetPair: {
+        base: selectedBaseAsset,
+        quote: asset
+      }
+    })
+    setSelectedQuoteAsset(asset)
   }
 
   return (
@@ -81,23 +95,7 @@ export const CreateTrade: React.FC<CreateTradeProps> = (props) => {
       }
 
       {selectedBaseAsset && !selectedQuoteAsset && (
-        <div>
-          <h3 className="text-lg font-medium mb-2">Select Asset You Want To Pay With</h3>
-          <SearchableCurrencyList
-            ref={quoteSearchRef}
-            onSelect={(asset) => {
-              // Guard for an empty asset.
-              if (!asset) { return }
-              setSelectedQuoteAsset(asset)
-              onTradeDataChange({
-                assetPair: {
-                  base: selectedBaseAsset,
-                  quote: asset
-                }
-              })
-            }}
-          />
-        </div>
+        <QuoteAssetSelector ref={quoteSearchRef} onSelect={handleQuoteAssetSelect} />
       )}
 
       {selectedBaseAsset && selectedQuoteAsset && (
@@ -155,7 +153,7 @@ export const CreateTrade: React.FC<CreateTradeProps> = (props) => {
                 onSelect={(date) => {
                   setDateOfTrade(date)
                   if (date) {
-                    onTradeDataChange({ dateOfTrade: BigInt(date.getTime()) })
+                    onTradeDataChange({ tradeDateTime: BigInt(date.getTime()) })
                   }
                 }}
                 className="rounded-md border border-gray-700 bg-dark text-white"

@@ -11,9 +11,9 @@ import { DueDiligenceQuestionnaire } from './Questionnaire'
 import { PencilSquareIcon } from "@heroicons/react/24/outline"
 import { WishlistItem, Answer } from '../../../../declarations/wishlist_manager/wishlist_manager.did'
 import { Button } from "@/components/ui/button"
-import { TbFidgetSpinner } from "react-icons/tb"
 import { XMarkIcon } from "@heroicons/react/24/solid"
 import { Save } from 'lucide-react'
+import { LoaderWithExplanation } from '@/Components/Loaders'
 
 interface EditWishlistItemProps {
   item: WishlistItem
@@ -77,17 +77,15 @@ export const EditWishlistItemDialog: FC<EditWishlistItemProps> = (props) => {
                       w-full sm:w-auto`
             }
           >
-            {updateLoading ? (
-              <>
-                <span>Updating...</span>
-                <TbFidgetSpinner className="h-5 w-5 animate-spin" />
-              </>
-            ) : (
-              <>
-                <Save strokeWidth={1.25} className="h-5 w-5" />
-                <span>Update</span>
-              </>
-            )}
+            {updateLoading
+              ? (
+                <LoaderWithExplanation explanation='Updating...' />)
+              : (
+                <>
+                  <Save strokeWidth={1.25} className="h-5 w-5" />
+                  <span>Update</span>
+                </>
+              )}
           </Button>
         </div>
       </DialogContent>

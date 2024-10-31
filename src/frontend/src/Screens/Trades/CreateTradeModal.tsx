@@ -7,12 +7,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { TbFidgetSpinner } from "react-icons/tb"
 import { CreateTrade } from './CreateTrade'
 import { WishlistItem } from "../../../../declarations/wishlist_manager/wishlist_manager.did"
-import { Trade } from "../../../../declarations/trade_manager/trade_manager.did"
+import { Trade, TradeType } from "../../../../declarations/trade_manager/trade_manager.did"
 import { useWishlistManagerQueryCall } from '@/Providers/WishlistManager'
 import { useTradeManagerUpdateCall } from "@/Providers/tradeManager"
+import { LoaderWithExplanation } from "@/Components/Loaders"
 
 interface CreateTradeModalProps {
   openClose: boolean
@@ -63,8 +63,11 @@ export const CreateTradeModal: FC<CreateTradeModalProps> = (props) => {
       const baseAmount = Number(tradeData.baseAssetAmount)
       const quoteAmount = Number(tradeData.quoteAssetAmount)
 
+      // This modal is about creating a trade.
+      const tradeType: TradeType = { 'buy': null }
+
       // Call the createTrade function with the correct parameters
-      createTrade([tradeData.assetPair, baseAmount, quoteAmount])
+      createTrade([tradeData.assetPair, baseAmount, quoteAmount, tradeType, []])
     } else {
       console.error('Incomplete trade data')
     }
@@ -76,7 +79,7 @@ export const CreateTradeModal: FC<CreateTradeModalProps> = (props) => {
 
   if (wishlistLoading) {
     return <div className="mb-4">
-      Adding wishlist items as options for trading... <TbFidgetSpinner className="h-6 w-6 animate-spin inline-block" />
+      <LoaderWithExplanation explanation="Adding wishlist items as trading options..." />
     </div>
   }
   if (!wishList) { return <>Wishlist Data isn't available.</> }
@@ -118,16 +121,13 @@ export const CreateTradeModal: FC<CreateTradeModalProps> = (props) => {
                       w-full sm:w-auto`
             }
           >
-            {createTradeLoading ? (
-              <>
-                <span>Updating...</span>
-                <TbFidgetSpinner className="h-5 w-5 animate-spin" />
-              </>
-            ) : (
-              <>
-                <span>Update</span>
-              </>
-            )}
+            {createTradeLoading
+              ? (<LoaderWithExplanation explanation="Updating..." />)
+              : (
+                <>
+                  <span>Update</span>
+                </>
+              )}
           </Button>
         </div>
       </DialogContent>

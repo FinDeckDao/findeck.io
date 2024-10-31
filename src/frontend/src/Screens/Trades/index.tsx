@@ -2,22 +2,27 @@ import { FC, useState, useEffect, useMemo } from 'react'
 import { Button } from '@/Components/ui/button'
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 import { CreateTradeModal } from './CreateTradeModal'
-import { useTradeManagerQueryCall } from '@/Providers/tradeManager'
+import { useTradeManagerQueryCall } from '@/Providers/TradeManager'
 import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
 import { TradeInfo } from './TradeInfo'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { TbFidgetSpinner } from "react-icons/tb"
+import { LoaderWithExplanation } from '@/Components/Loaders'
+import { useSearchParams } from 'react-router-dom'
 
 export const TradesScreen: FC = () => {
+  const [searchParams] = useSearchParams()
   const [openClosed, toggleOpenClosed] = useState(false)
-  const [selectedPair, setSelectedPair] = useState<string>('all')
+  const [selectedPair, setSelectedPair] = useState<string>(() => {
+    const pairParam = searchParams.get('pair')
+    return pairParam || 'all'
+  })
   const [deleting, setDeleting] = useState<boolean>(false)
 
   const handleOpenModal = () => {
     toggleOpenClosed(true)
   }
 
-  const { call: getUserTrades, data, loading, error } = useTradeManagerQueryCall({
+  const { call: getUserTrades, data: trades, loading, error } = useTradeManagerQueryCall({
     functionName: "getUserTrades",
   }) as { call: () => void, data: Trade[], loading: boolean, error: Error }
 
@@ -29,18 +34,20 @@ export const TradesScreen: FC = () => {
   }, [openClosed])
 
   const uniquePairs = useMemo(() => {
-    if (!data) return []
-    const pairs = data.map(trade => `${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}`)
+    if (!trades) return []
+    const pairs = trades.map(trade => `${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}`)
     return Array.from(new Set(pairs))
-  }, [data])
+  }, [trades])
 
-  const filteredTrades = useMemo(() => {
-    if (!data) return []
-    if (selectedPair === 'all') return data
-    return data.filter(trade =>
-      `${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}` === selectedPair
-    )
-  }, [data, selectedPair])
+  // Filter the trades but be sure to retain the original index for use when deleting.
+  const filteredTradesWithIndices = useMemo(() => {
+    if (!trades) return []
+    return trades.map((trade, originalIndex) => ({ trade, originalIndex }))
+      .filter(({ trade }) =>
+        selectedPair === 'all' ||
+        `${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}` === selectedPair
+      )
+  }, [trades, selectedPair])
 
   const handlePairChange = (value: string) => {
     setSelectedPair(value)
@@ -54,7 +61,7 @@ export const TradesScreen: FC = () => {
     <div className="container mx-auto min-h-96 p-4">
       <h1 className="text-4xl font-bold text-center mb-6">Trades</h1>
       <div className="flex justify-between items-center mb-6">
-        {data && data.length > 0
+        {filteredTradesWithIndices && filteredTradesWithIndices.length > 0
           ? (
             <Select onValueChange={handlePairChange} value={selectedPair}>
               <SelectTrigger className="w-[200px] bg-dark text-white">
@@ -88,14 +95,14 @@ export const TradesScreen: FC = () => {
       </div>
 
       <CreateTradeModal openClose={openClosed} toggleOpenClose={toggleOpenClosed} />
-      {loading ? <div className="inline-flex">Loading... <TbFidgetSpinner className="h-5 w-5 animate-spin" /></div> : null}
-      {deleting ? <div className="inline-flex">Deleting... <TbFidgetSpinner className="h-5 w-5 animate-spin" /></div> : null}
+      {loading ? <LoaderWithExplanation explanation='Loading..' /> : null}
+      {deleting ? <LoaderWithExplanation explanation='Deleting...' /> : null}
 
-      {filteredTrades.map((trade, index) => (
+      {filteredTradesWithIndices.map(({ trade, originalIndex }, _filteredIndex) => (
         <TradeInfo
-          index={index}
+          index={originalIndex}
           trade={trade}
-          key={`${index}-${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}`}
+          key={`${originalIndex}-${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}`}
           isDeleting={() => {
             setDeleting(true)
           }}

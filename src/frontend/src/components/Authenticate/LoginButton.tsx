@@ -52,7 +52,7 @@ export const LoginButton: FC<LoginButtonProps> = (props) => {
           })
         }}
         className={`-mx-3 flex items-center justify-start rounded-lg px-3 py-2.5 text-base font-semibold leading-7
-               text-sky-100 hover:bg-slate-700 ${dark ? 'bg-slate-800 hover:bg-slate-900' : ''}`}
+               text-sky-100 bg-dark hover:bg-medium hover:border-gray-600 ${dark ? 'hover:bg-dark hover:border' : ''}`}
       >
         <img src={iclogo} className="h-8 w-8 p-0" />
         <ArrowLeftEndOnRectangleIcon className='w-6 h-6 ml-2 mr-1 rotate-180' />
@@ -63,7 +63,7 @@ export const LoginButton: FC<LoginButtonProps> = (props) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className='px-3 py-2 rounded-lg hover:bg-slate-700 bg-dark text-white uppercase w-auto'>
+      <DropdownMenuTrigger className='px-3 py-2 rounded-lg hover:bg-medium bg-dark text-white uppercase w-auto'>
         <img src={iclogo} className="h-8 w-8 inline p-0 mb-1 mr-2 align-middle" />
         ({
           hasKey(profileData, 'ok')
@@ -104,7 +104,7 @@ export const LoginButton: FC<LoginButtonProps> = (props) => {
               navigateTo('/')
             }
           }
-          className='font-semibold bg-black text-white focus:bg-black focus:text-gray-400'
+          className='font-semibold bg-black text-white focus:bg-black focus:text-gray-400 '
         >
           <ArrowLeftStartOnRectangleIcon className='w-6 h-6 mr-2 rotate-180' />
           Logout

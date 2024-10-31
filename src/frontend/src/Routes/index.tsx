@@ -1,13 +1,16 @@
+
 import {
   createBrowserRouter,
 } from "react-router-dom"
+
 import { DefaultLayout } from '../Layout/index.tsx'
 import { ErrorPage } from '../Routes/ErrorPage.tsx'
-// import { Home } from '../Screens/Home'
-import { ComingSoon } from '../Screens/Home/ComingSoon'
-import { DashboardScreen } from "../Screens/Dashboard"
-import { PositionsScreen } from "../Screens/Positions"
-import { ResourcesScreen } from "../Screens/Resources"
+import {
+  ComingSoonScreen,
+  DashboardScreen,
+  PositionsScreen,
+  ResourcesScreen
+} from '../Components/LazyLoad'
 import {
   //RectangleGroupIcon,
   MapPinIcon,
@@ -19,6 +22,10 @@ import { TradesScreen } from '../Screens/Trades'
 import { Authenticate } from "@/Components/Authenticate"
 import { ProfileScreen } from "@/Screens/Profile"
 import { Wishlist } from "@/Screens/Wishlist"
+import { MoonBagCalculator } from "@/Components/MoonBag"
+import { SearchableFiatCurrencySelector } from "@/Components/Currency/SearchableFiatCurrencySelector"
+import { LoaderWithExplanation, LoadingWrapper } from '@/Components/Loaders'
+import { PositionOptions } from '@/Screens/Positions/Options.tsx'
 
 interface NavigationItem {
   name: string
@@ -46,17 +53,39 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <DefaultLayout>
-        <ComingSoon />
+        <LoadingWrapper
+          loader={<LoaderWithExplanation
+            explanation='Loading Coming Soon Screen...'
+          />}>
+          <ComingSoonScreen />
+        </LoadingWrapper>
       </DefaultLayout>
     ),
     errorElement: <ErrorPage />
+  },
+  {
+    path: "/position/options",
+    element: (
+      <DefaultLayout>
+        <Authenticate>
+          <LoadingWrapper loader={<LoaderWithExplanation explanation='Loading Position Options Screen...' />}>
+            <PositionOptions />
+          </LoadingWrapper>
+        </Authenticate>
+      </DefaultLayout>
+    )
   },
   {
     path: "/positions",
     element: (
       <DefaultLayout>
         <Authenticate>
-          <PositionsScreen />
+          <LoadingWrapper
+            loader={<LoaderWithExplanation
+              explanation='Loading Positions Screen...'
+            />}>
+            <PositionsScreen />
+          </LoadingWrapper>
         </Authenticate>
       </DefaultLayout >
     ),
@@ -67,7 +96,12 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <Authenticate>
-          <DashboardScreen />
+          <LoadingWrapper
+            loader={<LoaderWithExplanation
+              explanation='Loading Dashboard Screen...'
+            />}>
+            <DashboardScreen />
+          </LoadingWrapper>
         </Authenticate>
       </DefaultLayout>
     )
@@ -76,7 +110,12 @@ export const router = createBrowserRouter([
     path: "/resources",
     element: (
       <DefaultLayout>
-        <ResourcesScreen />
+        <LoadingWrapper
+          loader={<LoaderWithExplanation
+            explanation='Loading Resources Screen...'
+          />}>
+          <ResourcesScreen />
+        </LoadingWrapper>
       </DefaultLayout>
     )
   },
@@ -85,7 +124,12 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <Authenticate>
-          <TradesScreen />
+          <LoadingWrapper
+            loader={<LoaderWithExplanation
+              explanation='Loading Trades Screen...'
+            />}>
+            <TradesScreen />
+          </LoadingWrapper>
         </Authenticate>
       </DefaultLayout>
     )
@@ -95,7 +139,13 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <Authenticate>
-          <ProfileScreen />
+          <LoadingWrapper
+            loader={<LoaderWithExplanation
+              explanation='Loading Profile Screen...'
+            />}
+          >
+            <ProfileScreen />
+          </LoadingWrapper>
         </Authenticate>
       </DefaultLayout>
     )
@@ -105,8 +155,26 @@ export const router = createBrowserRouter([
     element: (
       <DefaultLayout>
         <Authenticate>
-          <Wishlist />
+          <LoadingWrapper loader={<LoaderWithExplanation explanation='Loading Wishlist Screen...' />}>
+            <Wishlist />
+          </LoadingWrapper>
         </Authenticate>
+      </DefaultLayout>
+    )
+  },
+  {
+    path: "/moonbag",
+    element: (
+      <DefaultLayout>
+        <MoonBagCalculator initialBaseAmount={1000} initialQuoteAmount={500} currentPrice={0.5} />
+      </DefaultLayout>
+    )
+  },
+  {
+    path: "/fiat-currency",
+    element: (
+      <DefaultLayout>
+        <SearchableFiatCurrencySelector onSelect={(item) => { console.log(`${JSON.stringify(item)} selected!`) }} />
       </DefaultLayout>
     )
   }

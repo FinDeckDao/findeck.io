@@ -1,68 +1,78 @@
-import { PropsWithChildren, useRef, useContext } from 'react'
-import { Positions } from '../../Components/Position'
-import { CreatePositionModal } from '../../Components/Position/CreatePositionModal'
-import { PlusCircleIcon } from "@heroicons/react/24/outline"
-import { DisplayContext } from '../../Contexts/Display'
+import { useState, useEffect, FC } from 'react'
+import { DisplayControl } from './DisplayControl'
+import { PositionTabs } from './PositionTabs'
+import { Trade } from '../../../../declarations/trade_manager/trade_manager.did'
+import { useTradeManagerQueryCall } from "../../Providers/TradeManager"
+import { PartialPosition } from './types'
+import { Link } from 'react-router-dom'
+import { LoaderWithExplanation } from '@/Components/Loaders'
 
-const PositionsScreenWrapper = (props: PropsWithChildren) => {
-  const { children } = props
-  const modalRef = useRef<HTMLDialogElement>(null)
-  const { display, setDisplay } = useContext(DisplayContext)
+export const PositionsScreen: FC = () => {
+  const [partialPositions, setPartialPositions] = useState<PartialPosition[]>([])
 
-  const openModal = () => {
-    modalRef.current?.showModal()
+  // Get the positions from the TradeManager contract.
+  // At this point the positions may be incomplete.
+  // Example: If they don't have a price.
+  const { call: getUserTrades, data, loading } = useTradeManagerQueryCall({
+    functionName: "getUserTrades",
+    onSuccess: (data) => {
+      if (!data) return
+
+      // Group trades by asset pair
+      const tradesByAssetPair = data.reduce((acc, trade) => {
+        const key = `${trade.assetPair.base.symbol}/${trade.assetPair.quote.symbol}`
+        if (!acc[key]) {
+          acc[key] = []
+        }
+        acc[key].push(trade)
+        return acc
+      }, {} as Record<string, Trade[]>)
+
+      // Create partial positions from grouped trades
+      const partialPositions: PartialPosition[] = Object.entries(tradesByAssetPair).map(([_key, trades]) => {
+        return {
+          assetPair: trades[0].assetPair, // Use the asset pair from the first trade
+          // price and priceDate are undefined initially
+        }
+      })
+
+      setPartialPositions(partialPositions)
+    }
+  })
+
+  useEffect(() => {
+    getUserTrades()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-center mb-8 mt-4">Loading your positions</h1>
+        <span className="flex items-center justify-center gap-2">
+          <LoaderWithExplanation explanation='Loading your trade data...' />
+        </span>
+      </div>
+    )
+  }
+
+  if (data && data.length < 1) {
+    return (
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-center mb-8 mt-4">No Positions Were Found</h1>
+        <p>
+          In order to review your positions please enter a trade on the{" "}
+          <Link to="/trades" className="fdLink">Trade Screen</Link>.
+        </p>
+      </div>
+    )
   }
 
   return (
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-center mb-6">Positions</h1>
-      <div className="relative h-14 mb-4">
-        {
-          Positions.length < 1
-            ?
-            <span className="isolate inline-flex rounded-md shadow-sm float-start">
-              <button
-                className={`relative inline-flex btn btn-primary rounded-r-none px-3 py-2 uppercase ring-1 ring-inset focus:z-10 
-                           ${display === "cards" ? 'bg-primary' : 'bg-slate-800 text-primary hover:text-black'}`}
-                onClick={() => {
-                  if (setDisplay) {
-                    setDisplay('cards')
-                    // Save the display type to local storage.
-                    localStorage.setItem('display', JSON.stringify('cards'))
-                  }
-                }}>
-                Cards
-              </button>
-              <button
-                className={`relative -ml-px inline-flex btn btn-primary rounded-l-none px-3 py-2 uppercase ring-1 ring-inset focus:z-10
-                           ${display === "table" ? 'bg-primary' : 'bg-slate-800 text-primary hover:text-black'}`}
-                onClick={() => {
-                  if (setDisplay) {
-                    setDisplay('table')
-                    // Save the display type to local storage.
-                    localStorage.setItem('display', JSON.stringify('table'))
-                  }
-                }}>
-                Table
-              </button>
-            </span>
-            : null
-        }
-        <button className="absolute btn btn-primary bg-slate-800 btn-outline right-0 uppercase" onClick={openModal}>
-          <PlusCircleIcon className="h-6 w-6" />
-          Position
-        </button>
-        <CreatePositionModal modalRef={modalRef} />
-      </div>
-      {children}
-    </div>
+    <PositionTabs partialPositions={partialPositions}>
+      <DisplayControl partialPositions={partialPositions} trades={data as Trade[]} />
+    </PositionTabs>
   )
 }
 
-export const PositionsScreen = () => {
-  return (
-    <PositionsScreenWrapper>
-      <Positions />
-    </PositionsScreenWrapper>
-  )
-}
+export default PositionsScreen

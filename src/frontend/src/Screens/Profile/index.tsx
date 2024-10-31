@@ -119,7 +119,6 @@ export const ProfileScreen: FC = () => {
   // Data is returned and the user has a profile.
   return (
     <ContentWrapper>
-      <h1 className='text-2xl'>Your Member Profile</h1>
       <ProfileForm
         userName={hasKey(data, "ok") ? data.ok.name : ""}
         shortTerm={hasKey(data, "ok") ? String(data.ok.capitalGainsTaxRate.shortTerm) : ""}
