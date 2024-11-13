@@ -21,9 +21,10 @@ export const CreateWishlistItemDialog: FC<CreateWishlistItemDialogProps> = (prop
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          variant="outline"
-          className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto dark:bg-blue-700 dark:hover:bg-blue-800">
-          <PlusCircleIcon className="mr-2 h-5 w-5" /> Create Wishlist Item
+          className="mt-6 w-full sm:w-auto bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-3 py-2 rounded-md shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+        >
+          <PlusCircleIcon className="mr-2 h-5 w-5" />
+          Create Wishlist Item
         </Button>
       </DialogTrigger>
 

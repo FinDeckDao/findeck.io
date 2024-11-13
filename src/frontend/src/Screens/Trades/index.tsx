@@ -85,9 +85,8 @@ export const TradesScreen: FC = () => {
           : <div>{" "}</div>}
 
         <Button
-          variant="outline"
           onClick={handleOpenModal}
-          className="bg-blue-600 hover:bg-blue-700 text-white w-auto dark:bg-blue-700 dark:hover:bg-blue-800"
+          className="bg-indigo-500 hover:bg-indigo-400 text-white w-auto dark:bg-indigo-500 dark:hover:bg-indigo-400"
         >
           <PlusCircleIcon className="mr-2 h-5 w-5" />
           Create New Trade Record
