@@ -8,7 +8,7 @@ export const DashboardScreen: FC = () => {
 
   return (
     <div className='container mx-auto items-center justify-center text-center'>
-      <h1 className='text-2xl'>Dashboard</h1>
+      <h1>Dashboard</h1>
       <p><span className="font-extrabold">Here are your stats:</span> {identity?.getPrincipal().toString()}</p>
       <p className="mb-20">
         In the future this page will be a dashboard that shows all of the details of your trading.

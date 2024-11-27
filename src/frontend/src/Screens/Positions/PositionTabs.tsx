@@ -22,7 +22,7 @@ export const PositionTabs: FC<PositionTabsProps> = (props) => {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow">
-        <h1 className="text-4xl font-bold text-center mb-6">Positions</h1>
+        <h1 className="text-center">Positions</h1>
         {partialPositions.length < 1 ? (
           <Tabs value={display} onValueChange={handleTabChange} className="w-full">
             <TabsList className="justify-center mb-4">

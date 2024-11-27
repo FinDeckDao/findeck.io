@@ -15,7 +15,7 @@ export const ComingSoon: FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start">
           {/* Left side text content */}
           <div className="w-full md:w-1/2 px-4 mb-6 md:mb-0 text-center md:text-left"> {/* Добавлено выравнивание текста */}
-            <h1 className="text-4xl font-bold mb-6">Coming Soon</h1>
+            <h1>Coming Soon</h1>
             <h2 className="text-3xl mb-4">Optimize your trading with data that supports your decisions</h2>
             <p className="mb-8 text-lg">
               This project is being built in public so there isn't much here yet,

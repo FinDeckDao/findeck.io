@@ -82,7 +82,7 @@ export const ProfileScreen: FC = () => {
   if (hasKey(data, 'err')) {
     return (
       <ContentWrapper>
-        <h1 className='text-2xl'>Create Your Member Profile</h1>
+        <h1 className="text-center">Create Your Member Profile</h1>
         <div className="rounded-md bg-yellow-50 m-4 p-4">
           <div className="flex">
             <div className="flex-shrink-0">

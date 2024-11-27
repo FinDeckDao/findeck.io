@@ -85,6 +85,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  h1 {
+    @apply text-4xl font-bold mb-8;
+  }
   .fdLink {
     @apply text-blue-600 dark:text-sky-400 no-underline hover:underline;
   }

@@ -57,7 +57,7 @@ export const ProfileForm: FC<ProfileFormProps> = (props) => {
   return (
     <div className="container mx-auto py-6 max-w-7xl px-4">
       <div className="flex justify-center items-center">
-        <h1 className="text-4xl font-bold text-white">Profile Settings</h1>
+        <h1>Profile Settings</h1>
       </div>
 
       <Form {...form}>

@@ -48,7 +48,7 @@ export const PositionsScreen: FC = () => {
   if (loading) {
     return (
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-center mb-8 mt-4">Loading your positions</h1>
+        <h1>Loading your positions</h1>
         <span className="flex items-center justify-center gap-2">
           <LoaderWithExplanation explanation='Loading your trade data...' />
         </span>
@@ -59,7 +59,7 @@ export const PositionsScreen: FC = () => {
   if (data && data.length < 1) {
     return (
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-center mb-8 mt-4">No Positions Were Found</h1>
+        <h1>No Positions Were Found</h1>
         <p>
           In order to review your positions please enter a trade on the{" "}
           <Link to="/trades" className="fdLink">Trade Screen</Link>.
