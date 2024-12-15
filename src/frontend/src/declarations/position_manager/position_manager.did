@@ -1,0 +1,31 @@
+type Position = 
+ record {
+   assetPair: AssetPair;
+   price: float64;
+   priceDate: int;
+ };
+type AssetVariant = 
+ variant {
+   Cryptocurrency;
+   FiatCurrency;
+ };
+type AssetPair = 
+ record {
+   base: Asset;
+   quote: Asset;
+ };
+type Asset = 
+ record {
+   img_url: text;
+   name: text;
+   slug: text;
+   symbol: text;
+   "variant": AssetVariant;
+ };
+service : {
+  addPosition: (Position) -> ();
+  getPositions: () -> (opt vec Position);
+  init: () -> ();
+  removePosition: (nat) -> (bool);
+  updatePosition: (nat, Position) -> (bool);
+}

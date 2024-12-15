@@ -1,0 +1,51 @@
+type WishlistItem = 
+ record {
+   DueDiligence: DueDiligenceAnswers;
+   base: Asset;
+ };
+type Result_1 = 
+ variant {
+   err: text;
+   ok: vec WishlistItem;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok;
+ };
+type Question = 
+ record {
+   hint: text;
+   id: int;
+   question: text;
+ };
+type DueDiligenceAnswers = vec Answer;
+type AssetVariant = 
+ variant {
+   Cryptocurrency;
+   FiatCurrency;
+ };
+type Asset = 
+ record {
+   img_url: text;
+   name: text;
+   slug: text;
+   symbol: text;
+   "variant": AssetVariant;
+ };
+type Answer = 
+ variant {
+   No;
+   Yes;
+ };
+service : {
+  createWishlistItem: (WishlistItem) -> (Result);
+  deleteWishlistItem: (WishlistItem) -> (Result);
+  getDueDiligenceQuestions: () -> (vec Question) query;
+  getTopWatchedAssets: () -> (vec WishlistItem) query;
+  getUserWishlist: () -> (vec WishlistItem);
+  getWishlistItem: () -> (Result_1);
+  init: () -> ();
+  listAllWishlistItems: () -> (vec WishlistItem) query;
+  updateWishlistItem: (WishlistItem) -> (Result);
+}

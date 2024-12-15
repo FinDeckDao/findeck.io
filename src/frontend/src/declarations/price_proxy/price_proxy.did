@@ -1,0 +1,43 @@
+type UnsupportedPair = 
+ record {
+   lastAttempt: int;
+   pair: AssetPair;
+ };
+type PairPrice = 
+ record {
+   pair: AssetPair;
+   price: float64;
+   timestamp: int;
+ };
+type AssetVariant = 
+ variant {
+   Cryptocurrency;
+   FiatCurrency;
+ };
+type AssetPair = 
+ record {
+   base: Asset;
+   quote: Asset;
+ };
+type Asset = 
+ record {
+   img_url: text;
+   name: text;
+   slug: text;
+   symbol: text;
+   "variant": AssetVariant;
+ };
+service : {
+  clearUnsupportedPairs: () -> ();
+  getCacheStatus: (AssetPair) ->
+   (variant {
+      cached: record {
+                price: float64;
+                timestamp: int;
+              };
+      expired;
+      not_cached;
+    }) query;
+  getExchangeRate: (AssetPair) -> (opt PairPrice);
+  getUnsupportedPairs: () -> (vec UnsupportedPair) query;
+}
