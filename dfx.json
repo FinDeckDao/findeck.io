@@ -1,11 +1,13 @@
 {
   "canisters": {
     "backend": {
+      "declarations": { "output": "src/declarations/backend" },
       "dependencies": ["internet_identity"],
       "main": "src/backend/main.mo",
       "type": "motoko"
     },
     "frontend": {
+      "declarations": { "output": "src/declarations/frontend" },
       "dependencies": ["internet_identity", "backend"],
       "source": ["src/frontend/dist"],
       "type": "assets",
@@ -13,33 +15,39 @@
     },
     "internet_identity": {
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "declarations": { "output": "src/declarations/internet_identity" },
       "frontend": {},
       "remote": { "id": { "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai" } },
       "type": "custom",
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     },
     "position_manager": {
+      "declarations": { "output": "src/declarations/position_manager" },
       "dependencies": ["internet_identity"],
       "main": "src/position_manager/main.mo",
       "type": "motoko"
     },
     "price_proxy": {
+      "declarations": { "output": "src/declarations/price_proxy" },
       "dependencies": ["xrc"],
       "main": "src/price_proxy/main.mo",
       "type": "motoko"
     },
     "trade_manager": {
+      "declarations": { "output": "src/declarations/trade_manager" },
       "dependencies": ["internet_identity"],
       "main": "src/trade_manager/main.mo",
       "type": "motoko"
     },
     "wishlist_manager": {
+      "declarations": { "output": "src/declarations/wishlist_manager" },
       "dependencies": ["internet_identity"],
       "main": "src/wishlist_manager/main.mo",
       "type": "motoko"
     },
     "xrc": {
       "candid": "src/xrc_demo/xrc/xrc.did",
+      "declarations": { "output": "src/declarations/xrc" },
       "remote": { "id": { "ic": "uf6dk-hyaaa-aaaaq-qaaaq-cai" } },
       "type": "custom",
       "wasm": "src/xrc_demo/xrc/xrc.wasm.gz"

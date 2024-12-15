@@ -1,0 +1,57 @@
+type TradeType = 
+ variant {
+   buy;
+   sell;
+ };
+type Trade = 
+ record {
+   assetPair: AssetPair;
+   baseAssetAmount: float64;
+   createdAt: int;
+   deletedAt: opt int;
+   quoteAssetAmount: float64;
+   tradeDateTime: int;
+   tradeType: TradeType;
+ };
+type Result_2 = 
+ variant {
+   err: text;
+   ok: nat;
+ };
+type Result_1 = 
+ variant {
+   err: text;
+   ok: Trade;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok;
+ };
+type AssetVariant = 
+ variant {
+   Cryptocurrency;
+   FiatCurrency;
+ };
+type AssetPair = 
+ record {
+   base: Asset;
+   quote: Asset;
+ };
+type Asset = 
+ record {
+   img_url: text;
+   name: text;
+   slug: text;
+   symbol: text;
+   "variant": AssetVariant;
+ };
+service : {
+  createTrade: (AssetPair, float64, float64, TradeType, opt int) ->
+   (Result_2);
+  deleteTrade: (nat) -> (Result);
+  getTotalTrades: () -> (nat) query;
+  getUserTrades: () -> (vec Trade) query;
+  readTrade: (nat) -> (Result_1) query;
+  updateTrade: (nat, opt float64, opt float64) -> (Result);
+}

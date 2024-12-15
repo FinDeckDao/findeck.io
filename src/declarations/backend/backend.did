@@ -1,0 +1,44 @@
+type Theme = 
+ variant {
+   Dark;
+   Light;
+   System;
+ };
+type Role = 
+ variant {
+   Administrator;
+   Member;
+ };
+type Result__1 = 
+ variant {
+   err: text;
+   ok: text;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok: Profile;
+ };
+type Profile = 
+ record {
+   capitalGainsTaxRate: CapitalGainsTaxRate;
+   name: text;
+   role: Role;
+   theme: Theme;
+ };
+type CapitalGainsTaxRate = 
+ record {
+   longTerm: float64;
+   shortTerm: float64;
+ };
+service : {
+  createProfile: (Profile) -> (Result__1);
+  deleteProfile: () -> (Result__1);
+  getAllProfiles: () -> (vec record {
+                               principal;
+                               Profile;
+                             }) query;
+  getProfile: () -> (Result) query;
+  init: () -> ();
+  updateProfile: (Profile) -> (bool);
+}
